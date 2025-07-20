@@ -13,7 +13,6 @@ import time
 chrome_options = Options()
 # chrome_options.binary_location = "/usr/bin/google-chrome"  # Uncomment if needed
 
-# Optional: reduce automation detectability
 chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
 chrome_options.add_experimental_option('useAutomationExtension', False)
 
@@ -23,7 +22,7 @@ wait = WebDriverWait(driver, 10)
 
 def login():
     driver.get("https://domainmetadata.com/login")
-    time.sleep(5)  # Allow page to fully load
+    time.sleep(5)
 
     attempt = 1
     max_attempts = 3
@@ -38,7 +37,7 @@ def login():
             email_input = wait.until(EC.presence_of_element_located((By.ID, "email")))
             password_input = wait.until(EC.presence_of_element_located((By.ID, "password")))
 
-            # Focus and type email
+            # Type email
             ActionChains(driver).move_to_element(email_input).click().perform()
             email_input.clear()
             for char in email:
@@ -47,7 +46,7 @@ def login():
             email_input.send_keys(" ")
             email_input.send_keys("\b")
 
-            # Focus and type password
+            # Type password
             ActionChains(driver).move_to_element(password_input).click().perform()
             password_input.clear()
             for char in password:
@@ -60,17 +59,14 @@ def login():
             sign_in_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.btn-lg.btn-primary")))
             sign_in_button.click()
 
-            # Wait for login processing
             time.sleep(6)
 
             if not inputs_still_exist():
                 print("Login successful.")
-                # Open the list of all domains page
                 driver.get("https://domainmetadata.com/list-of-all-domains")
-                time.sleep(5)  # Allow page to load
-
-                # Scroll to bottom
+                time.sleep(5)
                 scroll_to_bottom()
+                collect_second_li_links()
                 break
             else:
                 print("Login failed, retrying...")
@@ -92,22 +88,55 @@ def scroll_to_bottom():
     print("Scrolling to the bottom of the page...")
     last_height = driver.execute_script("return document.body.scrollHeight")
     while True:
-        # Scroll down to bottom
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(2)  # Wait to load page
-        # Calculate new scroll height and compare with last scroll height
+        time.sleep(2)
         new_height = driver.execute_script("return document.body.scrollHeight")
         if new_height == last_height:
             break
         last_height = new_height
     print("Reached bottom of the page.")
 
-# Perform login
+def collect_second_li_links():
+    try:
+        # Click all dropdown buttons to reveal their menus
+        dropdown_buttons = driver.find_elements(By.CSS_SELECTOR, "div.dropdown > button")
+        for btn in dropdown_buttons:
+            ActionChains(driver).move_to_element(btn).click().perform()
+            time.sleep(1)
+
+        # Wait for dropdown menus to be visible
+        wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "ul.dropdown-menu")))
+
+        # Find all ul elements with class 'dropdown-menu'
+        ul_menus = driver.find_elements(By.CSS_SELECTOR, "ul.dropdown-menu")
+
+        collected_links = []
+
+        for ul in ul_menus:
+            li_items = ul.find_elements(By.TAG_NAME, "li")
+            if len(li_items) >= 2:
+                second_li = li_items[1]
+                try:
+                    a_tag = second_li.find_element(By.TAG_NAME, "a")
+                    href = a_tag.get_attribute("href")
+                    collected_links.append(href)
+                except NoSuchElementException:
+                    print("Second <li> has no <a> tag.")
+
+        print(f"Collected {len(collected_links)} links from second <li> of each dropdown menu.")
+        for link in collected_links:
+            print("Link:", link)
+
+        if collected_links:
+            # Click the first collected link
+            driver.get(collected_links[0])
+            print("Clicked first collected link.")
+        else:
+            print("No links found to click.")
+
+    except (NoSuchElementException, TimeoutException) as e:
+        print("Error collecting second <li> links:", e)
+
+# Execute the script
 login()
-
-# Continue your automation here
-# Example: print page title of the list page
-print("Current page title:", driver.title)
-
-# Close driver at end
 driver.quit()
