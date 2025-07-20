@@ -68,6 +68,9 @@ def login():
                 # Open the list of all domains page
                 driver.get("https://domainmetadata.com/list-of-all-domains")
                 time.sleep(5)  # Allow page to load
+
+                # Scroll to bottom
+                scroll_to_bottom()
                 break
             else:
                 print("Login failed, retrying...")
@@ -84,6 +87,20 @@ def inputs_still_exist():
         return True
     except NoSuchElementException:
         return False
+
+def scroll_to_bottom():
+    print("Scrolling to the bottom of the page...")
+    last_height = driver.execute_script("return document.body.scrollHeight")
+    while True:
+        # Scroll down to bottom
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(2)  # Wait to load page
+        # Calculate new scroll height and compare with last scroll height
+        new_height = driver.execute_script("return document.body.scrollHeight")
+        if new_height == last_height:
+            break
+        last_height = new_height
+    print("Reached bottom of the page.")
 
 # Perform login
 login()
