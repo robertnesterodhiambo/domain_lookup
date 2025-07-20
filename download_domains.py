@@ -38,33 +38,36 @@ def login():
             email_input = wait.until(EC.presence_of_element_located((By.ID, "email")))
             password_input = wait.until(EC.presence_of_element_located((By.ID, "password")))
 
-            # Focus email input
+            # Focus and type email
             ActionChains(driver).move_to_element(email_input).click().perform()
             email_input.clear()
             for char in email:
                 email_input.send_keys(char)
                 time.sleep(0.1)
-            email_input.send_keys(" ")  # trigger input event
-            email_input.send_keys("\b")  # remove the extra space
+            email_input.send_keys(" ")
+            email_input.send_keys("\b")
 
-            # Focus password input
+            # Focus and type password
             ActionChains(driver).move_to_element(password_input).click().perform()
             password_input.clear()
             for char in password:
                 password_input.send_keys(char)
                 time.sleep(0.1)
-            password_input.send_keys(" ")  # trigger input event
-            password_input.send_keys("\b")  # remove the extra space
+            password_input.send_keys(" ")
+            password_input.send_keys("\b")
 
             # Click Sign in button
             sign_in_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.btn-lg.btn-primary")))
             sign_in_button.click()
 
-            # Wait for either successful login or inputs still existing
-            time.sleep(6)  # adjust based on network speed
+            # Wait for login processing
+            time.sleep(6)
 
             if not inputs_still_exist():
                 print("Login successful.")
+                # Open the list of all domains page
+                driver.get("https://domainmetadata.com/list-of-all-domains")
+                time.sleep(5)  # Allow page to load
                 break
             else:
                 print("Login failed, retrying...")
@@ -82,10 +85,12 @@ def inputs_still_exist():
     except NoSuchElementException:
         return False
 
-# Execute login
+# Perform login
 login()
 
 # Continue your automation here
+# Example: print page title of the list page
+print("Current page title:", driver.title)
 
 # Close driver at end
 driver.quit()
