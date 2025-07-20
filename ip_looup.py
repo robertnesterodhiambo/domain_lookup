@@ -6,7 +6,8 @@ import tldextract
 
 LOOKUP_FILE = 'looku_file/lookup.txt'
 OUTPUT_FILE = 'whois_results.csv'
-RETRY_DELAY = 60  # seconds
+RETRY_DELAY = 6  # seconds
+MAX_RETRIES = 1
 BATCH_SIZE = 100
 
 # Ensure the output file exists with headers
@@ -39,6 +40,7 @@ def load_collected_domains():
                 collected.add(row['domain'].strip().lower())
     return collected
 
+# Format emails properly
 def format_emails(emails):
     if not emails:
         return None
@@ -48,26 +50,28 @@ def format_emails(emails):
         return ','.join([e for e in emails if '@' in e and '.' in e])
     return None
 
+# Run WHOIS with max 3 retries
 def run_whois_with_retry(domain):
-    while True:
+    for attempt in range(1, MAX_RETRIES + 1):
         try:
-            print(f"Processing domain: {domain}")
+            print(f"Processing domain: {domain} (Attempt {attempt})")
             data = whois.whois(domain)
 
-            # Retry if response is empty or missing domain_name
             if not data or not getattr(data, 'domain_name', None):
-                print(f"No valid WHOIS data for {domain} — possibly socket error. Waiting {RETRY_DELAY} seconds...")
-                time.sleep(RETRY_DELAY)
-                continue
+                print(f"No valid WHOIS data for {domain} — possibly empty or bad data.")
+                raise ValueError("No valid WHOIS data")
 
             return data, None
 
         except Exception as e:
-            err_text = str(e)
-            print(f"[{type(e).__name__}] Error for {domain}: {err_text}")
-            print(f"Waiting {RETRY_DELAY} seconds before retrying {domain}...")
-            time.sleep(RETRY_DELAY)
+            print(f"[{type(e).__name__}] Error for {domain}: {str(e)}")
+            if attempt < MAX_RETRIES:
+                print(f"Retrying in {RETRY_DELAY} seconds...")
+                time.sleep(RETRY_DELAY)
+            else:
+                return None, "NO_DATA"
 
+# Process a list of domains
 def process_batch(domains, collected_set):
     for domain in domains:
         domain = domain.strip().lower()
@@ -78,22 +82,21 @@ def process_batch(domains, collected_set):
             continue
 
         result, error = run_whois_with_retry(domain)
-
         ext = tldextract.extract(domain)
         tld = ext.suffix
 
         row = {
             'domain': domain,
-            'domain_name': getattr(result, 'domain_name', None),
-            'registrar': getattr(result, 'registrar', None),
-            'creation_date': getattr(result, 'creation_date', None),
-            'expiration_date': getattr(result, 'expiration_date', None),
-            'updated_date': getattr(result, 'updated_date', None),
-            'status': getattr(result, 'status', None),
+            'domain_name': getattr(result, 'domain_name', None) if result else None,
+            'registrar': getattr(result, 'registrar', None) if result else None,
+            'creation_date': getattr(result, 'creation_date', None) if result else None,
+            'expiration_date': getattr(result, 'expiration_date', None) if result else None,
+            'updated_date': getattr(result, 'updated_date', None) if result else None,
+            'status': getattr(result, 'status', None) if result else None,
             'name_servers': ','.join(result.name_servers) if result and result.name_servers else None,
-            'emails': format_emails(getattr(result, 'emails', None)),
-            'country': getattr(result, 'country', None),
-            'city': getattr(result, 'city', None),
+            'emails': format_emails(getattr(result, 'emails', None)) if result else None,
+            'country': getattr(result, 'country', None) if result else None,
+            'city': getattr(result, 'city', None) if result else None,
             'tld': tld,
             'raw_text': error if error else "SUCCESS"
         }
@@ -105,6 +108,7 @@ def process_batch(domains, collected_set):
         collected_set.add(domain)
         time.sleep(10)
 
+# Read and process lookup file
 def process_lookup_file():
     collected_set = load_collected_domains()
     with open(LOOKUP_FILE, 'r', encoding='utf-8', errors='ignore') as f:
