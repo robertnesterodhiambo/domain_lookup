@@ -8,7 +8,7 @@ app = Flask(__name__)
 def index():
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM subdomain")  # Updated table name
+    cursor.execute("SELECT * FROM subdomain")
     records = cursor.fetchall()
     cursor.close()
     conn.close()
