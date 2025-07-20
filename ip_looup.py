@@ -50,6 +50,12 @@ def format_emails(emails):
         return ','.join([e for e in emails if '@' in e and '.' in e])
     return None
 
+# Normalize date fields that may return lists
+def normalize_date(date_field):
+    if isinstance(date_field, list):
+        return date_field[0]
+    return date_field
+
 # Run WHOIS with max 3 retries
 def run_whois_with_retry(domain):
     for attempt in range(1, MAX_RETRIES + 1):
@@ -89,9 +95,9 @@ def process_batch(domains, collected_set):
             'domain': domain,
             'domain_name': getattr(result, 'domain_name', None) if result else None,
             'registrar': getattr(result, 'registrar', None) if result else None,
-            'creation_date': getattr(result, 'creation_date', None) if result else None,
-            'expiration_date': getattr(result, 'expiration_date', None) if result else None,
-            'updated_date': getattr(result, 'updated_date', None) if result else None,
+            'creation_date': normalize_date(getattr(result, 'creation_date', None)) if result else None,
+            'expiration_date': normalize_date(getattr(result, 'expiration_date', None)) if result else None,
+            'updated_date': normalize_date(getattr(result, 'updated_date', None)) if result else None,
             'status': getattr(result, 'status', None) if result else None,
             'name_servers': ','.join(result.name_servers) if result and result.name_servers else None,
             'emails': format_emails(getattr(result, 'emails', None)) if result else None,
