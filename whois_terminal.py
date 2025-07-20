@@ -4,12 +4,14 @@ import csv
 import os
 import re
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 LOOKUP_FILE = 'looku_file/lookup.txt'
 OUTPUT_FILE = 'whois_results.csv'
 RETRY_DELAY = 6
 MAX_RETRIES = 1
 BATCH_SIZE = 100
+MAX_THREADS = 30
 
 # Create output file with correct headers
 HEADERS = [
@@ -96,25 +98,32 @@ def extract_all_fields(whois_text):
     }
 
 def process_batch(domains):
-    for domain in domains:
-        domain = domain.strip().lower()
-        if not domain:
-            continue
+    with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
+        future_to_domain = {
+            executor.submit(run_whois_terminal, domain.strip().lower()): domain.strip().lower()
+            for domain in domains if domain.strip()
+        }
 
-        whois_text, error = run_whois_terminal(domain)
-        if not whois_text:
-            continue
+        for future in as_completed(future_to_domain):
+            domain = future_to_domain[future]
+            try:
+                whois_text, error = future.result()
+                if not whois_text:
+                    continue
 
-        data = extract_all_fields(whois_text)
-        print("✅ Parsed Data:")
-        for k, v in data.items():
-            print(f"  {k}: {v}")
+                data = extract_all_fields(whois_text)
+                print(f"✅ Parsed Data for {domain}:")
+                for k, v in data.items():
+                    print(f"  {k}: {v}")
 
-        with open(OUTPUT_FILE, 'a', newline='', encoding='utf-8') as f:
-            writer = csv.DictWriter(f, fieldnames=HEADERS)
-            writer.writerow(data)
+                with open(OUTPUT_FILE, 'a', newline='', encoding='utf-8') as f:
+                    writer = csv.DictWriter(f, fieldnames=HEADERS)
+                    writer.writerow(data)
 
-        time.sleep(10)
+                time.sleep(1)  # Light pause to reduce I/O pressure
+
+            except Exception as exc:
+                print(f"❌ Exception for domain {domain}: {exc}")
 
 def process_lookup_file():
     with open(LOOKUP_FILE, 'r', encoding='utf-8', errors='ignore') as f:
