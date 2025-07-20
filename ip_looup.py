@@ -29,6 +29,16 @@ if not os.path.exists(OUTPUT_FILE):
             'raw_text'
         ])
 
+# Load already collected domains
+def load_collected_domains():
+    collected = set()
+    if os.path.exists(OUTPUT_FILE):
+        with open(OUTPUT_FILE, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                collected.add(row['domain'].strip().lower())
+    return collected
+
 def format_emails(emails):
     if not emails:
         return None
@@ -50,17 +60,17 @@ def run_whois_with_retry(domain):
         except Exception as e:
             err_text = str(e)
             print(f"Error for {domain}: {err_text}")
-            # Retry only if connection reset or similar
-            if "Connection reset by peer" in err_text or "timed out" in err_text or True:
-                print(f"Retrying after {RETRY_DELAY} seconds...")
-                time.sleep(RETRY_DELAY)
-                continue
-            return None, err_text
+            print(f"Retrying after {RETRY_DELAY} seconds...")
+            time.sleep(RETRY_DELAY)
+            continue
 
-def process_batch(domains):
+def process_batch(domains, collected_set):
     for domain in domains:
-        domain = domain.strip()
+        domain = domain.strip().lower()
         if not domain:
+            continue
+        if domain in collected_set:
+            print(f"Skipping already collected: {domain}")
             continue
 
         result, error = run_whois_with_retry(domain)
@@ -89,18 +99,20 @@ def process_batch(domains):
             writer = csv.DictWriter(f, fieldnames=row.keys())
             writer.writerow(row)
 
-        time.sleep(10)  # delay to avoid blocking
+        collected_set.add(domain)  # mark as collected
+        time.sleep(10)
 
 def process_lookup_file():
+    collected_set = load_collected_domains()
     with open(LOOKUP_FILE, 'r', encoding='utf-8', errors='ignore') as f:
         batch = []
         for line in f:
             batch.append(line)
             if len(batch) >= BATCH_SIZE:
-                process_batch(batch)
+                process_batch(batch, collected_set)
                 batch = []
         if batch:
-            process_batch(batch)
+            process_batch(batch, collected_set)
 
 if __name__ == '__main__':
     process_lookup_file()
