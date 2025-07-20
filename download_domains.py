@@ -1,3 +1,5 @@
+import os
+import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -11,8 +13,6 @@ import time
 
 # Setup Chrome options
 chrome_options = Options()
-# chrome_options.binary_location = "/usr/bin/google-chrome"  # Uncomment if needed
-
 chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
 chrome_options.add_experimental_option('useAutomationExtension', False)
 
@@ -66,7 +66,8 @@ def login():
                 driver.get("https://domainmetadata.com/list-of-all-domains")
                 time.sleep(5)
                 scroll_to_bottom()
-                collect_second_li_links()
+                download_links = collect_second_li_links()
+                download_files(download_links)
                 break
             else:
                 print("Login failed, retrying...")
@@ -97,20 +98,27 @@ def scroll_to_bottom():
     print("Reached bottom of the page.")
 
 def collect_second_li_links():
+    collected_links = []
+
     try:
-        # Click all dropdown buttons to reveal their menus
         dropdown_buttons = driver.find_elements(By.CSS_SELECTOR, "div.dropdown > button")
-        for btn in dropdown_buttons:
+        buttons_count = len(dropdown_buttons)
+        print(f"Found {buttons_count} dropdown buttons.")
+
+        for i in range(buttons_count):
+            # Refetch buttons every time to avoid stale element reference
+            dropdown_buttons = driver.find_elements(By.CSS_SELECTOR, "div.dropdown > button")
+            btn = dropdown_buttons[i]
+
+            # Scroll into view and click to open dropdown menu
+            driver.execute_script("arguments[0].scrollIntoView(true);", btn)
+            time.sleep(0.5)
             ActionChains(driver).move_to_element(btn).click().perform()
             time.sleep(1)
 
-        # Wait for dropdown menus to be visible
         wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "ul.dropdown-menu")))
 
-        # Find all ul elements with class 'dropdown-menu'
         ul_menus = driver.find_elements(By.CSS_SELECTOR, "ul.dropdown-menu")
-
-        collected_links = []
 
         for ul in ul_menus:
             li_items = ul.find_elements(By.TAG_NAME, "li")
@@ -119,6 +127,8 @@ def collect_second_li_links():
                 try:
                     a_tag = second_li.find_element(By.TAG_NAME, "a")
                     href = a_tag.get_attribute("href")
+                    if href.startswith("/"):
+                        href = "https://domainmetadata.com" + href
                     collected_links.append(href)
                 except NoSuchElementException:
                     print("Second <li> has no <a> tag.")
@@ -127,16 +137,34 @@ def collect_second_li_links():
         for link in collected_links:
             print("Link:", link)
 
-        if collected_links:
-            # Click the first collected link
-            driver.get(collected_links[0])
-            print("Clicked first collected link.")
-        else:
-            print("No links found to click.")
+        return collected_links
 
     except (NoSuchElementException, TimeoutException) as e:
         print("Error collecting second <li> links:", e)
+        return []
 
-# Execute the script
+def download_files(links):
+    if not links:
+        print("No links to download.")
+        return
+
+    os.makedirs("domain_zip", exist_ok=True)
+    session = requests.Session()
+
+    for link in links:
+        filename = os.path.basename(link)
+        filepath = os.path.join("domain_zip", filename)
+        print(f"Downloading {link} to {filepath} ...")
+
+        try:
+            resp = session.get(link)
+            resp.raise_for_status()
+            with open(filepath, "wb") as f:
+                f.write(resp.content)
+            print(f"Saved {filepath}")
+        except requests.RequestException as e:
+            print(f"Failed to download {link}: {e}")
+
+# Run the script
 login()
 driver.quit()
