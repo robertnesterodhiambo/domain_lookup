@@ -40,14 +40,19 @@ for domain in domains:
             "country": w.country
         }
 
+        # === Print collected data to terminal ===
+        print(f"\n=== WHOIS Data for {domain} ===")
+        for key, value in data.items():
+            print(f"{key}: {value}")
+
         # Append the result to dataframe
         df = pd.concat([df, pd.DataFrame([data])], ignore_index=True)
 
         # Save immediately after each domain to avoid data loss
         df.to_excel(output_file, index=False)
-        print(f"Saved WHOIS for {domain}")
+        print(f"✅ Saved WHOIS for {domain}")
 
     except Exception as e:
-        print(f"WHOIS lookup failed for {domain}: {e}")
+        print(f"❌ WHOIS lookup failed for {domain}: {e}")
 
-print("✅ All lookups processed and saved.")
+print("\n✅ All lookups processed and saved.")
