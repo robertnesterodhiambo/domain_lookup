@@ -2,49 +2,90 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
-# Set up Chrome options to use your local Chrome binary
+# Setup Chrome options
 chrome_options = Options()
+# chrome_options.binary_location = "/usr/bin/google-chrome"  # Uncomment if needed
 
-# Specify your local Chrome installation path if needed:
-# chrome_options.binary_location = "/usr/bin/google-chrome"  # default on many Linux systems
-# For Windows: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-
-# OPTIONAL: Remove automation flags to appear less bot-like
+# Optional: reduce automation detectability
 chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
 chrome_options.add_experimental_option('useAutomationExtension', False)
 
-# Initialize driver using local Chrome with managed chromedriver
+# Initialize driver
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+wait = WebDriverWait(driver, 10)
 
-# Open the website
-driver.get("https://domainmetadata.com/login")
-time.sleep(5)  # Wait for the page to load fully
+def login():
+    driver.get("https://domainmetadata.com/login")
+    time.sleep(5)  # Allow page to fully load
 
-# Define email and password
-email = "office@risikomonitor.com"
-password = "sEAGgGqERE6z"
+    attempt = 1
+    max_attempts = 3
 
-# Find the email input field and type letter by letter
-email_input = driver.find_element(By.ID, "email")
-for char in email:
-    email_input.send_keys(char)
-    time.sleep(0.1)  # Simulate typing speed
+    while attempt <= max_attempts:
+        print(f"Login attempt {attempt}...")
 
-# Find the password input field and type letter by letter
-password_input = driver.find_element(By.ID, "password")
-for char in password:
-    password_input.send_keys(char)
-    time.sleep(0.1)  # Simulate typing speed
+        email = "office@risikomonitor.com"
+        password = "sEAGgGqERE6z"
 
-# Press Enter to submit
-password_input.send_keys(Keys.ENTER)
+        try:
+            email_input = wait.until(EC.presence_of_element_located((By.ID, "email")))
+            password_input = wait.until(EC.presence_of_element_located((By.ID, "password")))
 
-# Wait for 6 seconds after login
-time.sleep(60)
+            # Focus email input
+            ActionChains(driver).move_to_element(email_input).click().perform()
+            email_input.clear()
+            for char in email:
+                email_input.send_keys(char)
+                time.sleep(0.1)
+            email_input.send_keys(" ")  # trigger input event
+            email_input.send_keys("\b")  # remove the extra space
 
-# Continue your automation or close driver
+            # Focus password input
+            ActionChains(driver).move_to_element(password_input).click().perform()
+            password_input.clear()
+            for char in password:
+                password_input.send_keys(char)
+                time.sleep(0.1)
+            password_input.send_keys(" ")  # trigger input event
+            password_input.send_keys("\b")  # remove the extra space
+
+            # Click Sign in button
+            sign_in_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.btn-lg.btn-primary")))
+            sign_in_button.click()
+
+            # Wait for either successful login or inputs still existing
+            time.sleep(6)  # adjust based on network speed
+
+            if not inputs_still_exist():
+                print("Login successful.")
+                break
+            else:
+                print("Login failed, retrying...")
+                attempt += 1
+
+        except (NoSuchElementException, TimeoutException) as e:
+            print("Error locating element:", e)
+            break
+
+def inputs_still_exist():
+    try:
+        driver.find_element(By.ID, "email")
+        driver.find_element(By.ID, "password")
+        return True
+    except NoSuchElementException:
+        return False
+
+# Execute login
+login()
+
+# Continue your automation here
+
+# Close driver at end
 driver.quit()
