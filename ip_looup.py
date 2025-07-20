@@ -6,7 +6,7 @@ import tldextract
 
 LOOKUP_FILE = 'looku_file/lookup.txt'
 OUTPUT_FILE = 'whois_results.csv'
-RETRY_DELAY = 15  # seconds
+RETRY_DELAY = 60  # seconds
 BATCH_SIZE = 100
 
 # Ensure the output file exists with headers
@@ -53,16 +53,20 @@ def run_whois_with_retry(domain):
         try:
             print(f"Processing domain: {domain}")
             data = whois.whois(domain)
-            if data and data.domain_name:
-                return data, None
-            else:
-                return None, "NO_DATA"
+
+            # Retry if response is empty or missing domain_name
+            if not data or not getattr(data, 'domain_name', None):
+                print(f"No valid WHOIS data for {domain} — possibly socket error. Waiting {RETRY_DELAY} seconds...")
+                time.sleep(RETRY_DELAY)
+                continue
+
+            return data, None
+
         except Exception as e:
             err_text = str(e)
-            print(f"Error for {domain}: {err_text}")
-            print(f"Retrying after {RETRY_DELAY} seconds...")
+            print(f"[{type(e).__name__}] Error for {domain}: {err_text}")
+            print(f"Waiting {RETRY_DELAY} seconds before retrying {domain}...")
             time.sleep(RETRY_DELAY)
-            continue
 
 def process_batch(domains, collected_set):
     for domain in domains:
@@ -75,7 +79,6 @@ def process_batch(domains, collected_set):
 
         result, error = run_whois_with_retry(domain)
 
-        # Extract TLD
         ext = tldextract.extract(domain)
         tld = ext.suffix
 
@@ -92,14 +95,14 @@ def process_batch(domains, collected_set):
             'country': getattr(result, 'country', None),
             'city': getattr(result, 'city', None),
             'tld': tld,
-            'raw_text': error if error else None
+            'raw_text': error if error else "SUCCESS"
         }
 
         with open(OUTPUT_FILE, 'a', newline='', encoding='utf-8') as f:
             writer = csv.DictWriter(f, fieldnames=row.keys())
             writer.writerow(row)
 
-        collected_set.add(domain)  # mark as collected
+        collected_set.add(domain)
         time.sleep(10)
 
 def process_lookup_file():
