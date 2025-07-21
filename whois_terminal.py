@@ -13,7 +13,7 @@ MAX_RETRIES = 1
 BATCH_SIZE = 100
 MAX_THREADS = 30
 
-# Create output file with correct headers
+# Headers for CSV
 HEADERS = [
     'domain_name',
     'registry_domain_id',
@@ -39,10 +39,23 @@ HEADERS = [
     'date_searched'
 ]
 
+# Create output file if it doesn't exist
 if not os.path.exists(OUTPUT_FILE):
     with open(OUTPUT_FILE, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(HEADERS)
+
+# <<< ADDED: Load existing domains >>>
+def load_existing_domains():
+    existing = set()
+    if os.path.exists(OUTPUT_FILE):
+        with open(OUTPUT_FILE, 'r', encoding='utf-8', errors='ignore') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                domain = row.get('domain_name', '').strip().lower()
+                if domain:
+                    existing.add(domain)
+    return existing
 
 def run_whois_terminal(domain):
     for attempt in range(1, MAX_RETRIES + 1):
@@ -97,11 +110,11 @@ def extract_all_fields(whois_text):
         'date_searched': datetime.utcnow().isoformat()
     }
 
-def process_batch(domains):
+def process_batch(domains, processed_domains):  # <<< ADDED param
     with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
         future_to_domain = {
             executor.submit(run_whois_terminal, domain.strip().lower()): domain.strip().lower()
-            for domain in domains if domain.strip()
+            for domain in domains if domain.strip().lower() not in processed_domains  # <<< ADDED
         }
 
         for future in as_completed(future_to_domain):
@@ -120,21 +133,28 @@ def process_batch(domains):
                     writer = csv.DictWriter(f, fieldnames=HEADERS)
                     writer.writerow(data)
 
-                time.sleep(1)  # Light pause to reduce I/O pressure
+                processed_domains.add(domain)  # <<< ADDED to keep in-memory record
+                time.sleep(1)
 
             except Exception as exc:
                 print(f"❌ Exception for domain {domain}: {exc}")
 
 def process_lookup_file():
+    processed_domains = load_existing_domains()  # <<< ADDED
+    print(f"🧠 {len(processed_domains)} domains already processed. Skipping those.")
+
     with open(LOOKUP_FILE, 'r', encoding='utf-8', errors='ignore') as f:
         batch = []
         for line in f:
-            batch.append(line)
+            domain = line.strip().lower()
+            if not domain or domain in processed_domains:
+                continue
+            batch.append(domain)
             if len(batch) >= BATCH_SIZE:
-                process_batch(batch)
+                process_batch(batch, processed_domains)
                 batch = []
         if batch:
-            process_batch(batch)
+            process_batch(batch, processed_domains)
 
 if __name__ == '__main__':
     process_lookup_file()
