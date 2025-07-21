@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <title>Subdomain Table</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -27,31 +25,53 @@
         th, td {
             white-space: nowrap;
         }
-        select.form-select {
-            font-size: 0.8rem;
-            padding: 0.2rem 0.5rem;
-        }
     </style>
 </head>
 <body>
 
 <div class="container-fluid full-height">
     <div class="content">
-        <h2 class="text-center my-4">📋 Subdomain Table with Column Filters</h2>
+        <h2 class="text-center my-4">📋 Filter Subdomain Records</h2>
 
+        <!-- Filter Form -->
+        <form method="get" class="row g-2 mb-4">
+            <div class="col-md-3">
+                <select name="domain" class="form-select">
+                    <option value="">All Domains</option>
+                    {% for d in unique_domains %}
+                        <option value="{{ d }}" {% if d == domain %}selected{% endif %}>{{ d }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="tld" class="form-select">
+                    <option value="">All TLDs</option>
+                    {% for t in unique_tlds %}
+                        <option value="{{ t }}" {% if t == tld %}selected{% endif %}>{{ t }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="date_start" class="form-control" value="{{ date_start }}">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="date_end" class="form-control" value="{{ date_end }}">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" type="submit">Filter</button>
+            </div>
+            <div class="col-md-1">
+                <a href="/" class="btn btn-secondary w-100">Reset</a>
+            </div>
+        </form>
+
+        {% if records %}
         <div class="table-responsive">
-            <table id="data-table" class="table table-bordered table-hover table-striped w-100">
+            <table class="table table-bordered table-hover table-striped w-100">
                 <thead class="table-dark">
                     <tr>
                         {% for key in records[0].keys() %}
-                        <th>
-                            <div class="d-flex flex-column">
-                                <span>{{ key | capitalize }}</span>
-                                <select class="form-select filter-select" data-column="{{ loop.index0 }}">
-                                    <option value="">All</option>
-                                </select>
-                            </div>
-                        </th>
+                        <th>{{ key | capitalize }}</th>
                         {% endfor %}
                     </tr>
                 </thead>
@@ -60,17 +80,7 @@
                     <tr>
                         {% for val in row.values() %}
                         <td>
-                            {% if val is iterable and val is not string %}
-                                {% set formatted = [] %}
-                                {% for item in val %}
-                                    {% if item.__class__.__name__ == 'datetime' %}
-                                        {% set _ = formatted.append(item.strftime('%Y-%m-%d %H:%M:%S')) %}
-                                    {% else %}
-                                        {% set _ = formatted.append(item) %}
-                                    {% endif %}
-                                {% endfor %}
-                                {{ formatted | join(', ') }}
-                            {% elif val.__class__.__name__ == 'datetime' %}
+                            {% if val.__class__.__name__ == 'datetime' %}
                                 {{ val.strftime('%Y-%m-%d %H:%M:%S') }}
                             {% else %}
                                 {{ val }}
@@ -82,50 +92,12 @@
                 </tbody>
             </table>
         </div>
+        {% else %}
+            <p class="text-muted text-center mt-4">No data to display. Use filters to load results.</p>
+        {% endif %}
     </div>
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Filtering Script -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const table = document.getElementById('data-table');
-    const rows = Array.from(table.querySelectorAll('tbody tr'));
-    const filters = table.querySelectorAll('.filter-select');
-
-    // Populate filter dropdowns
-    filters.forEach((select, colIndex) => {
-        const uniqueValues = new Set();
-        rows.forEach(row => {
-            const cell = row.children[colIndex];
-            const text = cell.textContent.trim();
-            if (text) uniqueValues.add(text);
-        });
-        Array.from(uniqueValues).sort().forEach(value => {
-            const option = document.createElement('option');
-            option.value = value;
-            option.textContent = value;
-            select.appendChild(option);
-        });
-
-        // Filter logic
-        select.addEventListener('change', () => {
-            rows.forEach(row => {
-                let visible = true;
-                filters.forEach((f, i) => {
-                    const selected = f.value;
-                    const cell = row.children[i];
-                    const text = cell.textContent.trim();
-                    if (selected && text !== selected) visible = false;
-                });
-                row.style.display = visible ? '' : 'none';
-            });
-        });
-    });
-});
-</script>
-
 </body>
 </html>
