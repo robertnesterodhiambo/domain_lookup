@@ -1,27 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Subdomain Table</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f9fa;
-        }
-        .full-height {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .content {
-            flex: 1;
-            padding: 20px;
-        }
         th, td {
             white-space: nowrap;
         }
@@ -31,50 +14,58 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-light">
 
-<div class="container-fluid full-height">
-    <div class="content">
-        <h2 class="text-center my-4">📋 Subdomain Table with Filters</h2>
+<div class="container-fluid py-4">
+    <h2 class="text-center mb-4">📋 Subdomain Filter Table</h2>
 
-        <!-- Filter Form -->
-        <form method="get" class="row g-2 mb-4">
-            <div class="col-md-3">
-                <select name="domain" class="form-select">
-                    <option value="">All Domains</option>
-                    {% for d in unique_domains %}
-                        <option value="{{ d }}" {% if d == domain %}selected{% endif %}>{{ d }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select name="tld" class="form-select">
-                    <option value="">All TLDs</option>
-                    {% for t in unique_tlds %}
-                        <option value="{{ t }}" {% if t == tld %}selected{% endif %}>{{ t }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-2">
-                <input type="date" name="date_start" class="form-control" value="{{ date_start }}">
-            </div>
-            <div class="col-md-2">
-                <input type="date" name="date_end" class="form-control" value="{{ date_end }}">
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-primary w-100" type="submit">Filter</button>
-            </div>
-            <div class="col-md-1">
-                <a href="/" class="btn btn-secondary w-100">Reset</a>
-            </div>
-        </form>
+    <form method="POST" class="row g-2 mb-4">
+        <div class="col-md-2">
+            <label for="tld" class="form-label">TLD</label>
+            <select name="tld" id="tld" class="form-select">
+                <option value="">All</option>
+                {% for t in tlds %}
+                    <option value="{{ t }}" {% if filters.tld == t %}selected{% endif %}>{{ t }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="registrar" class="form-label">Registrar</label>
+            <select name="registrar" id="registrar" class="form-select">
+                <option value="">All</option>
+                {% for r in registrars %}
+                    <option value="{{ r }}" {% if filters.registrar == r %}selected{% endif %}>{{ r }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="country" class="form-label">Registrant Country</label>
+            <select name="country" id="country" class="form-select">
+                <option value="">All</option>
+                {% for c in countries %}
+                    <option value="{{ c }}" {% if filters.country == c %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Start Date</label>
+            <input type="date" name="start_date" value="{{ filters.start_date }}" class="form-control">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">End Date</label>
+            <input type="date" name="end_date" value="{{ filters.end_date }}" class="form-control">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+    </form>
 
-        {% if records %}
-        <div class="table-responsive">
-            <table id="data-table" class="table table-bordered table-hover table-striped w-100">
-                <thead class="table-dark">
-                    <tr>
-                        {% for key in records[0].keys() %}
+    {% if records %}
+    <div class="table-responsive">
+        <table id="data-table" class="table table-bordered table-hover table-striped">
+            <thead class="table-dark">
+                <tr>
+                    {% for key in records[0].keys() %}
                         <th>
                             <div class="d-flex flex-column">
                                 <span>{{ key | capitalize }}</span>
@@ -83,33 +74,30 @@
                                 </select>
                             </div>
                         </th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in records %}
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in records %}
                     <tr>
                         {% for val in row.values() %}
-                        <td>
-                            {% if val.__class__.__name__ == 'datetime' %}
-                                {{ val.strftime('%Y-%m-%d %H:%M:%S') }}
-                            {% else %}
-                                {{ val }}
-                            {% endif %}
-                        </td>
+                            <td>
+                                {% if val.__class__.__name__ == 'datetime' %}
+                                    {{ val.strftime('%Y-%m-%d %H:%M:%S') }}
+                                {% else %}
+                                    {{ val }}
+                                {% endif %}
+                            </td>
                         {% endfor %}
                     </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-        <p class="text-muted text-center mt-4">No data to display. Use filters to load results.</p>
-        {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+    {% else %}
+        <div class="alert alert-info text-center">No records to display. Please use the filters above.</div>
+    {% endif %}
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -139,9 +127,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 let visible = true;
                 filters.forEach((f, i) => {
                     const selected = f.value;
-                    const cell = row.children[i];
-                    const text = cell.textContent.trim();
-                    if (selected && text !== selected) visible = false;
+                    const cellText = row.children[i].textContent.trim();
+                    if (selected && cellText !== selected) visible = false;
                 });
                 row.style.display = visible ? '' : 'none';
             });

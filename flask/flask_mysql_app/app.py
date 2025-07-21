@@ -4,65 +4,67 @@ from db_config import DB_CONFIG
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET'])
-def index():
+def get_unique_values(column):
     conn = mysql.connector.connect(**DB_CONFIG)
-    cursor = conn.cursor(dictionary=True)
-
-    # Fetch unique filter options
-    cursor.execute("SELECT DISTINCT domain FROM accessibility ORDER BY domain")
-    unique_domains = [row['domain'] for row in cursor.fetchall()]
-
-    cursor.execute("SELECT DISTINCT tld FROM accessibility ORDER BY tld")
-    unique_tlds = [row['tld'] for row in cursor.fetchall()]
-
-    cursor.execute("SELECT MIN(lookup_date) as min_date, MAX(lookup_date) as max_date FROM accessibility")
-    date_range = cursor.fetchone()
-    min_date = str(date_range['min_date']) if date_range['min_date'] else ''
-    max_date = str(date_range['max_date']) if date_range['max_date'] else ''
-
-    # Get filter input
-    domain = request.args.get('domain')
-    tld = request.args.get('tld')
-    date_start = request.args.get('date_start')
-    date_end = request.args.get('date_end')
-
-    records = []
-    if domain or tld or date_start or date_end:
-        filters = []
-        params = []
-
-        if domain:
-            filters.append("domain = %s")
-            params.append(domain)
-        if tld:
-            filters.append("tld = %s")
-            params.append(tld)
-        if date_start:
-            filters.append("lookup_date >= %s")
-            params.append(date_start)
-        if date_end:
-            filters.append("lookup_date <= %s")
-            params.append(date_end)
-
-        where_clause = f"WHERE {' AND '.join(filters)}" if filters else ""
-        query = f"SELECT * FROM accessibility {where_clause} LIMIT 1000"
-
-        cursor.execute(query, params)
-        records = cursor.fetchall()
-
+    cursor = conn.cursor()
+    query = f"SELECT DISTINCT {column} FROM accessibility WHERE {column} IS NOT NULL AND {column} != ''"
+    cursor.execute(query)
+    results = [row[0] for row in cursor.fetchall()]
     cursor.close()
     conn.close()
+    return sorted(results)
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    records = []
+    filters = {
+        'tld': request.form.get('tld'),
+        'registrar': request.form.get('registrar'),
+        'country': request.form.get('country'),
+        'start_date': request.form.get('start_date'),
+        'end_date': request.form.get('end_date')
+    }
+
+    if request.method == 'POST':
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+
+        conditions = []
+        values = []
+
+        if filters['tld']:
+            conditions.append("tld = %s")
+            values.append(filters['tld'])
+        if filters['registrar']:
+            conditions.append("registrar = %s")
+            values.append(filters['registrar'])
+        if filters['country']:
+            conditions.append("registrant_country = %s")
+            values.append(filters['country'])
+        if filters['start_date']:
+            conditions.append("lookup_date >= %s")
+            values.append(filters['start_date'])
+        if filters['end_date']:
+            conditions.append("lookup_date <= %s")
+            values.append(filters['end_date'])
+
+        where_clause = "WHERE " + " AND ".join(conditions) if conditions else ""
+        cursor.execute(f"SELECT * FROM accessibility {where_clause}", values)
+        records = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+    tlds = get_unique_values('tld')
+    registrars = get_unique_values('registrar')
+    countries = get_unique_values('registrant_country')
 
     return render_template(
         'index.html',
         records=records,
-        unique_domains=unique_domains,
-        unique_tlds=unique_tlds,
-        domain=domain,
-        tld=tld,
-        date_start=date_start or min_date,
-        date_end=date_end or max_date
+        tlds=tlds,
+        registrars=registrars,
+        countries=countries,
+        filters=filters
     )
 
 if __name__ == '__main__':
