@@ -13,7 +13,6 @@ MAX_RETRIES = 1
 BATCH_SIZE = 100
 MAX_THREADS = 30
 
-# Headers for CSV
 HEADERS = [
     'domain_name',
     'registry_domain_id',
@@ -39,13 +38,12 @@ HEADERS = [
     'date_searched'
 ]
 
-# Create output file if it doesn't exist
+# Create output file with headers if not exists
 if not os.path.exists(OUTPUT_FILE):
     with open(OUTPUT_FILE, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(HEADERS)
 
-# <<< ADDED: Load existing domains >>>
 def load_existing_domains():
     existing = set()
     if os.path.exists(OUTPUT_FILE):
@@ -110,11 +108,21 @@ def extract_all_fields(whois_text):
         'date_searched': datetime.utcnow().isoformat()
     }
 
-def process_batch(domains, processed_domains):  # <<< ADDED param
+def write_no_data_row(domain):
+    data = {
+        field: 'NO_DATA' for field in HEADERS
+    }
+    data['domain_name'] = domain
+    data['date_searched'] = datetime.utcnow().isoformat()
+    with open(OUTPUT_FILE, 'a', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=HEADERS)
+        writer.writerow(data)
+
+def process_batch(domains, processed_domains):
     with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
         future_to_domain = {
-            executor.submit(run_whois_terminal, domain.strip().lower()): domain.strip().lower()
-            for domain in domains if domain.strip().lower() not in processed_domains  # <<< ADDED
+            executor.submit(run_whois_terminal, domain): domain
+            for domain in domains if domain not in processed_domains
         }
 
         for future in as_completed(future_to_domain):
@@ -122,6 +130,9 @@ def process_batch(domains, processed_domains):  # <<< ADDED param
             try:
                 whois_text, error = future.result()
                 if not whois_text:
+                    print(f"⚠️ No WHOIS data for {domain}, recording as NO_DATA.")
+                    write_no_data_row(domain)
+                    processed_domains.add(domain)
                     continue
 
                 data = extract_all_fields(whois_text)
@@ -133,14 +144,16 @@ def process_batch(domains, processed_domains):  # <<< ADDED param
                     writer = csv.DictWriter(f, fieldnames=HEADERS)
                     writer.writerow(data)
 
-                processed_domains.add(domain)  # <<< ADDED to keep in-memory record
+                processed_domains.add(domain)
                 time.sleep(1)
 
             except Exception as exc:
                 print(f"❌ Exception for domain {domain}: {exc}")
+                write_no_data_row(domain)
+                processed_domains.add(domain)
 
 def process_lookup_file():
-    processed_domains = load_existing_domains()  # <<< ADDED
+    processed_domains = load_existing_domains()
     print(f"🧠 {len(processed_domains)} domains already processed. Skipping those.")
 
     with open(LOOKUP_FILE, 'r', encoding='utf-8', errors='ignore') as f:
