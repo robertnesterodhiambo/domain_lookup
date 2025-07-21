@@ -9,7 +9,7 @@ def index():
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor(dictionary=True)
 
-    # Get unique filter values
+    # Fetch unique filter options
     cursor.execute("SELECT DISTINCT domain FROM accessibility ORDER BY domain")
     unique_domains = [row['domain'] for row in cursor.fetchall()]
 
@@ -21,7 +21,7 @@ def index():
     min_date = str(date_range['min_date']) if date_range['min_date'] else ''
     max_date = str(date_range['max_date']) if date_range['max_date'] else ''
 
-    # Filter inputs
+    # Get filter input
     domain = request.args.get('domain')
     tld = request.args.get('tld')
     date_start = request.args.get('date_start')

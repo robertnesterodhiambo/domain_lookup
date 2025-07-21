@@ -25,13 +25,17 @@
         th, td {
             white-space: nowrap;
         }
+        select.form-select {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+        }
     </style>
 </head>
 <body>
 
 <div class="container-fluid full-height">
     <div class="content">
-        <h2 class="text-center my-4">📋 Filter Subdomain Records</h2>
+        <h2 class="text-center my-4">📋 Subdomain Table with Filters</h2>
 
         <!-- Filter Form -->
         <form method="get" class="row g-2 mb-4">
@@ -67,11 +71,18 @@
 
         {% if records %}
         <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped w-100">
+            <table id="data-table" class="table table-bordered table-hover table-striped w-100">
                 <thead class="table-dark">
                     <tr>
                         {% for key in records[0].keys() %}
-                        <th>{{ key | capitalize }}</th>
+                        <th>
+                            <div class="d-flex flex-column">
+                                <span>{{ key | capitalize }}</span>
+                                <select class="form-select filter-select" data-column="{{ loop.index0 }}">
+                                    <option value="">All</option>
+                                </select>
+                            </div>
+                        </th>
                         {% endfor %}
                     </tr>
                 </thead>
@@ -93,11 +104,51 @@
             </table>
         </div>
         {% else %}
-            <p class="text-muted text-center mt-4">No data to display. Use filters to load results.</p>
+        <p class="text-muted text-center mt-4">No data to display. Use filters to load results.</p>
         {% endif %}
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const table = document.getElementById('data-table');
+    if (!table) return;
+
+    const rows = Array.from(table.querySelectorAll('tbody tr'));
+    const filters = table.querySelectorAll('.filter-select');
+
+    filters.forEach((select, colIndex) => {
+        const uniqueValues = new Set();
+        rows.forEach(row => {
+            const cell = row.children[colIndex];
+            const text = cell.textContent.trim();
+            if (text) uniqueValues.add(text);
+        });
+
+        Array.from(uniqueValues).sort().forEach(value => {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = value;
+            select.appendChild(option);
+        });
+
+        select.addEventListener('change', () => {
+            rows.forEach(row => {
+                let visible = true;
+                filters.forEach((f, i) => {
+                    const selected = f.value;
+                    const cell = row.children[i];
+                    const text = cell.textContent.trim();
+                    if (selected && text !== selected) visible = false;
+                });
+                row.style.display = visible ? '' : 'none';
+            });
+        });
+    });
+});
+</script>
+
 </body>
 </html>
