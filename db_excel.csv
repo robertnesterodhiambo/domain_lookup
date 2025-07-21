@@ -1,0 +1,18 @@
+domain,tld,registrar,whois_server,creation_date,updated_date,expiration_date,status,registrant_name,registrant_org,registrant_country,admin_email,tech_email,name_servers,dnssec,lookup_date,source,domain_count
+00.institute,institute,,,,,,,,,,,,,,2025-07-21T06:58:58.258592,"terminal-error: Command '['whois', '00.institute']' timed out after 20 seconds",0
+000.institute,institute,,,,,,,,,,,,,,2025-07-21T06:59:18.280518,"terminal-error: Command '['whois', '000.institute']' timed out after 20 seconds",7
+001.institute,institute,,,,,,,,,,,,,,2025-07-21T06:59:38.302442,"terminal-error: Command '['whois', '001.institute']' timed out after 20 seconds",1
+0rg.institute,institute,,,,,,,,,,,,,,2025-07-21T06:59:58.324556,"terminal-error: Command '['whois', '0rg.institute']' timed out after 20 seconds",0
+00.institute,institute,,,,,,,,,,,,,,2025-07-21T06:58:58.258592,"terminal-error: Command '['whois', '00.institute']' timed out after 20 seconds",0
+0x00.institute,institute,,,,,,,,,,,,,,2025-07-21T07:00:18.345599,"terminal-error: Command '['whois', '0x00.institute']' timed out after 20 seconds",0
+100.institute,institute,,,,,,,,,,,,,,2025-07-21T07:00:38.367482,"terminal-error: Command '['whois', '100.institute']' timed out after 20 seconds",1
+1000neue.institute,institute,,,,,,,,,,,,,,2025-07-21T07:00:58.388503,"terminal-error: Command '['whois', '1000neue.institute']' timed out after 20 seconds",1
+1000x.institute,institute,,,,,,,,,,,,,,2025-07-21T07:01:18.410601,"terminal-error: Command '['whois', '1000x.institute']' timed out after 20 seconds",0
+101.institute,institute,,,,,,,,,,,,,,2025-07-21T07:01:38.431408,"terminal-error: Command '['whois', '101.institute']' timed out after 20 seconds",9
+1031.institute,institute,,,,,,,,,,,,,,2025-07-21T07:01:58.453506,"terminal-error: Command '['whois', '1031.institute']' timed out after 20 seconds",0
+108.institute,institute,,,,,,,,,,,,,,2025-07-21T07:02:18.474713,"terminal-error: Command '['whois', '108.institute']' timed out after 20 seconds",1
+10k.institute,institute,,,,,,,,,,,,,,2025-07-21T07:02:38.496885,"terminal-error: Command '['whois', '10k.institute']' timed out after 20 seconds",11
+10x.institute,institute,,,,,,,,,,,,,,2025-07-21T07:02:58.519483,"terminal-error: Command '['whois', '10x.institute']' timed out after 20 seconds",3
+110.institute,institute,,,,,,,,,,,,,,2025-07-21T07:03:18.541498,"terminal-error: Command '['whois', '110.institute']' timed out after 20 seconds",1
+1111.institute,institute,,,,,,,,,,,,,,2025-07-21T07:03:38.562427,"terminal-error: Command '['whois', '1111.institute']' timed out after 20 seconds",1
+112pawangslot.institute,institute,,,,,,,,,,,,,,2025-07-21T07:03:58.583726,"terminal-error: Command '['whois', '112pawangslot.institute']' timed out after 20 seconds",0
