@@ -1,16 +1,17 @@
 import os
 import csv
 import subprocess
-import time
 import re
 import whois
 from datetime import datetime
 from dateutil.parser import parse as parse_date
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
 
 LOOKUP_FILE = 'looku_file/lookup.txt'
 OUTPUT_FILE = 'whois_results.csv'
 CHUNK_SIZE = 20000
-RETRY_DELAY = 60  # not used now
+MAX_WORKERS = 60
 HEADERS = [
     'domain', 'tld', 'registrar', 'whois_server', 'creation_date', 'updated_date',
     'expiration_date', 'status', 'registrant_name', 'registrant_org',
@@ -18,7 +19,6 @@ HEADERS = [
     'dnssec', 'lookup_date', 'source'
 ]
 
-# Regex patterns to extract WHOIS fields
 REGEX_PATTERNS = {
     'registrar': r'Registrar:\s*(.+)',
     'whois_server': r'Registrar WHOIS Server:\s*(.+)',
@@ -34,6 +34,8 @@ REGEX_PATTERNS = {
     'tech_email': r'Tech Email:\s*(.+)',
     'dnssec': r'DNSSEC:\s*(.+)',
 }
+
+lock = Lock()
 
 def clean_date(value):
     try:
@@ -104,7 +106,7 @@ def run_whois(domain):
         result = subprocess.run(['whois', domain], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=20)
         output = result.stdout
         if "Number of allowed queries exceeded" in output or "rate limit" in output.lower():
-            print(f"Rate limit exceeded for {domain}. Switching to Python whois.")
+            print(f"[RATE LIMIT] Switching to Python WHOIS for: {domain}")
             return parse_whois_python(domain)
         elif "No match for" in output or "NOT FOUND" in output.upper():
             return {'domain': domain, 'tld': extract_tld(domain), 'lookup_date': datetime.utcnow().isoformat(), 'source': 'no data'}
@@ -113,39 +115,75 @@ def run_whois(domain):
     except Exception as e:
         return {'domain': domain, 'tld': extract_tld(domain), 'lookup_date': datetime.utcnow().isoformat(), 'source': f'terminal-error: {str(e)}'}
 
-def save_result(record):
-    file_exists = os.path.exists(OUTPUT_FILE)
-    with open(OUTPUT_FILE, 'a', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=HEADERS)
-        if not file_exists:
-            writer.writeheader()
-        writer.writerow(record)
+def save_results_batch(records):
+    with lock:
+        file_exists = os.path.exists(OUTPUT_FILE)
+        with open(OUTPUT_FILE, 'a', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=HEADERS)
+            if not file_exists or f.tell() == 0:
+                writer.writeheader()
+            writer.writerows(records)
 
-def process_chunk(domains):
-    for domain in domains:
-        domain = domain.strip()
-        if not domain: continue
-        record = run_whois(domain)
-        save_result(record)
-        print(record)
+def load_processed_domains():
+    processed = set()
+    if os.path.exists(OUTPUT_FILE):
+        with open(OUTPUT_FILE, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                domain = row.get('domain', '').strip().lower()
+                if domain:
+                    processed.add(domain)
+    return processed
+
+def process_domain(domain, processed_domains):
+    domain = domain.strip().lower()
+    if not domain or domain in processed_domains:
+        print(f"[SKIPPED] {domain}")
+        return None
+    record = run_whois(domain)
+    processed_domains.add(domain)
+    return record
+
+def process_chunk(domains, processed_domains):
+    results = []
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = [executor.submit(process_domain, domain, processed_domains) for domain in domains]
+        for future in as_completed(futures):
+            result = future.result()
+            if result:
+                print(f"[OK] {result['domain']} -> {result['source']}")
+                results.append(result)
+    save_results_batch(results)
 
 def main():
     if not os.path.exists(LOOKUP_FILE):
-        print(f"{LOOKUP_FILE} not found.")
+        print(f"[ERROR] {LOOKUP_FILE} not found.")
         return
 
-    with open(LOOKUP_FILE, 'r', encoding='utf-8', errors='ignore') as f:
-        buffer = []
-        for i, line in enumerate(f, start=1):
-            buffer.append(line.strip())
-            if i % CHUNK_SIZE == 0:
-                print(f"\nProcessing {CHUNK_SIZE} domains (up to line {i})...")
-                process_chunk(buffer)
-                buffer.clear()
+    processed_domains = load_processed_domains()
+    print(f"[INFO] Loaded {len(processed_domains)} already processed domains.")
 
-        if buffer:
-            print(f"\nProcessing remaining {len(buffer)} domains...")
-            process_chunk(buffer)
+    with open(LOOKUP_FILE, 'r', encoding='utf-8', errors='ignore') as f:
+        domains = [line.strip() for line in f if line.strip()]
+
+    # Prioritize .nl and .NL domains first
+    nl_domains = [d for d in domains if d.lower().endswith('.nl')]
+    other_domains = [d for d in domains if not d.lower().endswith('.nl')]
+    sorted_domains = nl_domains + other_domains
+
+    print(f"[INFO] Prioritized {len(nl_domains)} .nl domains")
+
+    buffer = []
+    for i, domain in enumerate(sorted_domains, start=1):
+        buffer.append(domain)
+        if i % CHUNK_SIZE == 0:
+            print(f"\n[INFO] Processing {CHUNK_SIZE} domains (up to line {i})...")
+            process_chunk(buffer, processed_domains)
+            buffer.clear()
+
+    if buffer:
+        print(f"\n[INFO] Processing remaining {len(buffer)} domains...")
+        process_chunk(buffer, processed_domains)
 
 if __name__ == '__main__':
     main()
