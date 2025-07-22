@@ -6,14 +6,13 @@ from concurrent.futures import ThreadPoolExecutor
 
 INPUT_FILE = 'db_excel.csv'
 OUTPUT_FILE = 'db_excel_ns.csv'
-THREADS = 9999  # Adjust based on system capacity
+THREADS = 10
 LOCK = threading.Lock()
 
-# DNS types to query
 NS_TYPES = ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR', 'TXT', 'SRV', 'SOA']
+counter = 0  # global progress tracker
 
 def get_processed_domains():
-    """Return a set of already processed domain names from OUTPUT_FILE."""
     if not os.path.exists(OUTPUT_FILE):
         return set()
     try:
@@ -23,41 +22,36 @@ def get_processed_domains():
         return set()
 
 def run_nslookups(domain):
-    """Run nslookup for all DNS types and return results in a dict."""
-    outputs = {}
+    result = {}
     for qtype in NS_TYPES:
         try:
-            result = subprocess.run(
+            lookup = subprocess.run(
                 ['nslookup', '-q=' + qtype, domain],
                 capture_output=True,
                 text=True,
-                timeout=10
+                timeout=8
             )
-            outputs[f'nslookup{qtype}'] = result.stdout.strip()
+            result[f'nslookup{qtype}'] = lookup.stdout.strip()
         except Exception as e:
-            outputs[f'nslookup{qtype}'] = f"Error: {e}"
-    return outputs
+            result[f'nslookup{qtype}'] = f"Error: {e}"
+    return result
 
-def save_row(row_dict, columns):
-    """Append a single row to the output CSV in a thread-safe way."""
+def save_result(row_data, all_columns):
     with LOCK:
         file_exists = os.path.exists(OUTPUT_FILE)
-        df = pd.DataFrame([row_dict], columns=columns)
+        df = pd.DataFrame([row_data], columns=all_columns)
         df.to_csv(OUTPUT_FILE, mode='a', index=False, header=not file_exists)
 
+        global counter
+        counter += 1
+        print(f"{counter} saved and processed")
+
 def process_row(row, all_columns):
-    """Process a single row: run nslookups, add results, and save."""
     domain = str(row['domain']).strip()
-    ns_outputs = run_nslookups(domain)
-
-    print(f"\n🔍 Domain: {domain}")
-    for k, v in ns_outputs.items():
-        print(f"  ├─ {k}: {len(v.splitlines())} lines")
-
-    result = dict(row)
-    result.update(ns_outputs)
-
-    save_row(result, all_columns)
+    ns_data = run_nslookups(domain)
+    full_data = dict(row)
+    full_data.update(ns_data)
+    save_result(full_data, all_columns)
 
 def main():
     if not os.path.exists(INPUT_FILE):
@@ -69,18 +63,24 @@ def main():
         print("❌ 'domain' column is missing in input.")
         return
 
+    df['domain'] = df['domain'].astype(str).str.strip()
     processed = get_processed_domains()
-    remaining = df[~df['domain'].astype(str).isin(processed)]
+    remaining = df[~df['domain'].isin(processed)]
 
-    print(f"✅ Already processed: {len(processed)}")
-    print(f"🚀 Domains to process: {len(remaining)}")
+    print(f"🟡 Already processed: {len(processed)}")
+    print(f"🟢 Remaining to process: {len(remaining)}")
 
-    base_cols = df.columns.tolist()
-    extra_cols = [f'nslookup{q}' for q in NS_TYPES]
-    all_columns = base_cols + extra_cols
+    exact_nl = remaining[remaining['domain'].str.match(r'^[^.]+\.(nl)$', na=False)]
+    sub_nl = remaining[remaining['domain'].str.match(r'^.+\.(.+\.)?nl$', na=False) & ~remaining['domain'].str.match(r'^[^.]+\.(nl)$', na=False)]
+    others = remaining[~remaining.index.isin(exact_nl.index) & ~remaining.index.isin(sub_nl.index)]
+    prioritized = pd.concat([exact_nl, sub_nl, others], ignore_index=True)
+
+    base_columns = df.columns.tolist()
+    ns_columns = [f'nslookup{q}' for q in NS_TYPES]
+    all_columns = base_columns + ns_columns
 
     with ThreadPoolExecutor(max_workers=THREADS) as executor:
-        for _, row in remaining.iterrows():
+        for _, row in prioritized.iterrows():
             executor.submit(process_row, row, all_columns)
 
 if __name__ == '__main__':
