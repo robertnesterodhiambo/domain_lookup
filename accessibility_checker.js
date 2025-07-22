@@ -21,14 +21,17 @@ const outputFile = 'accessibility.xlsx';
   await workbook.csv.readFile(inputFile);
   const worksheet = workbook.worksheets[0];
 
-  // Add new column header if not present
+  // Add new column headers if not present
   const firstRow = worksheet.getRow(1);
   const headers = firstRow.values.map(v => (typeof v === 'string' ? v.toLowerCase() : v));
-  let accessColIndex = headers.indexOf('accessibility');
+  let accessColIndex = headers.indexOf('violations');
 
   if (accessColIndex === -1) {
-    accessColIndex = firstRow.values.length;
-    firstRow.getCell(accessColIndex).value = 'accessibility';
+    accessColIndex = firstRow.values.length + 1;
+    firstRow.getCell(accessColIndex).value = 'Violations';
+    firstRow.getCell(accessColIndex + 1).value = 'Passes';
+    firstRow.getCell(accessColIndex + 2).value = 'Incomplete';
+    firstRow.getCell(accessColIndex + 3).value = 'Inapplicable';
     firstRow.commit();
   }
 
@@ -37,7 +40,11 @@ const outputFile = 'accessibility.xlsx';
     const row = worksheet.getRow(i);
     const domain = row.getCell(1).text.trim(); // assumes domain is in first column
     const url = `https://${domain}`;
-    let result = 'NO';
+
+    let violations = 'ERR';
+    let passes = 'ERR';
+    let incomplete = 'ERR';
+    let inapplicable = 'ERR';
 
     try {
       console.log(`Checking ${url}`);
@@ -46,24 +53,28 @@ const outputFile = 'accessibility.xlsx';
       await page.evaluate(axeSource);
       const axeResults = await page.evaluate(async () => await axe.run());
 
-      result = axeResults.violations.length > 0 ? 'NO' : 'YES';
+      violations = axeResults.violations.length;
+      passes = axeResults.passes.length;
+      incomplete = axeResults.incomplete.length;
+      inapplicable = axeResults.inapplicable.length;
     } catch (err) {
       const message = err.message.toLowerCase();
+      console.error(`Error on ${domain}: ${err.message}`);
       if (message.includes('net::err_name_not_resolved')) {
-        result = 'UNREACHABLE';
-      } else {
-        console.error(`Error on ${domain}: ${err.message}`);
-        result = 'NO';
+        violations = passes = incomplete = inapplicable = 'UNREACHABLE';
       }
     }
 
-    row.getCell(accessColIndex).value = result;
+    row.getCell(accessColIndex).value = violations;
+    row.getCell(accessColIndex + 1).value = passes;
+    row.getCell(accessColIndex + 2).value = incomplete;
+    row.getCell(accessColIndex + 3).value = inapplicable;
     row.commit();
-    console.log(`${domain} => ${result}`);
+
+    console.log(`${domain} => Violations: ${violations}, Passes: ${passes}`);
   }
 
   await browser.close();
   await workbook.xlsx.writeFile(outputFile);
   console.log(`✅ Done. Results saved to ${outputFile}`);
 })();
-
