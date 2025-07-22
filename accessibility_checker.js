@@ -61,8 +61,10 @@ async function tryLoadWithFallback(page, domain, maxRetries = 2) {
     outputSheet = outputWorkbook.worksheets[0];
   } else {
     outputSheet = outputWorkbook.addWorksheet('Results');
+    const headerRow = inputSheet.getRow(1).values.slice(1); // skip ExcelJS dummy index 0
     outputSheet.addRow([
-      'Domain', 'Violations', 'Passes', 'Incomplete', 'Inapplicable'
+      ...headerRow,
+      'Violations', 'Passes', 'Incomplete', 'Inapplicable'
     ]);
   }
 
@@ -98,10 +100,17 @@ async function tryLoadWithFallback(page, domain, maxRetries = 2) {
       violations = passes = incomplete = inapplicable = 'UNREACHABLE';
     }
 
-    // Only write row after analysis
-    outputSheet.addRow([domain, violations, passes, incomplete, inapplicable]);
+    // Add original row + axe results
+    const originalValues = row.values.slice(1); // skip index 0
+    outputSheet.addRow([
+      ...originalValues,
+      violations,
+      passes,
+      incomplete,
+      inapplicable
+    ]);
 
-    // Append domain to completed.txt
+    // Mark domain as completed
     fs.appendFileSync(completedFile, domain + '\n');
 
     // Save after each domain
