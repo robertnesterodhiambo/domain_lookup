@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "axe-core": "^4.10.3",
+    "csv-parser": "^3.2.0",
     "cypress": "^14.5.2",
     "cypress-axe": "^1.6.0",
     "exceljs": "^4.4.0",
