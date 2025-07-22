@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 INPUT_FILE = 'db_excel.csv'
 OUTPUT_FILE = 'db_excel_ns.csv'
-THREADS = 20  # You can increase this depending on your system
+THREADS = 999  # You can increase this depending on your system
 LOCK = threading.Lock()
 
 def get_processed_domains():
@@ -85,3 +85,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
