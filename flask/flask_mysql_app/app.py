@@ -7,7 +7,7 @@ app = Flask(__name__)
 def get_unique_values(column):
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
-    query = f"SELECT DISTINCT {column} FROM accessibility WHERE {column} IS NOT NULL AND {column} != ''"
+    query = f"SELECT DISTINCT {column} FROM nslookup WHERE {column} IS NOT NULL AND {column} != ''"
     cursor.execute(query)
     results = [row[0] for row in cursor.fetchall()]
     cursor.close()
