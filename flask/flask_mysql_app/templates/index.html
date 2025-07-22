@@ -108,6 +108,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const filters = table.querySelectorAll('.filter-select');
 
     filters.forEach((select, colIndex) => {
+        // Clear any previous options except default
+        select.innerHTML = '';
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'All';
+        select.appendChild(defaultOption);
+
         const uniqueValues = new Set();
         rows.forEach(row => {
             const cell = row.children[colIndex];

@@ -7,7 +7,7 @@ app = Flask(__name__)
 def get_unique_values(column):
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
-    query = f"SELECT DISTINCT {column} FROM nslookup WHERE {column} IS NOT NULL AND {column} != ''"
+    query = f"SELECT DISTINCT {column} FROM accessibility WHERE {column} IS NOT NULL AND {column} != ''"
     cursor.execute(query)
     results = [row[0] for row in cursor.fetchall()]
     cursor.close()
@@ -24,6 +24,8 @@ def index():
         'start_date': request.form.get('start_date'),
         'end_date': request.form.get('end_date')
     }
+
+    print("FILTERS USED:", filters)  # Debug
 
     if request.method == 'POST':
         conn = mysql.connector.connect(**DB_CONFIG)
@@ -49,11 +51,16 @@ def index():
             values.append(filters['end_date'])
 
         where_clause = "WHERE " + " AND ".join(conditions) if conditions else ""
-        cursor.execute(f"SELECT * FROM accessibility {where_clause}", values)
+        query = f"SELECT * FROM accessibility {where_clause}"
+        print("QUERY:", query)
+        print("VALUES:", values)
+
+        cursor.execute(query, values)
         records = cursor.fetchall()
         cursor.close()
         conn.close()
 
+    # Always load the full unique values for filters from the full table
     tlds = get_unique_values('tld')
     registrars = get_unique_values('registrar')
     countries = get_unique_values('registrant_country')
