@@ -1,18 +1,1348 @@
-domain,tld,registrar,whois_server,creation_date,updated_date,expiration_date,status,registrant_name,registrant_org,registrant_country,admin_email,tech_email,name_servers,dnssec,lookup_date,source,domain_count,nslookup_ip_1,nslookup_ip_2,nslookup_ip_3,nslookup_ip_4,nslookup_ip_5,nslookup_ip_6,nslookup_ip_7,nslookup_ip_8,nslookup_ip_9,nslookup_ip_10
-001.institute,institute,,,,,,,,,,,,,,2025-07-21T06:59:38.302442,"terminal-error: Command '['whois', '001.institute']' timed out after 20 seconds",1,127.0.0.53,,,,,,,,,
-0rg.institute,institute,,,,,,,,,,,,,,2025-07-21T06:59:58.324556,"terminal-error: Command '['whois', '0rg.institute']' timed out after 20 seconds",0,127.0.0.53,162.255.119.218,,,,,,,,
-1000x.institute,institute,,,,,,,,,,,,,,2025-07-21T07:01:18.410601,"terminal-error: Command '['whois', '1000x.institute']' timed out after 20 seconds",0,127.0.0.53,,,,,,,,,
-10k.institute,institute,,,,,,,,,,,,,,2025-07-21T07:02:38.496885,"terminal-error: Command '['whois', '10k.institute']' timed out after 20 seconds",11,127.0.0.53,,,,,,,,,
-108.institute,institute,,,,,,,,,,,,,,2025-07-21T07:02:18.474713,"terminal-error: Command '['whois', '108.institute']' timed out after 20 seconds",1,127.0.0.53,217.70.184.38,,,,,,,,
-110.institute,institute,,,,,,,,,,,,,,2025-07-21T07:03:18.541498,"terminal-error: Command '['whois', '110.institute']' timed out after 20 seconds",1,127.0.0.53,52.223.13.41,,,,,,,,
-112pawangslot.institute,institute,,,,,,,,,,,,,,2025-07-21T07:03:58.583726,"terminal-error: Command '['whois', '112pawangslot.institute']' timed out after 20 seconds",0,127.0.0.53,,,,,,,,,
-00.institute,institute,,,,,,,,,,,,,,2025-07-21T06:58:58.258592,"terminal-error: Command '['whois', '00.institute']' timed out after 20 seconds",0,127.0.0.53,44.227.65.245,44.227.76.166,,,,,,,
-00.institute,institute,,,,,,,,,,,,,,2025-07-21T06:58:58.258592,"terminal-error: Command '['whois', '00.institute']' timed out after 20 seconds",0,127.0.0.53,44.227.65.245,44.227.76.166,,,,,,,
-1000neue.institute,institute,,,,,,,,,,,,,,2025-07-21T07:00:58.388503,"terminal-error: Command '['whois', '1000neue.institute']' timed out after 20 seconds",1,127.0.0.53,185.224.138.147,,,,,,,,
-000.institute,institute,,,,,,,,,,,,,,2025-07-21T06:59:18.280518,"terminal-error: Command '['whois', '000.institute']' timed out after 20 seconds",7,127.0.0.53,3.13.167.13,,,,,,,,
-1031.institute,institute,,,,,,,,,,,,,,2025-07-21T07:01:58.453506,"terminal-error: Command '['whois', '1031.institute']' timed out after 20 seconds",0,127.0.0.53,104.21.36.34,172.67.184.89,2606:4700:3035::6815:2422,2606:4700:3033::ac43:b859,,,,,
-101.institute,institute,,,,,,,,,,,,,,2025-07-21T07:01:38.431408,"terminal-error: Command '['whois', '101.institute']' timed out after 20 seconds",9,127.0.0.53,13.248.243.5,76.223.105.230,,,,,,,
-100.institute,institute,,,,,,,,,,,,,,2025-07-21T07:00:38.367482,"terminal-error: Command '['whois', '100.institute']' timed out after 20 seconds",1,127.0.0.53,15.197.148.33,3.33.130.190,,,,,,,
-1111.institute,institute,,,,,,,,,,,,,,2025-07-21T07:03:38.562427,"terminal-error: Command '['whois', '1111.institute']' timed out after 20 seconds",1,127.0.0.53,76.223.67.189,13.248.213.45,,,,,,,
-10x.institute,institute,,,,,,,,,,,,,,2025-07-21T07:02:58.519483,"terminal-error: Command '['whois', '10x.institute']' timed out after 20 seconds",3,127.0.0.53,54.149.79.189,34.216.117.25,,,,,,,
-0x00.institute,institute,,,,,,,,,,,,,,2025-07-21T07:00:18.345599,"terminal-error: Command '['whois', '0x00.institute']' timed out after 20 seconds",0,127.0.0.53,185.248.198.180,,,,,,,,
+domain,tld,registrar,whois_server,creation_date,updated_date,expiration_date,status,registrant_name,registrant_org,registrant_country,admin_email,tech_email,name_servers,dnssec,lookup_date,source,domain_count,nslookupA,nslookupAAAA,nslookupCNAME,nslookupMX,nslookupNS,nslookupPTR,nslookupTXT,nslookupSRV,nslookupSOA
+000.institute,institute,,,,,,,,,,,,,,2025-07-21T06:59:18.280518,"terminal-error: Command '['whois', '000.institute']' timed out after 20 seconds",7,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	000.institute
+Address: 3.13.167.13","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 000.institute: No answer","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 000.institute: No answer
+
+Authoritative answers can be found from:
+000.institute
+	origin = ns1.name.com
+	mail addr = hostmaster.nsone.net
+	serial = 1579127764
+	refresh = 7200
+	retry = 3600
+	expire = 604800
+	minimum = 300","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+000.institute	mail exchanger = 10 in1-smtp.messagingengine.com.
+000.institute	mail exchanger = 20 in2-smtp.messagingengine.com.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+000.institute	nameserver = ns2ckr.name.com.
+000.institute	nameserver = ns1kpv.name.com.
+000.institute	nameserver = ns3jnr.name.com.
+000.institute	nameserver = ns4ghm.name.com.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 000.institute: No answer
+
+Authoritative answers can be found from:
+000.institute
+	origin = ns1.name.com
+	mail addr = hostmaster.nsone.net
+	serial = 1579127764
+	refresh = 7200
+	retry = 3600
+	expire = 604800
+	minimum = 300","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+000.institute	text = ""v=spf1 include:spf.messagingengine.com ?all""
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 000.institute: No answer
+
+Authoritative answers can be found from:
+000.institute
+	origin = ns1.name.com
+	mail addr = hostmaster.nsone.net
+	serial = 1579127764
+	refresh = 7200
+	retry = 3600
+	expire = 604800
+	minimum = 300","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+000.institute
+	origin = ns1.name.com
+	mail addr = hostmaster.nsone.net
+	serial = 1579127764
+	refresh = 7200
+	retry = 3600
+	expire = 604800
+	minimum = 300
+
+Authoritative answers can be found from:"
+1031.institute,institute,,,,,,,,,,,,,,2025-07-21T07:01:58.453506,"terminal-error: Command '['whois', '1031.institute']' timed out after 20 seconds",0,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	1031.institute
+Address: 104.21.36.34
+Name:	1031.institute
+Address: 172.67.184.89","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	1031.institute
+Address: 2606:4700:3035::6815:2422
+Name:	1031.institute
+Address: 2606:4700:3033::ac43:b859","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 1031.institute: No answer
+
+Authoritative answers can be found from:
+1031.institute
+	origin = ram.ns.cloudflare.com
+	mail addr = dns.cloudflare.com
+	serial = 2377792405
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+1031.institute	mail exchanger = 20 fwd2.porkbun.com.
+1031.institute	mail exchanger = 10 fwd1.porkbun.com.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+1031.institute	nameserver = venus.ns.cloudflare.com.
+1031.institute	nameserver = ram.ns.cloudflare.com.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 1031.institute: No answer
+
+Authoritative answers can be found from:
+1031.institute
+	origin = ram.ns.cloudflare.com
+	mail addr = dns.cloudflare.com
+	serial = 2377792405
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+1031.institute	text = ""v=spf1 mx ~all""
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 1031.institute: No answer
+
+Authoritative answers can be found from:
+1031.institute
+	origin = ram.ns.cloudflare.com
+	mail addr = dns.cloudflare.com
+	serial = 2377792405
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+1031.institute
+	origin = ram.ns.cloudflare.com
+	mail addr = dns.cloudflare.com
+	serial = 2377792405
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800
+
+Authoritative answers can be found from:"
+0rg.institute,institute,,,,,,,,,,,,,,2025-07-21T06:59:58.324556,"terminal-error: Command '['whois', '0rg.institute']' timed out after 20 seconds",0,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	0rg.institute
+Address: 162.255.119.218","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 0rg.institute: No answer","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 0rg.institute: No answer
+
+Authoritative answers can be found from:
+0rg.institute
+	origin = dns1.registrar-servers.com
+	mail addr = hostmaster.registrar-servers.com
+	serial = 1740517028
+	refresh = 43200
+	retry = 3600
+	expire = 604800
+	minimum = 3601","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+0rg.institute	mail exchanger = 10 mx.zoho.com.
+0rg.institute	mail exchanger = 50 mx3.zoho.com.
+0rg.institute	mail exchanger = 20 mx2.zoho.com.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+0rg.institute	nameserver = dns2.registrar-servers.com.
+0rg.institute	nameserver = dns1.registrar-servers.com.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 0rg.institute: No answer
+
+Authoritative answers can be found from:
+0rg.institute
+	origin = dns1.registrar-servers.com
+	mail addr = hostmaster.registrar-servers.com
+	serial = 1740517028
+	refresh = 43200
+	retry = 3600
+	expire = 604800
+	minimum = 3601","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+0rg.institute	text = ""v=spf1 include:zohomail.com ~all""
+0rg.institute	text = ""zoho-verification=zb80233793.zmverify.zoho.com""
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 0rg.institute: No answer
+
+Authoritative answers can be found from:
+0rg.institute
+	origin = dns1.registrar-servers.com
+	mail addr = hostmaster.registrar-servers.com
+	serial = 1740517028
+	refresh = 43200
+	retry = 3600
+	expire = 604800
+	minimum = 3601","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+0rg.institute
+	origin = dns1.registrar-servers.com
+	mail addr = hostmaster.registrar-servers.com
+	serial = 1740517028
+	refresh = 43200
+	retry = 3600
+	expire = 604800
+	minimum = 3601
+
+Authoritative answers can be found from:"
+108.institute,institute,,,,,,,,,,,,,,2025-07-21T07:02:18.474713,"terminal-error: Command '['whois', '108.institute']' timed out after 20 seconds",1,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	108.institute
+Address: 217.70.184.38","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 108.institute: No answer","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 108.institute: No answer
+
+Authoritative answers can be found from:
+108.institute
+	origin = ns1.gandi.net
+	mail addr = hostmaster.gandi.net
+	serial = 1752710400
+	refresh = 10800
+	retry = 3600
+	expire = 604800
+	minimum = 10800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+108.institute	mail exchanger = 50 fb.mail.gandi.net.
+108.institute	mail exchanger = 10 spool.mail.gandi.net.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+108.institute	nameserver = ns-212-c.gandi.net.
+108.institute	nameserver = ns-26-a.gandi.net.
+108.institute	nameserver = ns-133-b.gandi.net.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 108.institute: No answer
+
+Authoritative answers can be found from:
+108.institute
+	origin = ns1.gandi.net
+	mail addr = hostmaster.gandi.net
+	serial = 1752710400
+	refresh = 10800
+	retry = 3600
+	expire = 604800
+	minimum = 10800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+108.institute	text = ""v=spf1 include:_mailcust.gandi.net ?all""
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 108.institute: No answer
+
+Authoritative answers can be found from:
+108.institute
+	origin = ns1.gandi.net
+	mail addr = hostmaster.gandi.net
+	serial = 1752710400
+	refresh = 10800
+	retry = 3600
+	expire = 604800
+	minimum = 10800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+108.institute
+	origin = ns1.gandi.net
+	mail addr = hostmaster.gandi.net
+	serial = 1752710400
+	refresh = 10800
+	retry = 3600
+	expire = 604800
+	minimum = 10800
+
+Authoritative answers can be found from:"
+00.institute,institute,,,,,,,,,,,,,,2025-07-21T06:58:58.258592,"terminal-error: Command '['whois', '00.institute']' timed out after 20 seconds",0,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	00.institute
+Address: 44.227.65.245
+Name:	00.institute
+Address: 44.227.76.166","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 00.institute: No answer","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 00.institute: No answer
+
+Authoritative answers can be found from:
+00.institute
+	origin = curitiba.ns.porkbun.com
+	mail addr = dns.cloudflare.com
+	serial = 2372670378
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 00.institute: No answer
+
+Authoritative answers can be found from:
+00.institute
+	origin = curitiba.ns.porkbun.com
+	mail addr = dns.cloudflare.com
+	serial = 2372670378
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+00.institute	nameserver = salvador.ns.porkbun.com.
+00.institute	nameserver = curitiba.ns.porkbun.com.
+00.institute	nameserver = maceio.ns.porkbun.com.
+00.institute	nameserver = fortaleza.ns.porkbun.com.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 00.institute: No answer
+
+Authoritative answers can be found from:
+00.institute
+	origin = curitiba.ns.porkbun.com
+	mail addr = dns.cloudflare.com
+	serial = 2372670378
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 00.institute: No answer
+
+Authoritative answers can be found from:
+00.institute
+	origin = curitiba.ns.porkbun.com
+	mail addr = dns.cloudflare.com
+	serial = 2372670378
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 00.institute: No answer
+
+Authoritative answers can be found from:
+00.institute
+	origin = curitiba.ns.porkbun.com
+	mail addr = dns.cloudflare.com
+	serial = 2372670378
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+00.institute
+	origin = curitiba.ns.porkbun.com
+	mail addr = dns.cloudflare.com
+	serial = 2372670378
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800
+
+Authoritative answers can be found from:"
+00.institute,institute,,,,,,,,,,,,,,2025-07-21T06:58:58.258592,"terminal-error: Command '['whois', '00.institute']' timed out after 20 seconds",0,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	00.institute
+Address: 44.227.65.245
+Name:	00.institute
+Address: 44.227.76.166","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 00.institute: No answer","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 00.institute: No answer
+
+Authoritative answers can be found from:
+00.institute
+	origin = curitiba.ns.porkbun.com
+	mail addr = dns.cloudflare.com
+	serial = 2372670378
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 00.institute: No answer
+
+Authoritative answers can be found from:
+00.institute
+	origin = curitiba.ns.porkbun.com
+	mail addr = dns.cloudflare.com
+	serial = 2372670378
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+00.institute	nameserver = fortaleza.ns.porkbun.com.
+00.institute	nameserver = salvador.ns.porkbun.com.
+00.institute	nameserver = curitiba.ns.porkbun.com.
+00.institute	nameserver = maceio.ns.porkbun.com.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 00.institute: No answer
+
+Authoritative answers can be found from:
+00.institute
+	origin = curitiba.ns.porkbun.com
+	mail addr = dns.cloudflare.com
+	serial = 2372670378
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 00.institute: No answer
+
+Authoritative answers can be found from:
+00.institute
+	origin = curitiba.ns.porkbun.com
+	mail addr = dns.cloudflare.com
+	serial = 2372670378
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 00.institute: No answer
+
+Authoritative answers can be found from:
+00.institute
+	origin = curitiba.ns.porkbun.com
+	mail addr = dns.cloudflare.com
+	serial = 2372670378
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+00.institute
+	origin = curitiba.ns.porkbun.com
+	mail addr = dns.cloudflare.com
+	serial = 2372670378
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 1800
+
+Authoritative answers can be found from:"
+112pawangslot.institute,institute,,,,,,,,,,,,,,2025-07-21T07:03:58.583726,"terminal-error: Command '['whois', '112pawangslot.institute']' timed out after 20 seconds",0,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 112pawangslot.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 112pawangslot.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 112pawangslot.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 112pawangslot.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 112pawangslot.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 112pawangslot.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 112pawangslot.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 112pawangslot.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 112pawangslot.institute: NXDOMAIN"
+001.institute,institute,,,,,,,,,,,,,,2025-07-21T06:59:38.302442,"terminal-error: Command '['whois', '001.institute']' timed out after 20 seconds",1,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 001.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 001.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 001.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 001.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 001.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 001.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 001.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 001.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 001.institute: NXDOMAIN"
+10k.institute,institute,,,,,,,,,,,,,,2025-07-21T07:02:38.496885,"terminal-error: Command '['whois', '10k.institute']' timed out after 20 seconds",11,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 10k.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 10k.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 10k.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 10k.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 10k.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 10k.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 10k.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 10k.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 10k.institute: NXDOMAIN"
+1000x.institute,institute,,,,,,,,,,,,,,2025-07-21T07:01:18.410601,"terminal-error: Command '['whois', '1000x.institute']' timed out after 20 seconds",0,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN"
+0x00.institute,institute,,,,,,,,,,,,,,2025-07-21T07:00:18.345599,"terminal-error: Command '['whois', '0x00.institute']' timed out after 20 seconds",0,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	0x00.institute
+Address: 185.248.198.180","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 0x00.institute: No answer","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 0x00.institute: No answer
+
+Authoritative answers can be found from:
+0x00.institute
+	origin = ns1.gazduire.net
+	mail addr = hostmaster.0x00.institute
+	serial = 2025062005
+	refresh = 3600
+	retry = 3600
+	expire = 1209600
+	minimum = 86400","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+0x00.institute	mail exchanger = 10 mail.0x00.institute.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+0x00.institute	nameserver = ns1.gazduire.net.
+0x00.institute	nameserver = ns2.gazduire.net.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 0x00.institute: No answer
+
+Authoritative answers can be found from:
+0x00.institute
+	origin = ns1.gazduire.net
+	mail addr = hostmaster.0x00.institute
+	serial = 2025062005
+	refresh = 3600
+	retry = 3600
+	expire = 1209600
+	minimum = 86400","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+0x00.institute	text = ""v=spf1 a mx ip4:185.248.198.0 ~all""
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 0x00.institute: No answer
+
+Authoritative answers can be found from:
+0x00.institute
+	origin = ns1.gazduire.net
+	mail addr = hostmaster.0x00.institute
+	serial = 2025062005
+	refresh = 3600
+	retry = 3600
+	expire = 1209600
+	minimum = 86400","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+0x00.institute
+	origin = ns1.gazduire.net
+	mail addr = hostmaster.0x00.institute
+	serial = 2025062005
+	refresh = 3600
+	retry = 3600
+	expire = 1209600
+	minimum = 86400
+
+Authoritative answers can be found from:"
+1000neue.institute,institute,,,,,,,,,,,,,,2025-07-21T07:00:58.388503,"terminal-error: Command '['whois', '1000neue.institute']' timed out after 20 seconds",1,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	1000neue.institute
+Address: 185.224.138.147","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 1000neue.institute: No answer","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 1000neue.institute: No answer
+
+Authoritative answers can be found from:
+1000neue.institute
+	origin = ns1.dns-parking.com
+	mail addr = dns.hostinger.com
+	serial = 2025071701
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+1000neue.institute	mail exchanger = 5 mx1.hostinger.com.
+1000neue.institute	mail exchanger = 10 mx2.hostinger.com.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+1000neue.institute	nameserver = ns2.dns-parking.com.
+1000neue.institute	nameserver = ns1.dns-parking.com.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 1000neue.institute: No answer
+
+Authoritative answers can be found from:
+1000neue.institute
+	origin = ns1.dns-parking.com
+	mail addr = dns.hostinger.com
+	serial = 2025071701
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+1000neue.institute	text = ""v=spf1 include:_spf.mail.hostinger.com ~all""
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 1000neue.institute: No answer
+
+Authoritative answers can be found from:
+1000neue.institute
+	origin = ns1.dns-parking.com
+	mail addr = dns.hostinger.com
+	serial = 2025071701
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+1000neue.institute
+	origin = ns1.dns-parking.com
+	mail addr = dns.hostinger.com
+	serial = 2025071701
+	refresh = 10000
+	retry = 2400
+	expire = 604800
+	minimum = 600
+
+Authoritative answers can be found from:"
+1111.institute,institute,,,,,,,,,,,,,,2025-07-21T07:03:38.562427,"terminal-error: Command '['whois', '1111.institute']' timed out after 20 seconds",1,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	1111.institute
+Address: 13.248.213.45
+Name:	1111.institute
+Address: 76.223.67.189","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 1111.institute: No answer","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 1111.institute: No answer
+
+Authoritative answers can be found from:
+1111.institute
+	origin = ns61.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2025070200
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 1111.institute: No answer
+
+Authoritative answers can be found from:
+1111.institute
+	origin = ns61.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2025070200
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+1111.institute	nameserver = ns62.domaincontrol.com.
+1111.institute	nameserver = ns61.domaincontrol.com.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 1111.institute: No answer
+
+Authoritative answers can be found from:
+1111.institute
+	origin = ns61.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2025070200
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 1111.institute: No answer
+
+Authoritative answers can be found from:
+1111.institute
+	origin = ns61.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2025070200
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 1111.institute: No answer
+
+Authoritative answers can be found from:
+1111.institute
+	origin = ns61.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2025070200
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+1111.institute
+	origin = ns61.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2025070200
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600
+
+Authoritative answers can be found from:"
+100.institute,institute,,,,,,,,,,,,,,2025-07-21T07:00:38.367482,"terminal-error: Command '['whois', '100.institute']' timed out after 20 seconds",1,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	100.institute
+Address: 15.197.148.33
+Name:	100.institute
+Address: 3.33.130.190","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 100.institute: No answer","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 100.institute: No answer
+
+Authoritative answers can be found from:
+100.institute
+	origin = ns35.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2023092600
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 100.institute: No answer
+
+Authoritative answers can be found from:
+100.institute
+	origin = ns35.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2023092600
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+100.institute	nameserver = ns35.domaincontrol.com.
+100.institute	nameserver = ns36.domaincontrol.com.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 100.institute: No answer
+
+Authoritative answers can be found from:
+100.institute
+	origin = ns35.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2023092600
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 100.institute: No answer
+
+Authoritative answers can be found from:
+100.institute
+	origin = ns35.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2023092600
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 100.institute: No answer
+
+Authoritative answers can be found from:
+100.institute
+	origin = ns35.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2023092600
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+100.institute
+	origin = ns35.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2023092600
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600
+
+Authoritative answers can be found from:"
+101.institute,institute,,,,,,,,,,,,,,2025-07-21T07:01:38.431408,"terminal-error: Command '['whois', '101.institute']' timed out after 20 seconds",9,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	101.institute
+Address: 13.248.243.5
+Name:	101.institute
+Address: 76.223.105.230","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 101.institute: No answer","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 101.institute: No answer
+
+Authoritative answers can be found from:
+101.institute
+	origin = ns23.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2024111701
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 101.institute: No answer
+
+Authoritative answers can be found from:
+101.institute
+	origin = ns23.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2024111701
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+101.institute	nameserver = ns24.domaincontrol.com.
+101.institute	nameserver = ns23.domaincontrol.com.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 101.institute: No answer
+
+Authoritative answers can be found from:
+101.institute
+	origin = ns23.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2024111701
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 101.institute: No answer
+
+Authoritative answers can be found from:
+101.institute
+	origin = ns23.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2024111701
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 101.institute: No answer
+
+Authoritative answers can be found from:
+101.institute
+	origin = ns23.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2024111701
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+101.institute
+	origin = ns23.domaincontrol.com
+	mail addr = dns.jomax.net
+	serial = 2024111701
+	refresh = 28800
+	retry = 7200
+	expire = 604800
+	minimum = 600
+
+Authoritative answers can be found from:"
+110.institute,institute,,,,,,,,,,,,,,2025-07-21T07:03:18.541498,"terminal-error: Command '['whois', '110.institute']' timed out after 20 seconds",1,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	110.institute
+Address: 52.223.13.41","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 110.institute: No answer","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 110.institute: No answer
+
+Authoritative answers can be found from:
+110.institute
+	origin = ns1.renewyourname.net
+	mail addr = hostmaster.renewyourname.net
+	serial = 2025061707
+	refresh = 86400
+	retry = 7200
+	expire = 2592000
+	minimum = 43200","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 110.institute: No answer
+
+Authoritative answers can be found from:
+110.institute
+	origin = ns1.renewyourname.net
+	mail addr = hostmaster.renewyourname.net
+	serial = 2025061707
+	refresh = 86400
+	retry = 7200
+	expire = 2592000
+	minimum = 43200","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+110.institute	nameserver = ns2.renewyourname.net.
+110.institute	nameserver = ns1.renewyourname.net.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 110.institute: No answer
+
+Authoritative answers can be found from:
+110.institute
+	origin = ns1.renewyourname.net
+	mail addr = hostmaster.renewyourname.net
+	serial = 2025061707
+	refresh = 86400
+	retry = 7200
+	expire = 2592000
+	minimum = 43200","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 110.institute: No answer
+
+Authoritative answers can be found from:
+110.institute
+	origin = ns1.renewyourname.net
+	mail addr = hostmaster.renewyourname.net
+	serial = 2025061707
+	refresh = 86400
+	retry = 7200
+	expire = 2592000
+	minimum = 43200","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 110.institute: No answer
+
+Authoritative answers can be found from:
+110.institute
+	origin = ns1.renewyourname.net
+	mail addr = hostmaster.renewyourname.net
+	serial = 2025061707
+	refresh = 86400
+	retry = 7200
+	expire = 2592000
+	minimum = 43200","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+110.institute
+	origin = ns1.renewyourname.net
+	mail addr = hostmaster.renewyourname.net
+	serial = 2025061707
+	refresh = 86400
+	retry = 7200
+	expire = 2592000
+	minimum = 43200
+
+Authoritative answers can be found from:"
+10x.institute,institute,,,,,,,,,,,,,,2025-07-21T07:02:58.519483,"terminal-error: Command '['whois', '10x.institute']' timed out after 20 seconds",3,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	10x.institute
+Address: 34.216.117.25
+Name:	10x.institute
+Address: 54.149.79.189","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 10x.institute: No answer","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 10x.institute: No answer
+
+Authoritative answers can be found from:
+10x.institute
+	origin = launch1.spaceship.net
+	mail addr = support.spaceship.com
+	serial = 1750431983
+	refresh = 43200
+	retry = 3600
+	expire = 604800
+	minimum = 3600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 10x.institute: No answer
+
+Authoritative answers can be found from:
+10x.institute
+	origin = launch1.spaceship.net
+	mail addr = support.spaceship.com
+	serial = 1750431983
+	refresh = 43200
+	retry = 3600
+	expire = 604800
+	minimum = 3600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+10x.institute	nameserver = launch2.spaceship.net.
+10x.institute	nameserver = launch1.spaceship.net.
+
+Authoritative answers can be found from:","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 10x.institute: No answer
+
+Authoritative answers can be found from:
+10x.institute
+	origin = launch1.spaceship.net
+	mail addr = support.spaceship.com
+	serial = 1750431983
+	refresh = 43200
+	retry = 3600
+	expire = 604800
+	minimum = 3600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 10x.institute: No answer
+
+Authoritative answers can be found from:
+10x.institute
+	origin = launch1.spaceship.net
+	mail addr = support.spaceship.com
+	serial = 1750431983
+	refresh = 43200
+	retry = 3600
+	expire = 604800
+	minimum = 3600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+*** Can't find 10x.institute: No answer
+
+Authoritative answers can be found from:
+10x.institute
+	origin = launch1.spaceship.net
+	mail addr = support.spaceship.com
+	serial = 1750431983
+	refresh = 43200
+	retry = 3600
+	expire = 604800
+	minimum = 3600","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+10x.institute
+	origin = launch1.spaceship.net
+	mail addr = support.spaceship.com
+	serial = 1750431983
+	refresh = 43200
+	retry = 3600
+	expire = 604800
+	minimum = 3600
+
+Authoritative answers can be found from:"
