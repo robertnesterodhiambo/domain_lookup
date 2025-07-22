@@ -10,10 +10,11 @@ DB_CONFIG = {
     'database': 'domain_data'
 }
 
-# Path to uploaded file
+# CSV path
 csv_file = 'db_excel_ns.csv'
+batch_size = 20000
 
-# Expected column list
+# Expected columns
 columns = [
     'domain', 'tld', 'registrar', 'whois_server', 'creation_date',
     'updated_date', 'expiration_date', 'status', 'registrant_name',
@@ -23,28 +24,31 @@ columns = [
     'nslookupNS', 'nslookupPTR', 'nslookupTXT', 'nslookupSRV', 'nslookupSOA'
 ]
 
-# Load CSV
+# Load and clean CSV
 df = pd.read_csv(csv_file)
 
-# Trim to only valid columns (ignore extras)
+# Trim extra cols and fill missing ones
 df = df[[col for col in columns if col in df.columns]]
-
-# Fill missing columns if needed
 for col in columns:
     if col not in df.columns:
         df[col] = None
 
-# Convert everything to string and strip, then replace invalids
+# Clean data
 df = df.astype(str).applymap(lambda x: x.strip() if isinstance(x, str) else x)
-df.replace(to_replace=['', 'nan', 'NaN', 'None', 'NULL'], value=None, inplace=True)
-
-# Fix domain_count as INT
+df.replace(['', 'nan', 'NaN', 'None', 'NULL'], None, inplace=True)
 df['domain_count'] = pd.to_numeric(df['domain_count'], errors='coerce')
+
+# Create SQL insert query
+insert_query = f'''
+    INSERT IGNORE INTO nslookup ({','.join(columns)}) 
+    VALUES ({','.join(['%s'] * len(columns))})
+'''
 
 try:
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
 
+    # Create table if not exists
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS nslookup (
             domain VARCHAR(255) PRIMARY KEY,
@@ -77,20 +81,35 @@ try:
         )
     ''')
 
-    insert_query = f'''
-        INSERT IGNORE INTO nslookup ({','.join(columns)}) 
-        VALUES ({','.join(['%s'] * len(columns))})
-    '''
+    total_success = 0
+    total_failed = 0
+    total_blocks = (len(df) // batch_size) + 1
 
-    for _, row in df.iterrows():
-        values = [row.get(col) if row.get(col) not in ['nan', 'NaN', 'None', 'NULL', ''] else None for col in columns]
-        try:
-            cursor.execute(insert_query, values)
-        except Exception as e:
-            print(f"⚠️ Failed to insert domain {row.get('domain')}: {e}")
+    for block_num in range(total_blocks):
+        start = block_num * batch_size
+        end = start + batch_size
+        df_block = df.iloc[start:end]
 
-    conn.commit()
-    print("✅ All rows inserted (duplicates ignored).")
+        success_count = 0
+        fail_count = 0
+
+        for _, row in df_block.iterrows():
+            values = [row.get(col) if row.get(col) not in ['nan', 'NaN', 'None', 'NULL', ''] else None for col in columns]
+            try:
+                cursor.execute(insert_query, values)
+                success_count += 1
+            except Exception as e:
+                print(f"⚠️ Failed to insert domain {row.get('domain')}: {e}")
+                fail_count += 1
+
+        conn.commit()
+        print(f"✅ Block {block_num + 1}/{total_blocks} done — Success: {success_count}, Failed: {fail_count}")
+        total_success += success_count
+        total_failed += fail_count
+
+    print(f"\n✅ Insertion complete.")
+    print(f"✅ Total successful inserts: {total_success}")
+    print(f"❌ Total failed inserts: {total_failed}")
 
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -102,5 +121,5 @@ except mysql.connector.Error as err:
 finally:
     if 'cursor' in locals():
         cursor.close()
-    if 'conn' in locals():
+    if 'conn' in locals() and conn.is_connected():
         conn.close()
