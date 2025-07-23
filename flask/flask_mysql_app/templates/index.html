@@ -2,147 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Subdomain Table</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        th, td {
-            white-space: nowrap;
-        }
-        select.form-select {
-            font-size: 0.8rem;
-            padding: 0.2rem 0.5rem;
-        }
-    </style>
+    <title>NSLookup Filter Export</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
-
-<div class="container-fluid py-4">
-    <h2 class="text-center mb-4">📋 Subdomain Filter Table</h2>
-
-    <form method="POST" class="row g-2 mb-4">
-        <div class="col-md-2">
+<body class="container mt-5">
+    <h2 class="mb-4">Filter and Export NSLookup Records</h2>
+    <form method="POST" action="/download">
+        <div class="mb-3">
             <label for="tld" class="form-label">TLD</label>
-            <select name="tld" id="tld" class="form-select">
-                <option value="">All</option>
-                {% for t in tlds %}
-                    <option value="{{ t }}" {% if filters.tld == t %}selected{% endif %}>{{ t }}</option>
+            <select class="form-select" id="tld" name="tld">
+                <option value="">-- All --</option>
+                {% for value in tlds %}
+                    <option value="{{ value }}">{{ value }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div class="col-md-2">
+        <div class="mb-3">
             <label for="registrar" class="form-label">Registrar</label>
-            <select name="registrar" id="registrar" class="form-select">
-                <option value="">All</option>
-                {% for r in registrars %}
-                    <option value="{{ r }}" {% if filters.registrar == r %}selected{% endif %}>{{ r }}</option>
+            <select class="form-select" id="registrar" name="registrar">
+                <option value="">-- All --</option>
+                {% for value in registrars %}
+                    <option value="{{ value }}">{{ value }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div class="col-md-2">
+        <div class="mb-3">
             <label for="country" class="form-label">Registrant Country</label>
-            <select name="country" id="country" class="form-select">
-                <option value="">All</option>
-                {% for c in countries %}
-                    <option value="{{ c }}" {% if filters.country == c %}selected{% endif %}>{{ c }}</option>
+            <select class="form-select" id="country" name="country">
+                <option value="">-- All --</option>
+                {% for value in countries %}
+                    <option value="{{ value }}">{{ value }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div class="col-md-2">
-            <label class="form-label">Start Date</label>
-            <input type="date" name="start_date" value="{{ filters.start_date }}" class="form-control">
-        </div>
-        <div class="col-md-2">
-            <label class="form-label">End Date</label>
-            <input type="date" name="end_date" value="{{ filters.end_date }}" class="form-control">
-        </div>
-        <div class="col-md-2 d-flex align-items-end">
-            <button type="submit" class="btn btn-primary w-100">Filter</button>
-        </div>
+        <button type="submit" class="btn btn-success">Write to Excel & Download</button>
     </form>
-
-    {% if records %}
-    <div class="table-responsive">
-        <table id="data-table" class="table table-bordered table-hover table-striped">
-            <thead class="table-dark">
-                <tr>
-                    {% for key in records[0].keys() %}
-                        <th>
-                            <div class="d-flex flex-column">
-                                <span>{{ key | capitalize }}</span>
-                                <select class="form-select filter-select" data-column="{{ loop.index0 }}">
-                                    <option value="">All</option>
-                                </select>
-                            </div>
-                        </th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in records %}
-                    <tr>
-                        {% for val in row.values() %}
-                            <td>
-                                {% if val.__class__.__name__ == 'datetime' %}
-                                    {{ val.strftime('%Y-%m-%d %H:%M:%S') }}
-                                {% else %}
-                                    {{ val }}
-                                {% endif %}
-                            </td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-        <div class="alert alert-info text-center">No records to display. Please use the filters above.</div>
-    {% endif %}
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const table = document.getElementById('data-table');
-    if (!table) return;
-
-    const rows = Array.from(table.querySelectorAll('tbody tr'));
-    const filters = table.querySelectorAll('.filter-select');
-
-    filters.forEach((select, colIndex) => {
-        // Clear any previous options except default
-        select.innerHTML = '';
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'All';
-        select.appendChild(defaultOption);
-
-        const uniqueValues = new Set();
-        rows.forEach(row => {
-            const cell = row.children[colIndex];
-            const text = cell.textContent.trim();
-            if (text) uniqueValues.add(text);
-        });
-
-        Array.from(uniqueValues).sort().forEach(value => {
-            const option = document.createElement('option');
-            option.value = value;
-            option.textContent = value;
-            select.appendChild(option);
-        });
-
-        select.addEventListener('change', () => {
-            rows.forEach(row => {
-                let visible = true;
-                filters.forEach((f, i) => {
-                    const selected = f.value;
-                    const cellText = row.children[i].textContent.trim();
-                    if (selected && cellText !== selected) visible = false;
-                });
-                row.style.display = visible ? '' : 'none';
-            });
-        });
-    });
-});
-</script>
-
 </body>
 </html>
