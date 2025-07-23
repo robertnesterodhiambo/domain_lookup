@@ -14,7 +14,7 @@ os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 def get_unique_values(column):
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
-    query = f"SELECT DISTINCT {column} FROM nslookup WHERE {column} IS NOT NULL AND {column} != ''"
+    query = f"SELECT DISTINCT {column} FROM Axxes WHERE {column} IS NOT NULL AND {column} != ''"
     cursor.execute(query)
     results = [row[0] for row in cursor.fetchall()]
     cursor.close()
@@ -56,16 +56,35 @@ def download():
 
     where_clause = "WHERE " + " AND ".join(conditions) if conditions else ""
 
-    query = f"SELECT * FROM nslookup {where_clause}"
+    query = f"SELECT * FROM Axxes {where_clause}"
     print("Query:", query)
     print("Values:", values)
 
     conn = mysql.connector.connect(**DB_CONFIG)
     df = pd.read_sql(query, conn, params=values)
-    conn.close()
 
     if df.empty:
+        conn.close()
         return "No data matched the filters selected."
+
+    # Query to get count of unique domains per tld with same filters
+    count_query = f"""
+        SELECT tld, COUNT(DISTINCT domain) AS site_count
+        FROM nslookup
+        {where_clause}
+        GROUP BY tld
+    """
+    cursor = conn.cursor()
+    cursor.execute(count_query, values)
+    count_results = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    # Create dictionary {tld: site_count}
+    tld_counts = {row[0]: row[1] for row in count_results}
+
+    # Add site_count column to dataframe
+    df['site_count'] = df['tld'].map(tld_counts).fillna(0).astype(int)
 
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     filename = f"filtered_nslookup_{timestamp}.xlsx"
@@ -75,4 +94,4 @@ def download():
     return send_file(filepath, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

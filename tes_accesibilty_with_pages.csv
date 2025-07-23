@@ -1,0 +1,29 @@
+domain,tld,registrar,whois_server,creation_date,updated_date,expiration_date,status,registrant_name,registrant_org,registrant_country,admin_email,tech_email,name_servers,dnssec,lookup_date,source,domain_count,nslookupA,nslookupAAAA,nslookupCNAME,nslookupMX,nslookupNS,nslookupPTR,nslookupTXT,nslookupSRV,nslookupSOA,Violations,Passes,Incomplete,Inapplicable,pages_count
+1000x.institute,institute,,,,,,,,,,,,,,2025-07-21T07:01:18.410601,"terminal-error: Command '['whois', '1000x.institute']' timed out after 20 seconds",0,"Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN","Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+** server can't find 1000x.institute: NXDOMAIN",14,25,37,48,0
