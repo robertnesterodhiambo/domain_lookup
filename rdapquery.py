@@ -4,6 +4,8 @@ import os
 
 INPUT_CSV = 'data_rdap.csv'
 OUTPUT_CSV = 'data_rdap_parsed.csv'
+CHUNK_SIZE = 50000
+LAST_CHUNK_FILE = 'last_chunk.txt'  # file to store last processed chunk number
 
 def parse_rdap_json(rdap_data):
     parsed = {}
@@ -71,60 +73,83 @@ def parse_rdap_json(rdap_data):
 
     return parsed
 
-# Load input CSV
-df = pd.read_csv(INPUT_CSV)
+def save_last_chunk(num):
+    with open(LAST_CHUNK_FILE, 'w') as f:
+        f.write(str(num))
 
-# Drop empty rdap_link
-df = df[df['rdap_link'].notna()]
-df = df[df['rdap_link'].str.strip() != '']
+def load_last_chunk():
+    if os.path.exists(LAST_CHUNK_FILE):
+        with open(LAST_CHUNK_FILE, 'r') as f:
+            val = f.read().strip()
+            if val.isdigit():
+                return int(val)
+    return 0
 
-# Prioritize .nl TLD
-df_sorted = pd.concat([df[df['tld'] == 'nl'], df[df['tld'] != 'nl']])
-
-# Prepare output CSV columns
 parsed_columns = [
     'ldhName', 'status', 'registration_date', 'last_changed_date', 'last_update_rdap_date',
     'registrant_name', 'registrant_email', 'admin_name', 'admin_email',
     'tech_name', 'tech_email', 'registrar_name', 'reseller_name',
     'nameservers', 'secureDNS_delegationSigned'
 ]
-output_columns = list(df.columns) + parsed_columns
 
-# Create output CSV if doesn't exist
 if not os.path.exists(OUTPUT_CSV):
+    df_head = pd.read_csv(INPUT_CSV, nrows=1)
+    output_columns = list(df_head.columns) + parsed_columns
     pd.DataFrame(columns=output_columns).to_csv(OUTPUT_CSV, index=False)
 
-# Load processed rdap_links to skip duplicates
 processed = pd.read_csv(OUTPUT_CSV)
 processed_links = set(processed['rdap_link'].tolist())
 
-# Iterate and process
-for _, row in df_sorted.iterrows():
-    link = row['rdap_link']
-    if link in processed_links:
-        print(f"Skipping already processed: {link}")
+start_chunk = load_last_chunk()
+
+chunk_number = 0
+for chunk in pd.read_csv(INPUT_CSV, chunksize=CHUNK_SIZE):
+    chunk_number += 1
+
+    if chunk_number <= start_chunk:
+        print(f"Skipping chunk #{chunk_number} (already processed)")
         continue
 
-    print(f"Processing: {link}")
-    try:
-        response = requests.get(link, timeout=10)
-        if response.status_code == 429:
-            print(f"Rate limit exceeded for {link}, skipping for now.")
+    print(f"\nProcessing chunk #{chunk_number} with {len(chunk)} rows")
+    print(chunk.head())  # show first 5 rows for debug
+
+    chunk = chunk[chunk['rdap_link'].notna()].copy()
+    chunk['rdap_link'] = chunk['rdap_link'].astype(str)
+    chunk = chunk[chunk['rdap_link'].str.strip() != '']
+
+    chunk_sorted = pd.concat([chunk[chunk['tld'] == 'nl'], chunk[chunk['tld'] != 'nl']])
+
+    for _, row in chunk_sorted.iterrows():
+        link = row['rdap_link']
+        if link in processed_links:
+            print(f"Skipping already processed: {link}")
             continue
-        elif response.status_code != 200:
-            print(f"Failed to fetch {link} with status {response.status_code}, skipping.")
+
+        print(f"Processing: {link}")
+        try:
+            response = requests.get(link, timeout=10)
+            if response.status_code == 429:
+                print(f"Rate limit exceeded for {link}, skipping for now.")
+                continue
+            elif response.status_code != 200:
+                print(f"Failed to fetch {link} with status {response.status_code}, skipping.")
+                continue
+
+            rdap_json = response.json()
+            parsed = parse_rdap_json(rdap_json)
+
+            output_row = {col: row[col] for col in row.index}
+            output_row.update(parsed)
+
+            pd.DataFrame([output_row]).to_csv(OUTPUT_CSV, mode='a', header=False, index=False)
+
+            processed_links.add(link)
+
+            print(f"Saved data for: {link}")
+
+        except Exception as e:
+            print(f"Error processing {link}: {e}")
             continue
 
-        rdap_json = response.json()
-        parsed = parse_rdap_json(rdap_json)
-
-        output_row = {col: row[col] for col in df.columns}
-        output_row.update(parsed)
-
-        pd.DataFrame([output_row]).to_csv(OUTPUT_CSV, mode='a', header=False, index=False)
-
-        print(f"Saved data for: {link}")
-
-    except Exception as e:
-        print(f"Error processing {link}: {e}")
-        continue
+    # Save progress after chunk processed
+    save_last_chunk(chunk_number)
