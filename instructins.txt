@@ -1,2 +1,14 @@
+download.py
+unzip.py
 domaincount.py
 json_rdap.py
+rdaptldbuild.py
+linkbuild.py
+rdqpquery.py
+subdomaincount.py
+nslookup.py
+pagecount.py
+
+accessibility_checker.js
+
+accesiility.js is run from node js have it installed and install all its dependency

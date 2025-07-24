@@ -1,0 +1,54 @@
+2025-07-24 08:38:55 URL:https://020facility.nl/wp-content/plugins/ninja-forms/assets/css/font-awesome.min.css?ver=6.8.2 [27466/27466] -> "font-awesome.min.css?ver=6.8.2.tmp.tmp" [1]
+2025-07-24 08:38:56 URL: https://020facility.nl/wp-includes/js/underscore.min.js?ver=1.13.7 200 OK
+unlink: No such file or directory
+2025-07-24 08:38:56 URL: https://020facility.nl/wp-includes/js/backbone.min.js?ver=1.6.0 200 OK
+unlink: No such file or directory
+2025-07-24 08:38:56 URL: https://020facility.nl/wp-content/plugins/ninja-forms/assets/js/min/front-end-deps.js?ver=3.6.11 200 OK
+unlink: No such file or directory
+2025-07-24 08:38:56 URL: https://020facility.nl/wp-content/plugins/ninja-forms/assets/js/min/front-end.js?ver=3.6.11 200 OK
+unlink: No such file or directory
+2025-07-24 08:38:56 URL: https://020facility.nl/wp-json/wp/v2/pages/7190 200 OK
+unlink: No such file or directory
+2025-07-24 08:38:59 URL:https://020facility.nl/offerte/ [133425] -> "index.html?p=7190.tmp.tmp" [1]
+2025-07-24 08:38:59 URL: https://020facility.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F020facility.nl%2Fofferte%2F 200 OK
+unlink: No such file or directory
+2025-07-24 08:38:59 URL: https://020facility.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F020facility.nl%2Fofferte%2F&format=xml 200 OK
+unlink: No such file or directory
+https://020facility.nl/offerte/%5C:
+Remote file does not exist -- broken link!!!
+2025-07-24 08:39:01 URL:https://020facility.nl/wp-content/plugins/ninja-forms/assets/css/flatpickr.css?ver=6.8.2 [15954/15954] -> "flatpickr.css?ver=6.8.2.tmp.tmp" [1]
+2025-07-24 08:39:01 URL: https://020facility.nl/wp-content/plugins/ninja-forms/assets/js/min/front-end--datepicker.min.js?ver=3.6.11 200 OK
+unlink: No such file or directory
+2025-07-24 08:39:01 URL: https://020facility.nl/wp-json/wp/v2/pages/4165 200 OK
+unlink: No such file or directory
+2025-07-24 08:39:03 URL:https://020facility.nl/contact/ [101104] -> "index.html?p=4165.tmp.tmp" [1]
+2025-07-24 08:39:04 URL: https://020facility.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F020facility.nl%2Fcontact%2F 200 OK
+unlink: No such file or directory
+2025-07-24 08:39:04 URL: https://020facility.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F020facility.nl%2Fcontact%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-24 08:39:04 URL: https://020facility.nl/wp-includes/fonts/dashicons.eot?99ac726223c749443b642ce33df8b800 200 OK
+unlink: No such file or directory
+2025-07-24 08:39:04 URL: https://020facility.nl/wp-includes/fonts/dashicons.ttf?99ac726223c749443b642ce33df8b800 200 OK
+unlink: No such file or directory
+2025-07-24 08:39:05 URL: https://020facility.nl/wp-content/plugins/ninja-forms/assets/img/help-info.png 200 OK
+unlink: No such file or directory
+2025-07-24 08:39:05 URL: https://020facility.nl/wp-content/plugins/ninja-forms/assets/fonts/fontawesome-webfont.eot?v=4.5.0 200 OK
+unlink: No such file or directory
+2025-07-24 08:39:05 URL: https://020facility.nl/wp-content/plugins/ninja-forms/assets/fonts/fontawesome-webfont.eot? 200 OK
+unlink: No such file or directory
+2025-07-24 08:39:05 URL: https://020facility.nl/wp-content/plugins/ninja-forms/assets/fonts/fontawesome-webfont.woff2?v=4.5.0 200 OK
+unlink: No such file or directory
+2025-07-24 08:39:05 URL: https://020facility.nl/wp-content/plugins/ninja-forms/assets/fonts/fontawesome-webfont.woff?v=4.5.0 200 OK
+unlink: No such file or directory
+2025-07-24 08:39:05 URL: https://020facility.nl/wp-content/plugins/ninja-forms/assets/fonts/fontawesome-webfont.ttf?v=4.5.0 200 OK
+unlink: No such file or directory
+2025-07-24 08:39:06 URL: https://020facility.nl/wp-content/plugins/ninja-forms/assets/fonts/fontawesome-webfont.svg?v=4.5.0 200 OK
+unlink: No such file or directory
+Found 2 broken links.
+
+https://020facility.nl/wp-content/themes/020security/css/images/crease.svg
+https://020facility.nl/offerte/%5C
+
+FINISHED --2025-07-24 08:39:06--
+Total wall clock time: 1m 15s
+Downloaded: 31 files, 3.1M in 5.9s (536 KB/s)
