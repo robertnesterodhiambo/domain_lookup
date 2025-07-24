@@ -8,6 +8,7 @@ INPUT_FILE = 'domain_count.csv'
 OUTPUT_FILE = 'nslookup.csv'
 THREADS = 99
 LOCK = threading.Lock()
+CHUNK_SIZE = 50000
 
 NS_TYPES = ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR', 'TXT', 'SRV', 'SOA']
 counter = 0  # global progress tracker
@@ -53,36 +54,39 @@ def process_row(row, all_columns):
     full_data.update(ns_data)
     save_result(full_data, all_columns)
 
-def main():
-    if not os.path.exists(INPUT_FILE):
-        print(f"❌ Input file not found: {INPUT_FILE}")
+def process_chunk(chunk, processed_domains, all_columns):
+    chunk['domain'] = chunk['domain'].astype(str).str.strip()
+    remaining = chunk[~chunk['domain'].isin(processed_domains)]
+
+    if remaining.empty:
+        print("All domains in this chunk are already processed. Skipping chunk.")
         return
-
-    df = pd.read_csv(INPUT_FILE)
-    if 'domain' not in df.columns:
-        print("❌ 'domain' column is missing in input.")
-        return
-
-    df['domain'] = df['domain'].astype(str).str.strip()
-    processed = get_processed_domains()
-    remaining = df[~df['domain'].isin(processed)]
-
-    print(f"🟡 Already processed: {len(processed)}")
-    print(f"🟢 Remaining to process: {len(remaining)}")
 
     exact_nl = remaining[remaining['domain'].str.match(r'^[^.]+\.(nl)$', na=False)]
     sub_nl = remaining[remaining['domain'].str.match(r'^.+\.(.+\.)?nl$', na=False) & ~remaining['domain'].str.match(r'^[^.]+\.(nl)$', na=False)]
     others = remaining[~remaining.index.isin(exact_nl.index) & ~remaining.index.isin(sub_nl.index)]
     prioritized = pd.concat([exact_nl, sub_nl, others], ignore_index=True)
 
-    base_columns = df.columns.tolist()
-    ns_columns = [f'nslookup{q}' for q in NS_TYPES]
-    all_columns = base_columns + ns_columns
-
     with ThreadPoolExecutor(max_workers=THREADS) as executor:
         for _, row in prioritized.iterrows():
             executor.submit(process_row, row, all_columns)
 
+def main():
+    if not os.path.exists(INPUT_FILE):
+        print(f"❌ Input file not found: {INPUT_FILE}")
+        return
+
+    processed_domains = get_processed_domains()
+    print(f"🟡 Already processed: {len(processed_domains)}")
+
+    first_chunk = True
+    for chunk in pd.read_csv(INPUT_FILE, chunksize=CHUNK_SIZE):
+        print(f"🔹 Processing new chunk of size: {len(chunk)}")
+        base_columns = chunk.columns.tolist()
+        ns_columns = [f'nslookup{q}' for q in NS_TYPES]
+        all_columns = base_columns + ns_columns
+
+        process_chunk(chunk, processed_domains, all_columns)
+
 if __name__ == '__main__':
     main()
-
