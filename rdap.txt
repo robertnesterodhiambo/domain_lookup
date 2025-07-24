@@ -1,0 +1,5 @@
+https://rdap.sidn.nl/domain/003.nl,nl
+https://rdap.verisign.com/com/v1/domain/example.com,com
+https://rdap.nic.moe/domain/example.moe
+
+
