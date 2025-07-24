@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 INPUT_CSV = 'nslookup.csv'
 OUTPUT_CSV = 'page_count.csv'
-MAX_THREADS = 20  # Adjust based on your machine/network capacity
+MAX_THREADS = 200  # Adjust based on your machine/network capacity
 CHUNK_SIZE = 5000
 PRINT_TO_TERMINAL = False  # Set True to print output rows to terminal
 PRINT_CMD_OUTPUT = True    # Set True to print wget command output
