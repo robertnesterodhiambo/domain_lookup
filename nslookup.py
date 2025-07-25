@@ -6,6 +6,7 @@ import os
 import threading
 from concurrent.futures import ThreadPoolExecutor
 import re
+import csv  # <-- Import csv for quoting constants
 
 INPUT_FILE = 'domain_count.csv'
 OUTPUT_FILE = 'nslookup.csv'
@@ -77,7 +78,7 @@ def parse_nslookup_output(qtype, output):
             if match:
                 results.append(match.group(1).strip())
 
-    return ', '.join(results) if results else ''
+    return ' | '.join(results) if results else ''
 
 def run_nslookups(domain):
     result = {}
@@ -95,12 +96,11 @@ def run_nslookups(domain):
             result[f'nslookup{qtype}'] = parsed
 
             if qtype == 'A' and parsed:
-                a_addresses = [addr for addr in parsed.split(', ') if not skip_address(addr)]
+                a_addresses = [addr for addr in parsed.split(' | ') if not skip_address(addr)]
 
         except Exception as e:
             result[f'nslookup{qtype}'] = f"Error: {e}"
 
-    # PTR lookup for each valid A address
     ptr_results = []
     for address in a_addresses:
         try:
@@ -120,15 +120,42 @@ def run_nslookups(domain):
         except Exception as e:
             ptr_results.append(f"Error: {e}")
 
-    result['nslookupPTR'] = ', '.join(ptr_results) if ptr_results else ''
+    result['nslookupPTR'] = ' | '.join(ptr_results) if ptr_results else ''
 
     return result
+
+def run_dmarc_lookup(domain):
+    dmarc_domain = f"_dmarc.{domain}"
+    try:
+        lookup = subprocess.run(
+            ['nslookup', '-q=TXT', dmarc_domain],
+            capture_output=True,
+            text=True,
+            timeout=8
+        )
+        lines = lookup.stdout.splitlines()
+        results = []
+        for line in lines:
+            if '\t' in line and 'text = "' in line:
+                parts = line.split('text = "')
+                if len(parts) > 1:
+                    text_value = parts[1].rstrip('"').strip()
+                    results.append(text_value)
+        return ' | '.join(results) if results else ''
+    except Exception as e:
+        return f"Error: {e}"
 
 def save_result(row_data, all_columns):
     with LOCK:
         file_exists = os.path.exists(OUTPUT_FILE)
         df = pd.DataFrame([row_data], columns=all_columns)
-        df.to_csv(OUTPUT_FILE, mode='a', index=False, header=not file_exists)
+        df.to_csv(
+            OUTPUT_FILE,
+            mode='a',
+            index=False,
+            header=not file_exists,
+            quoting=csv.QUOTE_ALL   # <-- This quotes all fields, protecting commas and special chars inside
+        )
 
         global counter
         counter += 1
@@ -137,6 +164,9 @@ def save_result(row_data, all_columns):
 def process_row(row, all_columns):
     domain = str(row['domain']).strip()
     ns_data = run_nslookups(domain)
+    dmarc_data = run_dmarc_lookup(domain)
+    ns_data['nslookuptxt_dmarc'] = dmarc_data
+
     full_data = dict(row)
     full_data.update(ns_data)
     save_result(full_data, all_columns)
@@ -169,7 +199,7 @@ def main():
     for chunk in pd.read_csv(INPUT_FILE, chunksize=CHUNK_SIZE):
         print(f"🔹 Processing new chunk of size: {len(chunk)}")
         base_columns = chunk.columns.tolist()
-        ns_columns = [f'nslookup{q}' for q in NS_TYPES] + ['nslookupPTR']
+        ns_columns = [f'nslookup{q}' for q in NS_TYPES] + ['nslookupPTR', 'nslookuptxt_dmarc']
         all_columns = base_columns + ns_columns
 
         process_chunk(chunk, processed_domains, all_columns)
