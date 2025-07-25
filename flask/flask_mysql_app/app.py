@@ -14,7 +14,7 @@ os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 def get_unique_values(column):
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
-    query = f"SELECT DISTINCT {column} FROM Axxes WHERE {column} IS NOT NULL AND {column} != ''"
+    query = f"SELECT DISTINCT {column} FROM complete WHERE {column} IS NOT NULL AND {column} != ''"
     cursor.execute(query)
     results = [row[0] for row in cursor.fetchall()]
     cursor.close()
@@ -24,8 +24,8 @@ def get_unique_values(column):
 @app.route('/', methods=['GET'])
 def index():
     tlds = get_unique_values('tld')
-    registrars = get_unique_values('registrar')
-    countries = get_unique_values('registrant_country')
+    registrars = get_unique_values('registrar_name')
+    countries = get_unique_values('registrar_country')
     return render_template(
         'index.html',
         tlds=tlds,
@@ -36,7 +36,7 @@ def index():
 @app.route('/download', methods=['POST'])
 def download():
     tld = request.form.get('tld')
-    registrar = request.form.get('registrar')
+    registrar = request.form.get('registrar_name')
     country = request.form.get('country')
 
     print("Download requested with filters:", tld, registrar, country)
@@ -48,15 +48,15 @@ def download():
         conditions.append("tld = %s")
         values.append(tld)
     if registrar:
-        conditions.append("registrar = %s")
+        conditions.append("registrar_name = %s")
         values.append(registrar)
     if country:
-        conditions.append("registrant_country = %s")
+        conditions.append("registrar_country = %s")
         values.append(country)
 
     where_clause = "WHERE " + " AND ".join(conditions) if conditions else ""
 
-    query = f"SELECT * FROM Axxes {where_clause}"
+    query = f"SELECT * FROM complete {where_clause}"
     print("Query:", query)
     print("Values:", values)
 
@@ -70,7 +70,7 @@ def download():
     # Query to get count of unique domains per tld with same filters
     count_query = f"""
         SELECT tld, COUNT(DISTINCT domain) AS site_count
-        FROM nslookup
+        FROM complete
         {where_clause}
         GROUP BY tld
     """
