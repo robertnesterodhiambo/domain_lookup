@@ -1,8 +1,11 @@
+#!/usr/bin/env python3
+
 import subprocess
 import pandas as pd
 import os
 import threading
 from concurrent.futures import ThreadPoolExecutor
+import re
 
 INPUT_FILE = 'domain_count.csv'
 OUTPUT_FILE = 'nslookup.csv'
@@ -10,6 +13,7 @@ THREADS = 99
 LOCK = threading.Lock()
 CHUNK_SIZE = 50000
 
+NS_TYPES = ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'TXT', 'SRV', 'SOA']
 counter = 0  # global progress tracker
 
 def get_processed_domains():
@@ -21,25 +25,104 @@ def get_processed_domains():
     except Exception:
         return set()
 
+def skip_address(addr):
+    addr = addr.strip()
+    return addr.startswith('127.0.0.53') or addr.startswith('127.0.0.1') or addr == '127.0.0.53'
+
+def parse_nslookup_output(qtype, output):
+    lines = output.splitlines()
+    results = []
+
+    if qtype in ['A', 'AAAA']:
+        for line in lines:
+            match = re.search(r'Address:\s*(.+)', line)
+            if match:
+                addr = match.group(1).strip()
+                if not skip_address(addr):
+                    results.append(addr)
+
+    elif qtype == 'CNAME':
+        for line in lines:
+            match = re.search(r'canonical name = (.+)', line)
+            if match:
+                results.append(match.group(1).strip())
+
+    elif qtype == 'MX':
+        for line in lines:
+            match = re.search(r'mail exchanger = (.+)', line)
+            if match:
+                results.append(match.group(1).strip())
+
+    elif qtype == 'NS':
+        for line in lines:
+            match = re.search(r'nameserver = (.+)', line)
+            if match:
+                results.append(match.group(1).strip())
+
+    elif qtype == 'TXT':
+        for line in lines:
+            match = re.search(r'text = "(.+)"', line)
+            if match:
+                results.append(match.group(1).strip())
+
+    elif qtype == 'SRV':
+        for line in lines:
+            match = re.search(r'mail addr = (.+)', line)
+            if match:
+                results.append(match.group(1).strip())
+
+    elif qtype == 'SOA':
+        for line in lines:
+            match = re.search(r'serial = (.+)', line)
+            if match:
+                results.append(match.group(1).strip())
+
+    return ', '.join(results) if results else ''
+
 def run_nslookups(domain):
-    try:
-        lookup = subprocess.run(
-            ['nslookup', domain],
-            capture_output=True,
-            text=True,
-            timeout=8
-        )
-        output = lookup.stdout
-        addresses = []
-        for line in output.splitlines():
-            line = line.strip()
-            if line.startswith('Address:'):
-                ip = line.split('Address:')[1].strip()
-                addresses.append(ip)
-        addresses_str = ', '.join(addresses) if addresses else ''
-        return {'nslookupAddress': addresses_str}
-    except Exception as e:
-        return {'nslookupAddress': f"Error: {e}"}
+    result = {}
+    a_addresses = []
+
+    for qtype in NS_TYPES:
+        try:
+            lookup = subprocess.run(
+                ['nslookup', '-q=' + qtype, domain],
+                capture_output=True,
+                text=True,
+                timeout=8
+            )
+            parsed = parse_nslookup_output(qtype, lookup.stdout)
+            result[f'nslookup{qtype}'] = parsed
+
+            if qtype == 'A' and parsed:
+                a_addresses = [addr for addr in parsed.split(', ') if not skip_address(addr)]
+
+        except Exception as e:
+            result[f'nslookup{qtype}'] = f"Error: {e}"
+
+    # PTR lookup for each valid A address
+    ptr_results = []
+    for address in a_addresses:
+        try:
+            lookup = subprocess.run(
+                ['nslookup', address],
+                capture_output=True,
+                text=True,
+                timeout=8
+            )
+            lines = lookup.stdout.splitlines()
+            for line in lines:
+                match_name = re.search(r'Name:\s*(.+)', line)
+                if match_name:
+                    name = match_name.group(1).strip()
+                    if not skip_address(name):
+                        ptr_results.append(name)
+        except Exception as e:
+            ptr_results.append(f"Error: {e}")
+
+    result['nslookupPTR'] = ', '.join(ptr_results) if ptr_results else ''
+
+    return result
 
 def save_result(row_data, all_columns):
     with LOCK:
@@ -66,7 +149,6 @@ def process_chunk(chunk, processed_domains, all_columns):
         print("All domains in this chunk are already processed. Skipping chunk.")
         return
 
-    # Your domain prioritization logic unchanged
     exact_nl = remaining[remaining['domain'].str.match(r'^[^.]+\.(nl)$', na=False)]
     sub_nl = remaining[remaining['domain'].str.match(r'^.+\.(.+\.)?nl$', na=False) & ~remaining['domain'].str.match(r'^[^.]+\.(nl)$', na=False)]
     others = remaining[~remaining.index.isin(exact_nl.index) & ~remaining.index.isin(sub_nl.index)]
@@ -87,7 +169,7 @@ def main():
     for chunk in pd.read_csv(INPUT_FILE, chunksize=CHUNK_SIZE):
         print(f"🔹 Processing new chunk of size: {len(chunk)}")
         base_columns = chunk.columns.tolist()
-        ns_columns = ['nslookupAddress']  # Only this column now
+        ns_columns = [f'nslookup{q}' for q in NS_TYPES] + ['nslookupPTR']
         all_columns = base_columns + ns_columns
 
         process_chunk(chunk, processed_domains, all_columns)
