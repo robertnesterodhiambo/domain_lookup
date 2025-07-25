@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta charset="UTF-8">
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Geluk - gedicht door Lotte</title>
+	<meta name="keywords" content="Gedicht, gedichten, gedichtje, gedichtjes, geluk, blijdschap, leren" />
+	<meta name="p:domain_verify" content="634e73068540492d9e5fea57de8b8021" />
+	<meta name="google-site-verification" content="hj2VlSa04CHtfPtCqDcNRzutSZmDXjmOfpx5NB8Sqos" />
+	<meta name="description" content="Op 1001 gedichten staan de leukste gedichten en gedichtjes, meld je aan en voeg ook jouw gedichten toe. Lees ook het gedicht 'Geluk'!" />
+	<meta name="robots" content="index, follow" />
+			
+	<base href="https://1001gedichten.nl/" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9607008006084851"
+     crossorigin="anonymous"></script>
+	<meta name="msapplication-TileColor" content="#da532c">
+	<meta name="theme-color" content="#ffffff">
+	<!-- <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="36bd4a49-7ba1-412c-9eb2-3653344c57c2" data-blockingmode="auto" type="text/javascript"></script> -->
+	<script>
+		(function(window) {
+			var prevErrors = [];
+			var originalWindowErrorCallback = window.onerror;
+
+			function reportError(errorMessage, url, lineNumber, columnNumber, errorObject) {
+				if (errorMessage == "Script error." && url == "" && lineNumber == 0 && columnNumber == 0) {
+					return;
+				}
+				var exceptionDescription = errorMessage;
+				if (errorObject != null && typeof errorObject !== 'undefined' && typeof errorObject.message !== 'undefined') {
+					exceptionDescription = errorObject.message;
+				}
+				exceptionDescription += ' @ ' + url + ':' + lineNumber + ':' + columnNumber;
+
+				if (errorObject != null && typeof errorObject !== 'undefined' && typeof errorObject.stack !== 'undefined') {
+					exceptionDescription += '. Stack: ' + errorObject.stack;
+				}
+				ga('send', 'exception', {
+					'exDescription': exceptionDescription,
+					'exFatal': false,
+					'appName': '1001gedichten.nl',
+					'appVersion': '1.0'
+				});
+			}
+			window.onerror = function customErrorHandler(errorMessage, url, lineNumber, columnNumber, errorObject) {
+				if (typeof ga === 'function') {
+					reportError(errorMessage, url, lineNumber, columnNumber, errorObject);
+				} else {
+					prevErrors.push({
+						errorMessage: errorMessage,
+						url: url,
+						lineNumber: lineNumber,
+						columnNumber: columnNumber,
+						errorObject: errorObject
+					});
+				}
+				if (typeof originalWindowErrorCallback === 'function') {
+					try {
+						return originalWindowErrorCallback(errorMessage, url, lineNumber, columnNumber, errorObject);
+					} catch (err) {
+
+					}
+				}
+				return false;
+			};
+			window.prevErrorsInterval = setInterval(function() {
+				if (typeof ga != 'function') {
+					return;
+				}
+				clearInterval(window.prevErrorsInterval);
+				var e;
+				while (null != (e = prevErrors.pop())) {
+					reportError(e.errorMessage, e.url, e.lineNumber, e.columnNumber, e.errorObject);
+				}
+			}, 1000);
+		})(window);
+	</script>
+	<!-- <script src="https://js.gleam.io/oi-nb3Ust61.js" async="async"></script> -->
+	<!--<script src="https://hq.volomedia.com/vm-aplpxl.js" async="async"></script>-->
+	<!-- <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+	<script>
+		var OneSignal = window.OneSignal || [];
+		OneSignal.push(function() {
+			OneSignal.init({
+				appId: "2b21610f-8bbc-44e0-aeee-63be8a78abff",
+			});
+		});
+	</script> -->
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<link href="static/css/style.min.css?v=7" rel="stylesheet" type="text/css" />
+	<script>
+		(function() {
+			var cx = '016113424163059816509:_maspom7ffc';
+			var gcse = document.createElement('script');
+			gcse.type = 'text/javascript';
+			gcse.async = true;
+			gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(gcse, s);
+		})();
+	</script>
+	
+	<script src="https://1001gedichten.nl/cmp/stub.bundle.js"></script>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<script>
+		(adsbygoogle = window.adsbygoogle || []).push({
+			google_ad_client: "ca-pub-9607008006084851",
+			enable_page_level_ads: true
+		});
+	</script>
+
+	<meta name="google-site-verification" content="engSI3WJudkY03XxnT5YvGIQCyZY7TbKuSfjQtp0P6Q" />
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-2145328-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+
+		function gtag() {
+			dataLayer.push(arguments);
+		}
+		gtag('js', new Date());
+
+		gtag('config', 'UA-2145328-1');
+	</script>
+
+</head>
+
+<body class="" data-userlevel="0">
+	<main>
+		<header>
+			<div class="container">
+				<div class="row">
+					<div id="headerTitle" class="col-md-12 col-sm-14">
+						<h2 style="dusplay:none !important;">1001 Gedichten</h2>
+						<a href="/" title="Gedichten"><img src="static/images/1001gedichten.png" class="img-responsive" alt="1001 gedichten" /></a>
+					</div>
+					<div id="headerLoggedin" class="col-md-12 col-sm-10">
+													<div class="loginBox">
+								<form action="inloggen/" method="post">
+									<fieldset>
+										<h3>Zet ook uw gedichten op 1001Gedichten.nl</h3>
+										<h4>Heeft u nog geen account? <a href="registreren/">Meld u gratis aan!</a></h4>
+										<div class="row">
+											<div class="col-md-8"><input type="text" class="text1" name="username" value="Gebruikersnaam" onfocus="this.value='';" /></div>
+											<div class="col-md-8"><input type="password" class="text1" name="password" value="Wachtwoord" onfocus="this.value='';" /></div>
+											<div class="col-md-8"><input type="submit" name="submit" class="button" value="Login" /></div>
+										</div>
+										<label style="font-size: 10px; display: block; margin-top: 0px;"><input type="checkbox" name="keep_alive" value="true" style="position: relative; top: 3px; left: 4px; margin-right: 5px;" /> Laat mij hier 14 dagen ingelogd blijven!</label>
+									</fieldset>
+								</form>
+							</div>
+											</div>
+				</div>
+			</div>
+		</header>
+		<div class="container">
+			<div class="row">
+				<nav class="navbar navbar-default">
+					<div class="container-fluid">
+						<div class="navbar-header">
+							<a id="openCat" class="hidden-lg hidden-sm hidden-md categoryShow">Bekijk categorie&euml;n</a>
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+								<span class="sr-only">Open/sluit navigatie</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+						</div>
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav">
+																<li class="linkLogin"><a href="zoeken/">Gedichten zoeken</a>
+																	<li class="linkLogin"><a href="inloggen/">Inloggen</a>
+								<li><a href="gedichtenwedstrijd/">Gedichtenwedstrijd</a></li>
+														<li><a href="boeken/">Gedichtenbundels</a></li>
+							<li><a href="bekende-dichters/">Bekende dichters</a></li>
+							<li><a href="forum/">Forum</a></li>
+							</ul>
+							<form class="navbar-form navbar-right" action="zoek/" role="search">
+								<div class="form-group">
+									<input type="text" class="form-control" name="q" placeholder="Bijv. 'rozen verwelken'" value="">
+								</div>
+								<button type="submit" class="btn btn-default"></button>
+							</form>
+						</div><!-- /.navbar-collapse -->
+					</div><!-- /.container-fluid -->
+				</nav>
+				<div style="margin-bottom:30px;" class="hidden-sm hidden-lg"></div>
+			</div><!-- /.row -->
+		</div><!-- /.container -->
+		<div class="container">
+							<div class="row" style="background: #fff;">
+					<div class="banner-home-wide" style="display: block !important;height: 280px !important;">
+
+						<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+						<!-- 1001gedichten.nl template top banner responsive -->
+						<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9607008006084851" data-ad-slot="4308317119" data-ad-format="auto" data-full-width-responsive="true"></ins>
+						<script>
+							(adsbygoogle = window.adsbygoogle || []).push({});
+						</script>
+
+					</div>
+				</div>
+						<div id="rowContent" class="row">
+				<div id="sidebarLeft" class="col-md-5 col-sm-5 col-xs-24">
+										<div class="gedichtenBox">
+						<h3 class="hidden-xs">Gedichten</h3>
+					</div>
+					<div class="linkBox" id="poemCats">
+						<ul>
+															<li><a href="beterschaps-gedichten/" title="Beterschaps gedichten">Beterschaps gedichten</a></li>
+																<li><a href="christelijke-gedichten/" title="Christelijke gedichten">Christelijke gedichten</a></li>
+																<li><a href="cultuur-gedichten/" title="Cultuur gedichten">Cultuur gedichten</a></li>
+																<li><a href="dating-gedichten/" title="Dating gedichten">Dating gedichten</a></li>
+																<li><a href="dieren-gedichten/" title="Dieren gedichten">Dieren gedichten</a></li>
+																<li><a href="duitse-gedichten/" title="Duitse gedichten">Duitse gedichten</a></li>
+																<li><a href="engelse-gedichten/" title="Engelse gedichten">Engelse gedichten</a></li>
+																<li><a href="familie-gedichten/" title="Familie gedichten">Familie gedichten</a></li>
+																<li><a href="franse-gedichten/" title="Franse gedichten">Franse gedichten</a></li>
+																<li><a href="geboorte-gedichten/" title="Geboorte gedichten">Geboorte gedichten</a></li>
+																<li><a href="humor-gedichten/" title="Humor gedichten">Humor gedichten</a></li>
+																<li><a href="huwelijks-gedichten/" title="Huwelijks gedichten">Huwelijks gedichten</a></li>
+																<li><a href="islamitische-gedichten/" title="Islamitische gedichten">Islamitische gedichten</a></li>
+																<li><a href="kerst-gedichten/" title="Kerst gedichten">Kerst gedichten</a></li>
+																<li><a href="kinder-gedichten/" title="Kinder gedichten">Kinder gedichten</a></li>
+																<li><a href="levens-gedichten/" title="Levens gedichten">Levens gedichten</a></li>
+																<li><a href="liefdes-gedichten/" title="Liefdes gedichten">Liefdes gedichten</a></li>
+																<li><a href="moederdag-gedichten/" title="Moederdag gedichten">Moederdag gedichten</a></li>
+																<li><a href="muziek-gedichten/" title="Muziek gedichten">Muziek gedichten</a></li>
+																<li><a href="natuur-en-seizoen-gedichten/" title="Natuur &amp; seizoen gedichten">Natuur &amp; seizoen gedichten</a></li>
+																<li><a href="nieuwjaars-gedichten/" title="Nieuwjaars gedichten">Nieuwjaars gedichten</a></li>
+																<li class="active"><a href="overige-gedichten/" title="Overige gedichten">Overige gedichten</a></li>
+																<li><a href="overlijdens-gedichten/" title="Overlijdens gedichten">Overlijdens gedichten</a></li>
+																<li><a href="paas-gedichten/" title="Paas gedichten">Paas gedichten</a></li>
+																<li><a href="school-gedichten/" title="School gedichten">School gedichten</a></li>
+																<li><a href="sinterklaas-gedichten/" title="Sinterklaas gedichten">Sinterklaas gedichten</a></li>
+																<li><a href="sms-gedichten/" title="Sms gedichten">Sms gedichten</a></li>
+																<li><a href="sport-gedichten/" title="Sport gedichten">Sport gedichten</a></li>
+																<li><a href="vaderdag-gedichten/" title="Vaderdag gedichten">Vaderdag gedichten</a></li>
+																<li><a href="valentijn-gedichten/" title="Valentijn gedichten">Valentijn gedichten</a></li>
+																<li><a href="verdriet-gedichten/" title="Verdriet gedichten">Verdriet gedichten</a></li>
+																<li><a href="verjaardags-gedichten/" title="Verjaardags gedichten">Verjaardags gedichten</a></li>
+																<li><a href="vriendschaps-gedichten/" title="Vriendschaps gedichten">Vriendschaps gedichten</a></li>
+																<li><a href="vrolijke-gedichten/" title="Vrolijke gedichten">Vrolijke gedichten</a></li>
+														</ul>
+					</div>
+					<br />
+					<div class="hidden-xs">
+						<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+						<!-- 1001gedichten.nl responsive sidebar -->
+						<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9607008006084851" data-ad-slot="4262751867" data-ad-format="auto" data-full-width-responsive="true"></ins>
+						<script>
+							(adsbygoogle = window.adsbygoogle || []).push({});
+						</script>
+						<br />
+					</div>
+				</div>
+				<div id="contentRight" class="col-md-19 col-sm-18 col-xs-24" >
+											<div class="banner-home-top" style="height: 280px !important;">
+
+							<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+							<!-- 1001gedichten.nl homepage top banner responsive -->
+							<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9607008006084851" data-ad-slot="6695860621" data-ad-format="auto" data-full-width-responsive="true"></ins>
+							<script>
+								(adsbygoogle = window.adsbygoogle || []).push({});
+							</script>
+
+						</div>
+					<div class="npBox"><span class="hidden-sm hidden-xs">U bent hier:</span><ul><li><a href="/" title="Gedichten">Gedichten</a>  &raquo; </li>
+<li><a href="overige-gedichten/" title="Overige gedichten">Overige gedichten</a>  &raquo; </li>
+<li><a href="/gedichten/42492/geluk/" title="Gedicht 'Geluk'">Gedicht 'Geluk'</a> </li>
+</ul></div>					<div class="clear"></div>
+						<div style="float: right; margin-top: -23px;"><a href="afdrukken/42492/" target="_blank" rel="nofollow"><img src="static/images/icon-print.png" alt="Print dit gedicht" /></a></div>
+	<div class="row itemBox">
+		<div class="poetLeft col-md-18">
+							<a class="pre" href="gedichten/7703/halloweennacht/" title="Halloweennacht">vorige gedicht</a>
+							<a class="next" href="gedichten/90885/rozen-zijn-rood-viooltje-zijn-blauw-vers/" title="rozen-zijn-rood-viooltje-zijn-blauw-vers">volgende gedicht</a>
+						<div class="clear"></div>
+
+			<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" type="text/javascript" data-cookieconsent="marketing"></script> <!-- 1001gedichten.nl single poem middle banner responsive --> <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9607008006084851" data-ad-slot="2336759890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+			<script type="text/javascript" data-cookieconsent="marketing">
+				(adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
+
+			<div class="clear"></div>
+			<div style="background: #fdfdfd; padding-left: 20px; margin: 10px 0px; border-right: 1px solid #fdfdfd;">
+				<h1 style="color: #65645f; text-align: center;">Geluk</h1>
+				<p style="color: #65645f; text-align: c
