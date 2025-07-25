@@ -1,8 +1,14 @@
 {
   "dependencies": {
     "axe-core": "^4.10.3",
+    "axios": "^1.11.0",
     "csv-parser": "^3.2.0",
+    "csv-stringify": "^6.6.0",
+    "csv-writer": "^1.6.0",
     "exceljs": "^4.4.0",
+    "fs": "^0.0.1-security",
+    "hpagent": "^1.2.0",
+    "playwright": "^1.54.1",
     "puppeteer": "^24.15.0"
   }
 }

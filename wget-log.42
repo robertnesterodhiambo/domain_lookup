@@ -1,0 +1,247 @@
+2025-07-25 14:26:56 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fkosten-van-rechtsbijstand%2F&format=xml 200 ‘wget-log.42’
+unlink: No such file or directory
+2025-07-25 14:26:57 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1020 [9708/9708] -> "1020.tmp.tmp" [1]
+2025-07-25 14:26:59 URL:https://01-diefstal-advocaat.nl/diefstal-310-sr-advocaat-nodig/ [51051/51051] -> "index.html?p=1020.tmp.tmp" [1]
+2025-07-25 14:27:00 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fdiefstal-310-sr-advocaat-nodig%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:00 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fdiefstal-310-sr-advocaat-nodig%2F&format=xml 200 OK
+unlink: No such file or directory
+utime(index.html.tmp.tmp): No such file or directory
+2025-07-25 14:27:01 URL:https://01-diefstal-advocaat.nl/wegneming-bij-diefstal/ [42940/42940] -> "index.html.tmp.tmp" [1]
+index.html.tmp.tmp: No such file or directory
+unlink: No such file or directory
+2025-07-25 14:27:02 URL:https://01-diefstal-advocaat.nl/goed-bij-diefstal-verduistering-heling/ [42933/42933] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:02 URL:https://01-diefstal-advocaat.nl/goed-dat-aan-een-ander-toebehoort/ [44988/44988] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:02 URL:https://01-diefstal-advocaat.nl/oogmerk-van-wederrechtelijke-toe-eigening/ [43713/43713] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:03 URL:https://01-diefstal-advocaat.nl/wanneer-diefstal/ [57322/57322] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:03 URL:https://01-diefstal-advocaat.nl/straffen-diefstal/ [49547/49547] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:04 URL:https://01-diefstal-advocaat.nl/category/diefstal-informatie/ [46837/46837] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:04 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/991 [11663/11663] -> "991.tmp.tmp" [1]
+2025-07-25 14:27:06 URL:https://01-diefstal-advocaat.nl/verduistering-321-sr-advocaat-nodig/ [52968/52968] -> "index.html?p=991.tmp.tmp" [1]
+2025-07-25 14:27:07 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fverduistering-321-sr-advocaat-nodig%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:08 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fverduistering-321-sr-advocaat-nodig%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:09 URL:https://01-diefstal-advocaat.nl/diefstal-brandstof-of-verduistering-brandstof/ [46552/46552] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:09 URL:https://01-diefstal-advocaat.nl/verduistering-in-dienstbetrekking/ [45151/45151] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:10 URL:https://01-diefstal-advocaat.nl/res-nullius/ [47340/47340] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:10 URL:https://01-diefstal-advocaat.nl/wanneer-verduistering/ [52594/52594] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:11 URL:https://01-diefstal-advocaat.nl/straffen-verduistering/ [48768/48768] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:11 URL:https://01-diefstal-advocaat.nl/category/verduistering-informatie/ [42550/42550] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:12 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/989 [5147/5147] -> "989.tmp.tmp" [1]
+2025-07-25 14:27:14 URL:https://01-diefstal-advocaat.nl/heling-advocaat-nodig/ [46447/46447] -> "index.html?p=989.tmp.tmp" [1]
+2025-07-25 14:27:15 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fheling-advocaat-nodig%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:16 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fheling-advocaat-nodig%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:16 URL:https://01-diefstal-advocaat.nl/straffen-heling/ [48320/48320] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:17 URL:https://01-diefstal-advocaat.nl/wanneer-heling/ [46293/46293] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:17 URL:https://01-diefstal-advocaat.nl/category/heling-informatie/ [36371/36371] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:18 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1241 [3420/3420] -> "1241.tmp.tmp" [1]
+2025-07-25 14:27:20 URL:https://01-diefstal-advocaat.nl/diefstal-met-geweld/ [45047/45047] -> "index.html?p=1241.tmp.tmp" [1]
+2025-07-25 14:27:21 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fdiefstal-met-geweld%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:22 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fdiefstal-met-geweld%2F&format=xml 200 OK
+unlink: No such file or directory
+utime(index.html.tmp.tmp): No such file or directory
+2025-07-25 14:27:23 URL:https://01-diefstal-advocaat.nl/gewapende-overval-312-sr-advocaat-nodig/ [42896/42896] -> "index.html.tmp.tmp" [1]
+index.html.tmp.tmp: No such file or directory
+unlink: No such file or directory
+2025-07-25 14:27:23 URL:https://01-diefstal-advocaat.nl/wanneer-diefstal-geweld/ [42421/42421] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:24 URL:https://01-diefstal-advocaat.nl/straffen-diefstal-geweld-afpersing/ [48454/48454] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:24 URL:https://01-diefstal-advocaat.nl/category/diefstal-met-geweld-informatie/ [36051/36051] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:25 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1325 [2323/2323] -> "1325.tmp.tmp" [1]
+2025-07-25 14:27:27 URL:https://01-diefstal-advocaat.nl/goed-bij-diefstal-verduistering-heling/ [42933/42933] -> "index.html?p=1325.tmp.tmp" [1]
+2025-07-25 14:27:28 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fgoed-bij-diefstal-verduistering-heling%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:29 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fgoed-bij-diefstal-verduistering-heling%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:29 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1318 [4474/4474] -> "1318.tmp.tmp" [1]
+2025-07-25 14:27:31 URL:https://01-diefstal-advocaat.nl/goed-dat-aan-een-ander-toebehoort/ [44988/44988] -> "index.html?p=1318.tmp.tmp" [1]
+2025-07-25 14:27:32 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fgoed-dat-aan-een-ander-toebehoort%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:33 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fgoed-dat-aan-een-ander-toebehoort%2F&format=xml 200 OK
+unlink: No such file or directory
+utime(index.html.tmp.tmp): No such file or directory
+2025-07-25 14:27:33 URL:https://01-diefstal-advocaat.nl/eigendom-bij-diefstal-wie-is-eigenaar/ [43263/43263] -> "index.html.tmp.tmp" [1]
+unlink: No such file or directory
+2025-07-25 14:27:34 URL: https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1071 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:36 URL:https://01-diefstal-advocaat.nl/oogmerk-van-wederrechtelijke-toe-eigening/ [43713/43713] -> "index.html?p=1071.tmp.tmp" [1]
+2025-07-25 14:27:39 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Foogmerk-van-wederrechtelijke-toe-eigening%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:40 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Foogmerk-van-wederrechtelijke-toe-eigening%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:41 URL: https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1134 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:43 URL:https://01-diefstal-advocaat.nl/wanneer-diefstal/ [57322/57322] -> "index.html?p=1134.tmp.tmp" [1]
+2025-07-25 14:27:44 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fwanneer-diefstal%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:45 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fwanneer-diefstal%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:46 URL: https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1147 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:48 URL:https://01-diefstal-advocaat.nl/straffen-diefstal/ [49547/49547] -> "index.html?p=1147.tmp.tmp" [1]
+2025-07-25 14:27:49 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fstraffen-diefstal%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:50 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fstraffen-diefstal%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:51 URL:https://01-diefstal-advocaat.nl/straffen-winkeldiefstal/ [55241/55241] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:51 URL:https://01-diefstal-advocaat.nl/straffen-diefstal-fiets/ [48539/48539] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:52 URL:https://01-diefstal-advocaat.nl/straffen-diefstal-bromfiets-snorfiets-scooter/ [43512/43512] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:52 URL:https://01-diefstal-advocaat.nl/diefstal-auto-advocaat-nodig/ [48655/48655] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:52 URL:https://01-diefstal-advocaat.nl/category/diefstal-informatie/feed/ [26755/26755] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:53 URL: https://01-diefstal-advocaat.nl/wp-json/wp/v2/categories/1 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:54 URL:https://01-diefstal-advocaat.nl/verschil-diefstal-en-oplichting/ [38136/38136] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:54 URL:https://01-diefstal-advocaat.nl/pinnen-rekening-gestolen-bankpas-levert-diefstal-middel-valse-sleutel-op/ [36898/36898] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:55 URL:https://01-diefstal-advocaat.nl/goederen-meenemen-als-onderpand-is-vaak-we-diefstal/ [43282/43282] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:55 URL:https://01-diefstal-advocaat.nl/strafverzwarende-diefstal-art-311-sr/ [50605/50605] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:55 URL:https://01-diefstal-advocaat.nl/wanneer-gekwalificeerde-diefstal/ [48283/48283] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:56 URL:https://01-diefstal-advocaat.nl/straffen-gekwalificeerde-diefstal/ [50433/50433] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:56 URL:https://01-diefstal-advocaat.nl/category/gekwalificeerde-diefstal-informatie/ [34846/34846] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:57 URL:https://01-diefstal-advocaat.nl/tanken-priveauto-met-tankpas-werkgever-levert-diefstal-met-valse-sleutel-op/ [36434/36434] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:57 URL:https://01-diefstal-advocaat.nl/diefstal-elektriciteit-pas-bij-daadwerkelijk-verbruik/ [37313/37313] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:57 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1306 [5059/5059] -> "1306.tmp.tmp" [1]
+2025-07-25 14:28:01 URL:https://01-diefstal-advocaat.nl/diefstal-brandstof-of-verduistering-brandstof/ [46552/46552] -> "index.html?p=1306.tmp.tmp" [1]
+2025-07-25 14:28:02 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fdiefstal-brandstof-of-verduistering-brandstof%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:02 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fdiefstal-brandstof-of-verduistering-brandstof%2F&format=xml 200 OK
+unlink: No such file or directory
+utime(index.html.tmp.tmp): No such file or directory
+2025-07-25 14:28:03 URL:https://01-diefstal-advocaat.nl/tanken-zonder-betalen/ [48279/48279] -> "index.html.tmp.tmp" [1]
+unlink: No such file or directory
+2025-07-25 14:28:04 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1062 [4695/4695] -> "1062.tmp.tmp" [1]
+2025-07-25 14:28:06 URL:https://01-diefstal-advocaat.nl/verduistering-in-dienstbetrekking/ [45151/45151] -> "index.html?p=1062.tmp.tmp" [1]
+2025-07-25 14:28:07 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fverduistering-in-dienstbetrekking%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:08 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fverduistering-in-dienstbetrekking%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:08 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1111 [7115/7115] -> "1111.tmp.tmp" [1]
+2025-07-25 14:28:10 URL:https://01-diefstal-advocaat.nl/res-nullius/ [47340/47340] -> "index.html?p=1111.tmp.tmp" [1]
+2025-07-25 14:28:11 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fres-nullius%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:12 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fres-nullius%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:12 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1179 [11432/11432] -> "1179.tmp.tmp" [1]
+2025-07-25 14:28:15 URL:https://01-diefstal-advocaat.nl/wanneer-verduistering/ [52594/52594] -> "index.html?p=1179.tmp.tmp" [1]
+2025-07-25 14:28:16 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fwanneer-verduistering%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:16 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fwanneer-verduistering%2F&format=xml 200 OK
+unlink: No such file or directory
+utime(index.html.tmp.tmp): No such file or directory
+2025-07-25 14:28:17 URL:https://01-diefstal-advocaat.nl/toebehoren-verduistering-321-sr/ [58623/58623] -> "index.html.tmp.tmp" [1]
+unlink: No such file or directory
+2025-07-25 14:28:18 URL:https://01-diefstal-advocaat.nl/enkel-bezit-gevonden-identiteitsbewijs-levert-geen-verduistering-op/ [39060/39060] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:28:18 URL:https://01-diefstal-advocaat.nl/verschil-diefstal-en-verduistering/ [52499/52499] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:28:18 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1181 [7781/7781] -> "1181.tmp.tmp" [1]
+2025-07-25 14:28:20 URL:https://01-diefstal-advocaat.nl/straffen-verduistering/ [48768/48768] -> "index.html?p=1181.tmp.tmp" [1]
+2025-07-25 14:28:21 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fstraffen-verduistering%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:22 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fstraffen-verduistering%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:23 URL:https://01-diefstal-advocaat.nl/category/verduistering-informatie/feed/ [19156/19156] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:28:23 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/categories/43 [676/676] -> "43.tmp.tmp" [1]
+2025-07-25 14:28:24 URL:https://01-diefstal-advocaat.nl/niet-terugbrengen-gehuurde-of-geleende-auto-levert-niet-altijd-verduistering-op/ [37910/37910] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:28:24 URL:https://01-diefstal-advocaat.nl/wel-terechte-bewezenverklaring-van-verduistering-bij-niet-terugbrengen-auto/ [39200/39200] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:28:24 URL:https://01-diefstal-advocaat.nl/verkoop-van-geleasde-auto-is-geen-verduistering/ [36816/36816] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:28:25 URL:https://01-diefstal-advocaat.nl/niet-terugbetalen-lening-levert-onder-omstandigheden-verduistering-op/ [37941/37941] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:28:26 URL: https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1194 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:28 URL:https://01-diefstal-advocaat.nl/straffen-heling/ [48320/48320] -> "index.html?p=1194.tmp.tmp" [1]
+2025-07-25 14:28:29 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fstraffen-heling%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:30 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fstraffen-heling%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:31 URL: https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1192 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:33 URL:https://01-diefstal-advocaat.nl/wanneer-heling/ [46293/46293] -> "index.html?p=1192.tmp.tmp" [1]
+2025-07-25 14:28:34 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fwanneer-heling%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:35 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fwanneer-heling%2F&format=xml 200 OK
+unlink: No such file or directory
+utime(index.html.tmp.tmp): No such file or directory
+2025-07-25 14:28:35 URL:https://01-diefstal-advocaat.nl/schuldheling/ [44573/44573] -> "index.html.tmp.tmp" [1]
+unlink: No such file or directory
+2025-07-25 14:28:36 URL:https://01-diefstal-advocaat.nl/category/heling-informatie/feed/ [8462/8462] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:28:37 URL: https://01-diefstal-advocaat.nl/wp-json/wp/v2/categories/51 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:37 URL:https://01-diefstal-advocaat.nl/vrijspraak-opzettelijk-voordeel-trekken-uitkeringsfraude-partner/ [42070/42070] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:28:38 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1243 [1570/1570] -> "1243.tmp.tmp" [1]
+2025-07-25 14:28:40 URL:https://01-diefstal-advocaat.nl/wanneer-diefstal-geweld/ [42421/42421] -> "index.html?p=1243.tmp.tmp" [1]
+2025-07-25 14:28:41 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fwanneer-diefstal-geweld%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:42 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fwanneer-diefstal-geweld%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:42 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/pages/1246 [7041/7041] -> "1246.tmp.tmp" [1]
+2025-07-25 14:28:44 URL:https://01-diefstal-advocaat.nl/straffen-diefstal-geweld-afpersing/ [48454/48454] -> "index.html?p=1246.tmp.tmp" [1]
+2025-07-25 14:28:45 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fstraffen-diefstal-geweld-afpersing%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:46 URL: https://01-diefstal-advocaat.nl/wp-json/oembed/1.0/embed?url=https%3A%2F%2F01-diefstal-advocaat.nl%2Fstraffen-diefstal-geweld-afpersing%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-25 14:28:47 URL:https://01-diefstal-advocaat.nl/straffen-winkeldiefstal-met-geweld/ [45543/45543] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:28:47 URL:https://01-diefstal-advocaat.nl/straffen-voor-straatroof/ [44421/44421] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:28:47 URL:https://01-diefstal-advocaat.nl/straffen-bij-gewapende-overvallen/ [47033/47033] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:28:48 URL:https://01-diefstal-advocaat.nl/category/diefstal-met-geweld-informatie/feed/ [4487/4487] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:28:48 URL:https://01-diefstal-advocaat.nl/wp-json/wp/v2/categories/40 [694/694] -> "40.tmp.tmp" [1]
+2025-07-25 14:28:49 URL:https://01-diefstal-advocaat.nl/lagere-straf-gewapende-overval-omdat-fatale-afloop-niet-was-voorzien-spijt-en-jeugdigheid/ [38172/38172] -> "index.html.tmp.tmp" [1]
+Found 54 broken links.
+
+https://01-diefstal-advocaat.nl/nl/transformatie/waarden-ontdekken
+https://01-diefstal-advocaat.nl/nl/transformatie/leiderschap
+https://01-diefstal-advocaat.nl/nl/transformatie/communicatie
+https://01-diefstal-advocaat.nl/assets/img/favicons/apple-touch-icon-60x60.png
+https://01-diefstal-advocaat.nl/nl/waardenonderzoek/persoonlijk-waarden-onderzoek
+https://01-diefstal-advocaat.nl/assets/img/favicons/apple-touch-icon-152x152.png
+https://01-diefstal-advocaat.nl/assets/img/favicons/apple-touch-icon-76x76.png
+https://01-diefstal-advocaat.nl/wp-content/themes/advocatenstart/assets/fonts/din_light-webfont.eot
+https://01-diefstal-advocaat.nl/assets/plugins/line-icons/line-icons.css
+https://01-diefstal-advocaat.nl/assets/img/favicons/apple-touch-icon-114x114.png
+https://01-diefstal-advocaat.nl/wp-content/themes/advocatenstart/assets/fonts/din-bold-webfont.svg
+https://01-diefstal-advocaat.nl/assets/plugins/font-awesome/css/font-awesome.min.css
+https://01-diefstal-advocaat.nl/assets/img/flags/lang-de.svg
+https://01-diefstal-advocaat.nl/nl/updates
+https://01-diefstal-advocaat.nl/assets/img/favicons/apple-touch-icon-144x144.png
+https://01-diefstal-advocaat.nl/assets/css/custom_domainlist.css?2022121201
+https://01-diefstal-advocaat.nl/wp-content/themes/advocatenstart/assets/fonts/din_light-webfont.eot?
+https://01-diefstal-advocaat.nl/assets/css/pages/page_log_reg_v1.css
+https://01-diefstal-advocaat.nl/assets/css/custom.css?2025012001
+https://01-diefstal-advocaat.nl/assets/img/flags/lang-en.svg
+https://01-diefstal-advocaat.nl/assets/plugins/font-awesome/css/font-awesome-6.7.1.min.css
+https://01-diefstal-advocaat.nl/assets/plugins/bootstrap/css/bootstrap.min.css
+https://01-diefstal-advocaat.nl/assets/img/favicons/favicon.ico
+https://01-diefstal-advocaat.nl/nl/transformatie/trainingen
+https://01-diefstal-advocaat.nl/assets/plugins/font-awesome/css/brands.min.css
+https://01-diefstal-advocaat.nl/assets/img/favicons/favicon-32x32.png
+https://01-diefstal-advocaat.nl/nl/digital/digital-marketing
+https://01-diefstal-advocaat.nl/nl/digital/websites-en-webshops
+https://01-diefstal-advocaat.nl/assets/css/style.css?2022011302
+https://01-diefstal-advocaat.nl/wp-content/themes/advocatenstart/assets/fonts/dinrg-webfont.svg
+https://01-diefstal-advocaat.nl/wp-content/themes/advocatenstart/assets/fonts/din_light-webfont.woff
+https://01-diefstal-advocaat.nl/assets/css/themes/default.css
+https://01-diefstal-advocaat.nl/nl/digital/scrum-en-sprints
+https://01-diefstal-advocaat.nl/assets/img/fonk-rank-new.png
+https://01-diefstal-advocaat.nl/assets/img/favicons/apple-touch-icon-120x120.png
+https://01-diefstal-advocaat.nl/nl/digital/employee-engagement-platform
+https://01-diefstal-advocaat.nl/assets/img/favicons/android-chrome-192x192.png
+https://01-diefstal-advocaat.nl/assets/img/fonk-award_2024.png
+https://01-diefstal-advocaat.nl/nl/waardenonderzoek/organisatie-waarden-onderzoek
+https://01-diefstal-advocaat.nl/assets/img/favicons/favicon-16x16.png
+https://01-diefstal-advocaat.nl/nl/transformatie/veranderen
+https://01-diefstal-advocaat.nl/css/style.css
+https://01-diefstal-advocaat.nl/nl/waardenonderzoek/entropie
+https://01-diefstal-advocaat.nl/assets/css/shariff-custom.css
+https://01-diefstal-advocaat.nl/wp-content/themes/advocatenstart/assets/fonts/din_light-webfont.svg
+https://01-diefstal-advocaat.nl/assets/img/favicons/apple-touch-icon-180x180.png
+https://01-diefstal-advocaat.nl/wp-content/themes/advocatenstart/assets/fonts/din_light-webfont.ttf
+https://01-diefstal-advocaat.nl/assets/img/favicons/manifest.json
+https://01-diefstal-advocaat.nl/assets/img/favicons/apple-touch-icon-72x72.png
+https://01-diefstal-advocaat.nl/assets/img/favicons/apple-touch-icon-57x57.png
+https://01-diefstal-advocaat.nl/assets/css/shariff.min.css?2024010801
+https://01-diefstal-advocaat.nl/nl/digital/digitale-toegankelijkheid-websites
+https://01-diefstal-advocaat.nl/de/domain/073.nl
+https://01-diefstal-advocaat.nl/assets/img/favicons/favicon-96x96.png
+
+FINISHED --2025-07-25 14:28:49--
+Total wall clock time: 4m 4s
+Downloaded: 120 files, 4.2M in 27s (161 KB/s)

@@ -1,0 +1,57 @@
+2025-07-25 14:26:55 URL: https://1001spreuken.nl/blog/wp-content/themes/volo/assets/fonts/cardo/cardo_normal_400.woff2 200 ‘wget-log.34’
+unlink: No such file or directory
+2025-07-25 14:26:55 URL: https://1001spreuken.nl/blog/wp-content/themes/volo/assets/fonts/cardo/cardo_italic_400.woff2 200 OK
+unlink: No such file or directory
+2025-07-25 14:26:56 URL: https://1001spreuken.nl/blog/wp-content/themes/volo/assets/fonts/cardo/cardo_normal_700.woff2 200 OK
+unlink: No such file or directory
+2025-07-25 14:26:59 URL:https://1001spreuken.nl/blog/ [56697] -> "blog.tmp.tmp" [1]
+2025-07-25 14:26:59 URL: https://1001spreuken.nl/blog/wp-content/uploads/2024/04/Pretpark.jpg 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:00 URL: https://1001spreuken.nl/blog/wp-content/uploads/2024/04/Pretpark-300x199.jpg 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:02 URL:https://1001spreuken.nl/blog/tag/pretparken/ [49479] -> "index.html.tmp.tmp" [1]
+index.html.tmp.tmp: No such file or directory
+unlink: No such file or directory
+2025-07-25 14:27:02 URL: https://1001spreuken.nl/blog/wp-includes/js/dist/hooks.min.js?ver=4d63a3d491d11ffd8ac6 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:03 URL: https://1001spreuken.nl/blog/wp-includes/js/dist/i18n.min.js?ver=5e580eb46a90c2b997e6 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:03 URL: https://1001spreuken.nl/blog/wp-content/plugins/contact-form-7/includes/swv/js/index.js?ver=6.0.3 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:03 URL: https://1001spreuken.nl/blog/wp-content/plugins/contact-form-7/includes/js/index.js?ver=6.0.3 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:04 URL: https://1001spreuken.nl/blog/wp-json/wp/v2/posts/14 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:08 URL:https://1001spreuken.nl/blog/wat-is-een-smartshop-eigenlijk/ [57878] -> "index.html?p=14.tmp.tmp" [1]
+2025-07-25 14:27:09 URL: https://1001spreuken.nl/blog/wp-json/oembed/1.0/embed?url=https%3A%2F%2F1001spreuken.nl%2Fblog%2Fwat-is-een-smartshop-eigenlijk%2F 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:10 URL: https://1001spreuken.nl/blog/wp-json/oembed/1.0/embed?url=https%3A%2F%2F1001spreuken.nl%2Fblog%2Fwat-is-een-smartshop-eigenlijk%2F&format=xml 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:10 URL: https://1001spreuken.nl/blog/wp-content/uploads/2024/03/Smartshop.jpg 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:11 URL: https://1001spreuken.nl/blog/wp-content/uploads/2024/03/Smartshop-300x188.jpg 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:13 URL:https://1001spreuken.nl/blog/author/admin/ [52295] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:16 URL:https://1001spreuken.nl/blog/category/uitjes/ [49493] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:18 URL:https://1001spreuken.nl/blog/category/algemeen/ [49339] -> "index.html.tmp.tmp" [1]
+2025-07-25 14:27:19 URL: https://1001spreuken.nl/blog/author/admin/feed/ 200 OK
+unlink: No such file or directory
+https://1001spreuken.nl/blog/wp-json/wp/v2/users/1:
+Remote file does not exist -- broken link!!!
+2025-07-25 14:27:21 URL: https://1001spreuken.nl/blog/category/uitjes/feed/ 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:22 URL: https://1001spreuken.nl/blog/wp-json/wp/v2/categories/5 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:23 URL: https://1001spreuken.nl/blog/category/algemeen/feed/ 200 OK
+unlink: No such file or directory
+2025-07-25 14:27:24 URL: https://1001spreuken.nl/blog/wp-json/wp/v2/categories/1 200 OK
+unlink: No such file or directory
+Found 3 broken links.
+
+https://1001spreuken.nl/blog/wp-json/wp/v2/users/1
+https://1001spreuken.nl/cdn-cgi/l/email-protection
+https://1001spreuken.nl/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js
+
+FINISHED --2025-07-25 14:27:24--
+Total wall clock time: 1m 30s
+Downloaded: 33 files, 733K in 0.5s (1.53 MB/s)

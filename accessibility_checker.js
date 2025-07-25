@@ -1,173 +1,123 @@
 const fs = require('fs');
-const puppeteer = require('puppeteer');
-const ExcelJS = require('exceljs');
-const os = require('os');
 const csv = require('csv-parser');
+const { chromium } = require('playwright');
+const { HttpProxyAgent, HttpsProxyAgent } = require("hpagent");
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
-const axeSource = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
+const CHUNK_SIZE = 500;
+const CSV_FILE = 'page_count.csv';
+const OUTPUT_FILE = 'accessibility_results.csv';
+const AXE_SCRIPT = fs.readFileSync('axe.min.js', 'utf-8');
 
-const inputFile = 'page_count.csv';
-const outputFile = 'complete.xlsx';
-const completedFile = 'completed.txt';
+// Your proxy configurations
+const proxies = [
+  {
+    protocol: 'http',
+    proxy: 'http://geonode_USER1:PASS1@proxy.geonode.io:9000'
+  },
+  {
+    protocol: 'https',
+    proxy: 'http://geonode_USER2:PASS2@proxy.geonode.io:9000'
+  }
+];
 
-const CONCURRENCY = 5;
-const BATCH_SAVE_INTERVAL = 50;
-const GOTO_TIMEOUT = 10000;
-const CHUNK_SIZE = 50000;
+// Setup CSV writer (headers inferred dynamically)
+let headersWritten = false;
+let csvWriter;
 
-const delay = ms => new Promise(res => setTimeout(res, ms));
+function initCsvWriter(headers) {
+  csvWriter = createCsvWriter({
+    path: OUTPUT_FILE,
+    header: headers.map(h => ({ id: h, title: h })),
+    append: fs.existsSync(OUTPUT_FILE),
+    alwaysQuote: true  // ✅ Ensures commas and special chars in fields are preserved correctly
+  });
+}
 
-async function tryLoadWithFallback(page, domain, maxRetries = 2) {
-  const tryUrls = [`https://${domain}`, `http://${domain}`];
-
-  for (let url of tryUrls) {
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: GOTO_TIMEOUT });
-        return url;
-      } catch (e) {
-        if (attempt === maxRetries) {
-          return null;
+function readDomainsInChunks(file, chunkSize) {
+  return new Promise((resolve) => {
+    const results = [];
+    const chunks = [];
+    fs.createReadStream(file)
+      .pipe(csv())
+      .on('headers', (headers) => {
+        if (!headersWritten) {
+          headersWritten = true;
+          initCsvWriter([...headers, 'passCount', 'violations', 'incomplete', 'status', 'error']);
         }
-        await delay(2000);
+      })
+      .on('data', (data) => {
+        results.push(data);
+        if (results.length === chunkSize) {
+          chunks.push(results.splice(0));
+        }
+      })
+      .on('end', () => {
+        if (results.length) chunks.push(results);
+        resolve(chunks);
+      });
+  });
+}
+
+async function scanDomain(record, browser) {
+  let url = record.domain.startsWith('http') ? record.domain : `http://${record.domain}`;
+  for (let i = 0; i < proxies.length; i++) {
+    const context = await browser.newContext({
+      proxy: {
+        server: proxies[i].proxy
       }
-    }
-  }
+    });
 
-  return null;
-}
+    try {
+      const page = await context.newPage();
+      await page.goto(url, { timeout: 15000 });
 
-async function analyzeDomain(browser, rowData, completedDomains) {
-  const domain = rowData[0].trim().toLowerCase();
+      await page.addScriptTag({ content: AXE_SCRIPT });
 
-  if (!domain || completedDomains.has(domain)) {
-    console.log(`⏭️ Skipping ${domain}`);
-    return null;
-  }
+      const result = await page.evaluate(async () => await axe.run());
 
-  const page = await browser.newPage();
-  let result = {
-    domain,
-    violations: 'UNREACHABLE',
-    passes: 'UNREACHABLE',
-    incomplete: 'UNREACHABLE',
-    inapplicable: 'UNREACHABLE',
-    rowData
-  };
+      const output = {
+        ...record,
+        passCount: result.passes.length,
+        violations: result.violations.length,
+        incomplete: result.incomplete.length,
+        status: '✅',
+        error: ''
+      };
 
-  try {
-    const url = await tryLoadWithFallback(page, domain);
-    if (url) {
-      console.log(`✅ Loaded: ${url}`);
-      await page.evaluate(axeSource);
-      const axeResults = await page.evaluate(async () => await axe.run());
+      console.log(`✅ ${url}`);
+      await csvWriter.writeRecords([output]);
+      await context.close();
+      return;
+    } catch (err) {
+      console.log(`❌ ${url} with proxy ${proxies[i].protocol}`);
+      console.log(`   Error: ${err.message}`);
+      await context.close();
 
-      result.violations = axeResults.violations.length;
-      result.passes = axeResults.passes.length;
-      result.incomplete = axeResults.incomplete.length;
-      result.inapplicable = axeResults.inapplicable.length;
-    } else {
-      console.log(`❌ Failed to load ${domain}`);
-    }
-  } catch (err) {
-    console.log(`❌ Error with ${domain}: ${err.message}`);
-  }
-
-  await page.close();
-  return result;
-}
-
-async function processChunk(browser, chunk, outputSheet, completedDomains, outputWorkbook) {
-  let index = 0;
-  let processed = 0;
-
-  while (index < chunk.length) {
-    const batch = chunk.slice(index, index + CONCURRENCY);
-    const results = await Promise.all(batch.map(rowData => analyzeDomain(browser, rowData, completedDomains)));
-
-    for (const res of results) {
-      if (res === null) continue;
-      outputSheet.addRow([
-        ...res.rowData,
-        res.violations,
-        res.passes,
-        res.incomplete,
-        res.inapplicable
-      ]);
-      fs.appendFileSync(completedFile, res.domain + os.EOL);
-      completedDomains.add(res.domain);
-      processed++;
-    }
-
-    index += CONCURRENCY;
-
-    if (processed % BATCH_SAVE_INTERVAL === 0 || index >= chunk.length) {
-      await outputWorkbook.xlsx.writeFile(outputFile);
-      console.log(`💾 Batch saved after ${processed} domains`);
+      if (i === proxies.length - 1) {
+        const output = {
+          ...record,
+          passCount: '',
+          violations: '',
+          incomplete: '',
+          status: '❌',
+          error: err.message
+        };
+        await csvWriter.writeRecords([output]);
+      }
     }
   }
 }
 
 (async () => {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
+  const domainChunks = await readDomainsInChunks(CSV_FILE, CHUNK_SIZE);
+  const browser = await chromium.launch({ headless: true });
 
-  // Load completed
-  let completedDomains = new Set();
-  if (fs.existsSync(completedFile)) {
-    const content = fs.readFileSync(completedFile, 'utf8');
-    completedDomains = new Set(content.split('\n').map(d => d.trim().toLowerCase()).filter(Boolean));
-  }
-
-  // Load/create output
-  const outputWorkbook = new ExcelJS.Workbook();
-  let outputSheet;
-  if (fs.existsSync(outputFile)) {
-    await outputWorkbook.xlsx.readFile(outputFile);
-    outputSheet = outputWorkbook.worksheets[0];
-  } else {
-    outputSheet = outputWorkbook.addWorksheet('Results');
-  }
-
-  // Stream input in chunks
-  let chunk = [];
-  let headerAdded = false;
-
-  const processStream = async () => {
-    if (chunk.length === 0) return;
-
-    // If header not yet added, do so
-    if (!headerAdded) {
-      outputSheet.addRow([...chunk[0], 'Violations', 'Passes', 'Incomplete', 'Inapplicable']);
-      headerAdded = true;
-      chunk.shift(); // remove header row from processing
+  for (const chunk of domainChunks) {
+    for (const record of chunk) {
+      await scanDomain(record, browser);
     }
-
-    console.log(`🚀 Processing chunk of ${chunk.length} domains`);
-    await processChunk(browser, chunk, outputSheet, completedDomains, outputWorkbook);
-    chunk = [];
-  };
-
-  await new Promise((resolve, reject) => {
-    fs.createReadStream(inputFile)
-      .pipe(csv())
-      .on('data', (row) => {
-        const rowData = Object.values(row);
-        chunk.push(rowData);
-        if (chunk.length >= CHUNK_SIZE) {
-          processStream().catch(reject);
-        }
-      })
-      .on('end', async () => {
-        await processStream();
-        resolve();
-      })
-      .on('error', reject);
-  });
+  }
 
   await browser.close();
-  await outputWorkbook.xlsx.writeFile(outputFile);
-  console.log(`🎉 All chunks processed. Output written to ${outputFile}`);
 })();
