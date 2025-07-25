@@ -10,7 +10,6 @@ THREADS = 99
 LOCK = threading.Lock()
 CHUNK_SIZE = 50000
 
-NS_TYPES = ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR', 'TXT', 'SRV', 'SOA']
 counter = 0  # global progress tracker
 
 def get_processed_domains():
@@ -23,19 +22,24 @@ def get_processed_domains():
         return set()
 
 def run_nslookups(domain):
-    result = {}
-    for qtype in NS_TYPES:
-        try:
-            lookup = subprocess.run(
-                ['nslookup', '-q=' + qtype, domain],
-                capture_output=True,
-                text=True,
-                timeout=8
-            )
-            result[f'nslookup{qtype}'] = lookup.stdout.strip()
-        except Exception as e:
-            result[f'nslookup{qtype}'] = f"Error: {e}"
-    return result
+    try:
+        lookup = subprocess.run(
+            ['nslookup', domain],
+            capture_output=True,
+            text=True,
+            timeout=8
+        )
+        output = lookup.stdout
+        addresses = []
+        for line in output.splitlines():
+            line = line.strip()
+            if line.startswith('Address:'):
+                ip = line.split('Address:')[1].strip()
+                addresses.append(ip)
+        addresses_str = ', '.join(addresses) if addresses else ''
+        return {'nslookupAddress': addresses_str}
+    except Exception as e:
+        return {'nslookupAddress': f"Error: {e}"}
 
 def save_result(row_data, all_columns):
     with LOCK:
@@ -62,6 +66,7 @@ def process_chunk(chunk, processed_domains, all_columns):
         print("All domains in this chunk are already processed. Skipping chunk.")
         return
 
+    # Your domain prioritization logic unchanged
     exact_nl = remaining[remaining['domain'].str.match(r'^[^.]+\.(nl)$', na=False)]
     sub_nl = remaining[remaining['domain'].str.match(r'^.+\.(.+\.)?nl$', na=False) & ~remaining['domain'].str.match(r'^[^.]+\.(nl)$', na=False)]
     others = remaining[~remaining.index.isin(exact_nl.index) & ~remaining.index.isin(sub_nl.index)]
@@ -79,11 +84,10 @@ def main():
     processed_domains = get_processed_domains()
     print(f"🟡 Already processed: {len(processed_domains)}")
 
-    first_chunk = True
     for chunk in pd.read_csv(INPUT_FILE, chunksize=CHUNK_SIZE):
         print(f"🔹 Processing new chunk of size: {len(chunk)}")
         base_columns = chunk.columns.tolist()
-        ns_columns = [f'nslookup{q}' for q in NS_TYPES]
+        ns_columns = ['nslookupAddress']  # Only this column now
         all_columns = base_columns + ns_columns
 
         process_chunk(chunk, processed_domains, all_columns)
