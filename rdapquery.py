@@ -36,6 +36,11 @@ def parse_rdap_json(rdap_data):
     parsed['tech_name'] = ''
     parsed['tech_email'] = ''
     parsed['registrar_name'] = ''
+    parsed['registrar_addr'] = ''
+    parsed['registrar_city'] = ''
+    parsed['registrar_region'] = ''
+    parsed['registrar_postalcode'] = ''
+    parsed['registrar_country'] = ''
     parsed['reseller_name'] = ''
 
     for entity in rdap_data.get('entities', []):
@@ -44,11 +49,24 @@ def parse_rdap_json(rdap_data):
 
         name = ''
         email = ''
+        addr = ''
+        city = ''
+        region = ''
+        postalcode = ''
+        country = ''
         for item in vcard:
             if item[0] == 'fn':
                 name = item[3]
             elif item[0] == 'email':
                 email = item[3]
+            elif item[0] == 'adr':
+                adr_fields = item[3]
+                if isinstance(adr_fields, list) and len(adr_fields) >= 7:
+                    addr = adr_fields[2]  # street address
+                    city = adr_fields[3]  # city
+                    region = adr_fields[4]  # region/state
+                    postalcode = adr_fields[5]  # postal code
+                    country = adr_fields[6]  # country
 
         if 'registrant' in roles:
             parsed['registrant_name'] = name
@@ -61,6 +79,11 @@ def parse_rdap_json(rdap_data):
             parsed['tech_email'] = email
         elif 'registrar' in roles:
             parsed['registrar_name'] = name
+            parsed['registrar_addr'] = addr
+            parsed['registrar_city'] = city
+            parsed['registrar_region'] = region
+            parsed['registrar_postalcode'] = postalcode
+            parsed['registrar_country'] = country
         elif 'reseller' in roles:
             parsed['reseller_name'] = name
 
@@ -88,8 +111,9 @@ def load_last_chunk():
 parsed_columns = [
     'ldhName', 'status', 'registration_date', 'last_changed_date', 'last_update_rdap_date',
     'registrant_name', 'registrant_email', 'admin_name', 'admin_email',
-    'tech_name', 'tech_email', 'registrar_name', 'reseller_name',
-    'nameservers', 'secureDNS_delegationSigned'
+    'tech_name', 'tech_email', 'registrar_name',
+    'registrar_addr', 'registrar_city', 'registrar_region', 'registrar_postalcode', 'registrar_country',
+    'reseller_name', 'nameservers', 'secureDNS_delegationSigned'
 ]
 
 if not os.path.exists(OUTPUT_CSV):
