@@ -1,11 +1,16 @@
 import pandas as pd
 import requests
 import os
+from concurrent.futures import ThreadPoolExecutor
+import threading
 
 INPUT_CSV = 'data_rdap.csv'
 OUTPUT_CSV = 'data_rdap_parsed.csv'
 CHUNK_SIZE = 50000
-LAST_CHUNK_FILE = 'last_chunk.txt'  # file to store last processed chunk number
+LAST_CHUNK_FILE = 'last_chunk.txt'
+THREADS = 2
+
+write_lock = threading.Lock()
 
 def parse_rdap_json(rdap_data):
     parsed = {}
@@ -13,7 +18,6 @@ def parse_rdap_json(rdap_data):
     parsed['ldhName'] = rdap_data.get('ldhName', '')
     parsed['status'] = ','.join(rdap_data.get('status', []))
 
-    # Events
     events = rdap_data.get('events', [])
     parsed['registration_date'] = ''
     parsed['last_changed_date'] = ''
@@ -28,7 +32,6 @@ def parse_rdap_json(rdap_data):
         elif action == 'last update of RDAP database':
             parsed['last_update_rdap_date'] = date
 
-    # Entities
     parsed['registrant_name'] = ''
     parsed['registrant_email'] = ''
     parsed['admin_name'] = ''
@@ -62,11 +65,11 @@ def parse_rdap_json(rdap_data):
             elif item[0] == 'adr':
                 adr_fields = item[3]
                 if isinstance(adr_fields, list) and len(adr_fields) >= 7:
-                    addr = adr_fields[2]  # street address
-                    city = adr_fields[3]  # city
-                    region = adr_fields[4]  # region/state
-                    postalcode = adr_fields[5]  # postal code
-                    country = adr_fields[6]  # country
+                    addr = adr_fields[2]
+                    city = adr_fields[3]
+                    region = adr_fields[4]
+                    postalcode = adr_fields[5]
+                    country = adr_fields[6]
 
         if 'registrant' in roles:
             parsed['registrant_name'] = name
@@ -87,11 +90,9 @@ def parse_rdap_json(rdap_data):
         elif 'reseller' in roles:
             parsed['reseller_name'] = name
 
-    # Nameservers
     nameservers = [ns.get('ldhName', '') for ns in rdap_data.get('nameservers', [])]
     parsed['nameservers'] = ','.join(nameservers)
 
-    # SecureDNS
     parsed['secureDNS_delegationSigned'] = rdap_data.get('secureDNS', {}).get('delegationSigned', False)
 
     return parsed
@@ -122,9 +123,39 @@ if not os.path.exists(OUTPUT_CSV):
     pd.DataFrame(columns=output_columns).to_csv(OUTPUT_CSV, index=False)
 
 processed = pd.read_csv(OUTPUT_CSV)
-processed_links = set(processed['rdap_link'].tolist())
+processed_links = set(processed['rdap_link'].dropna().astype(str).tolist())
 
 start_chunk = load_last_chunk()
+
+def process_row(row):
+    link = row['rdap_link']
+    if link in processed_links:
+        print(f"Skipping already processed: {link}")
+        return
+
+    print(f"Processing: {link}")
+    try:
+        response = requests.get(link, timeout=10)
+        if response.status_code == 429:
+            print(f"Rate limit exceeded for {link}, skipping for now.")
+            return
+        elif response.status_code != 200:
+            print(f"Failed to fetch {link} with status {response.status_code}, skipping.")
+            return
+
+        rdap_json = response.json()
+        parsed = parse_rdap_json(rdap_json)
+
+        output_row = {col: row[col] for col in row.index}
+        output_row.update(parsed)
+
+        with write_lock:
+            pd.DataFrame([output_row]).to_csv(OUTPUT_CSV, mode='a', header=False, index=False)
+            processed_links.add(link)
+            print(f"Saved data for: {link}")
+
+    except Exception as e:
+        print(f"Error processing {link}: {e}")
 
 chunk_number = 0
 for chunk in pd.read_csv(INPUT_CSV, chunksize=CHUNK_SIZE):
@@ -135,7 +166,7 @@ for chunk in pd.read_csv(INPUT_CSV, chunksize=CHUNK_SIZE):
         continue
 
     print(f"\nProcessing chunk #{chunk_number} with {len(chunk)} rows")
-    print(chunk.head())  # show first 5 rows for debug
+    print(chunk.head())
 
     chunk = chunk[chunk['rdap_link'].notna()].copy()
     chunk['rdap_link'] = chunk['rdap_link'].astype(str)
@@ -143,37 +174,7 @@ for chunk in pd.read_csv(INPUT_CSV, chunksize=CHUNK_SIZE):
 
     chunk_sorted = pd.concat([chunk[chunk['tld'] == 'nl'], chunk[chunk['tld'] != 'nl']])
 
-    for _, row in chunk_sorted.iterrows():
-        link = row['rdap_link']
-        if link in processed_links:
-            print(f"Skipping already processed: {link}")
-            continue
+    with ThreadPoolExecutor(max_workers=THREADS) as executor:
+        executor.map(process_row, [row for _, row in chunk_sorted.iterrows()])
 
-        print(f"Processing: {link}")
-        try:
-            response = requests.get(link, timeout=10)
-            if response.status_code == 429:
-                print(f"Rate limit exceeded for {link}, skipping for now.")
-                continue
-            elif response.status_code != 200:
-                print(f"Failed to fetch {link} with status {response.status_code}, skipping.")
-                continue
-
-            rdap_json = response.json()
-            parsed = parse_rdap_json(rdap_json)
-
-            output_row = {col: row[col] for col in row.index}
-            output_row.update(parsed)
-
-            pd.DataFrame([output_row]).to_csv(OUTPUT_CSV, mode='a', header=False, index=False)
-
-            processed_links.add(link)
-
-            print(f"Saved data for: {link}")
-
-        except Exception as e:
-            print(f"Error processing {link}: {e}")
-            continue
-
-    # Save progress after chunk processed
     save_last_chunk(chunk_number)
