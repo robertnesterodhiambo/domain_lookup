@@ -4,43 +4,31 @@ import time
 import csv
 import random
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
 
 input_file = 'violations.csv'
 output_file = 'complete.csv'
 
-# Full list of 10 proxies
 proxy_credentials = [
-    "proxy.geonode.io:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302",
-    "proxy.geonode.io:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302",
-    "proxy.geonode.io:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302",
-    "proxy.geonode.io:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302",
-    "proxy.geonode.io:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302",
-    "proxy.geonode.io:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302",
-    "proxy.geonode.io:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302",
-    "proxy.geonode.io:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302",
-    "proxy.geonode.io:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302",
     "proxy.geonode.io:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302"
-]
+] * 10
 
-# Format proxies
 proxy_list = []
 for cred in proxy_credentials:
     host, port, user, password = cred.split(":")
     proxy_url = f"http://{user}:{password}@{host}:{port}"
-    proxy_list.append({
-        "http": proxy_url,
-        "https": proxy_url
-    })
+    proxy_list.append({"http": proxy_url, "https": proxy_url})
 
 geo_fields = ['city', 'region', 'country', 'loc', 'org', 'postal', 'timezone']
 ip_cache = {}
+cache_lock = Lock()
+write_lock = Lock()
 
-# Track already processed domains
 processed_domains = set()
 rows_collected = 0
 rows_skipped = 0
 
-# Load existing domains from complete.csv
 if os.path.exists(output_file):
     try:
         existing_df = pd.read_csv(output_file, usecols=['domain'])
@@ -66,66 +54,67 @@ def fetch_ipinfo_with_proxies(ip):
             continue
     return None
 
-# Write to output CSV incrementally
+def process_row(row_number, row, writer, processed_domains):
+    global rows_collected, rows_skipped
+    domain = str(row.get('domain', '')).strip()
+    print(f"📄 Processing row {row_number} - domain: {domain}")
+
+    if not domain or domain in processed_domains:
+        with write_lock:
+            rows_skipped += 1
+        return
+
+    nslookupA = row.get('nslookupA', '')
+    ip_list = [ip.strip() for ip in str(nslookupA).split('|') if ip.strip()] if pd.notna(nslookupA) else []
+    geo_data = {field: '' for field in geo_fields}
+
+    for ip in ip_list:
+        with cache_lock:
+            if ip in ip_cache:
+                geo_data = ip_cache[ip]
+                break
+
+        resp = fetch_ipinfo(ip)
+        if not (resp and resp.status_code == 200):
+            resp = fetch_ipinfo_with_proxies(ip)
+
+        if resp and resp.status_code == 200:
+            data = resp.json()
+            geo_data = {field: data.get(field, '') for field in geo_fields}
+            with cache_lock:
+                ip_cache[ip] = geo_data
+            break
+
+        with cache_lock:
+            ip_cache[ip] = geo_data
+
+        time.sleep(0.5)
+
+    for field in geo_fields:
+        row[field] = geo_data[field]
+
+    with write_lock:
+        writer.writerow(row.to_dict())
+        processed_domains.add(domain)
+        rows_collected += 1
+
 with open(output_file, mode='a', newline='', encoding='utf-8') as out_csv:
     writer = None
     file_empty = os.stat(output_file).st_size == 0
-    row_number = 0
 
-    for chunk in pd.read_csv(input_file, chunksize=100, quotechar='"', on_bad_lines='skip'):
-        for _, row in chunk.iterrows():
-            row_number += 1
-            domain = str(row.get('domain', '')).strip()
-            print(f"📄 Processing row {row_number} - domain: {domain}")
+    for chunk_number, chunk in enumerate(pd.read_csv(input_file, chunksize=100, quotechar='"', on_bad_lines='skip')):
+        if writer is None:
+            writer = csv.DictWriter(out_csv, fieldnames=chunk.columns.tolist() + geo_fields)
+            if file_empty:
+                writer.writeheader()
 
-            if not domain or domain in processed_domains:
-                rows_skipped += 1
-                continue
-
-            nslookupA = row.get('nslookupA', '')
-            ip_list = [ip.strip() for ip in str(nslookupA).split('|') if ip.strip()] if pd.notna(nslookupA) else []
-
-            geo_data = {field: '' for field in geo_fields}
-
-            for ip in ip_list:
-                if ip in ip_cache:
-                    geo_data = ip_cache[ip]
-                    break
-
-                # Try direct request
-                resp = fetch_ipinfo(ip)
-                if resp and resp.status_code == 200:
-                    data = resp.json()
-                    geo_data = {field: data.get(field, '') for field in geo_fields}
-                    ip_cache[ip] = geo_data
-                    break
-
-                # Try with proxy
-                resp = fetch_ipinfo_with_proxies(ip)
-                if resp and resp.status_code == 200:
-                    data = resp.json()
-                    geo_data = {field: data.get(field, '') for field in geo_fields}
-                    ip_cache[ip] = geo_data
-                    break
-
-                ip_cache[ip] = geo_data  # Cache failed attempt
-
-                time.sleep(0.5)
-
-            # Add geo fields to row
-            for field in geo_fields:
-                row[field] = geo_data[field]
-
-            # Initialize writer if needed
-            if writer is None:
-                writer = csv.DictWriter(out_csv, fieldnames=row.index)
-                if file_empty:
-                    writer.writeheader()
-
-            # Write row
-            writer.writerow(row.to_dict())
-            processed_domains.add(domain)
-            rows_collected += 1
+        with ThreadPoolExecutor(max_workers=206) as executor:
+            futures = [
+                executor.submit(process_row, idx + 1 + chunk_number * 100, row, writer, processed_domains.copy())
+                for idx, (_, row) in enumerate(chunk.iterrows())
+            ]
+            for future in as_completed(futures):
+                pass
 
 print(f"✅ Total collected now: {rows_collected}")
 print(f"⏩ Total skipped (already processed): {rows_skipped}")
