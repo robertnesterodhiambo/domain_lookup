@@ -1,294 +1,126 @@
 <!DOCTYPE html>
 <html lang="nl">
-
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<meta charset="UTF-8">
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-	<title>Geluk - gedicht door Lotte</title>
-	<meta name="keywords" content="Gedicht, gedichten, gedichtje, gedichtjes, geluk, blijdschap, leren" />
-	<meta name="p:domain_verify" content="634e73068540492d9e5fea57de8b8021" />
-	<meta name="google-site-verification" content="hj2VlSa04CHtfPtCqDcNRzutSZmDXjmOfpx5NB8Sqos" />
-	<meta name="description" content="Op 1001 gedichten staan de leukste gedichten en gedichtjes, meld je aan en voeg ook jouw gedichten toe. Lees ook het gedicht 'Geluk'!" />
-	<meta name="robots" content="index, follow" />
-			
-	<base href="https://1001gedichten.nl/" />
-	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-	<link rel="manifest" href="/site.webmanifest">
-	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9607008006084851"
-     crossorigin="anonymous"></script>
-	<meta name="msapplication-TileColor" content="#da532c">
-	<meta name="theme-color" content="#ffffff">
-	<!-- <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="36bd4a49-7ba1-412c-9eb2-3653344c57c2" data-blockingmode="auto" type="text/javascript"></script> -->
-	<script>
-		(function(window) {
-			var prevErrors = [];
-			var originalWindowErrorCallback = window.onerror;
+  
+  <meta charset='utf-8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1" id="wixDesktopViewport" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Wix.com Website Builder"/>
 
-			function reportError(errorMessage, url, lineNumber, columnNumber, errorObject) {
-				if (errorMessage == "Script error." && url == "" && lineNumber == 0 && columnNumber == 0) {
-					return;
-				}
-				var exceptionDescription = errorMessage;
-				if (errorObject != null && typeof errorObject !== 'undefined' && typeof errorObject.message !== 'undefined') {
-					exceptionDescription = errorObject.message;
-				}
-				exceptionDescription += ' @ ' + url + ':' + lineNumber + ':' + columnNumber;
+  <link rel="icon" sizes="192x192" href="https://static.wixstatic.com/media/28f011_03ab23e5da1b4496931a8bbe76f9b4e1%7Emv2.jpg/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/28f011_03ab23e5da1b4496931a8bbe76f9b4e1%7Emv2.jpg" type="image/jpeg"/>
+  <link rel="shortcut icon" href="https://static.wixstatic.com/media/28f011_03ab23e5da1b4496931a8bbe76f9b4e1%7Emv2.jpg/v1/fill/w_32%2Ch_32%2Clg_1%2Cusm_0.66_1.00_0.01/28f011_03ab23e5da1b4496931a8bbe76f9b4e1%7Emv2.jpg" type="image/jpeg"/>
+  <link rel="apple-touch-icon" href="https://static.wixstatic.com/media/28f011_03ab23e5da1b4496931a8bbe76f9b4e1%7Emv2.jpg/v1/fill/w_180%2Ch_180%2Clg_1%2Cusm_0.66_1.00_0.01/28f011_03ab23e5da1b4496931a8bbe76f9b4e1%7Emv2.jpg" type="image/jpeg"/>
 
-				if (errorObject != null && typeof errorObject !== 'undefined' && typeof errorObject.stack !== 'undefined') {
-					exceptionDescription += '. Stack: ' + errorObject.stack;
-				}
-				ga('send', 'exception', {
-					'exDescription': exceptionDescription,
-					'exFatal': false,
-					'appName': '1001gedichten.nl',
-					'appVersion': '1.0'
-				});
-			}
-			window.onerror = function customErrorHandler(errorMessage, url, lineNumber, columnNumber, errorObject) {
-				if (typeof ga === 'function') {
-					reportError(errorMessage, url, lineNumber, columnNumber, errorObject);
-				} else {
-					prevErrors.push({
-						errorMessage: errorMessage,
-						url: url,
-						lineNumber: lineNumber,
-						columnNumber: columnNumber,
-						errorObject: errorObject
-					});
-				}
-				if (typeof originalWindowErrorCallback === 'function') {
-					try {
-						return originalWindowErrorCallback(errorMessage, url, lineNumber, columnNumber, errorObject);
-					} catch (err) {
+  <!-- Safari Pinned Tab Icon -->
+  <!-- <link rel="mask-icon" href="https://static.wixstatic.com/media/28f011_03ab23e5da1b4496931a8bbe76f9b4e1%7Emv2.jpg/v1/fill/w_32%2Ch_32%2Clg_1%2Cusm_0.66_1.00_0.01/28f011_03ab23e5da1b4496931a8bbe76f9b4e1%7Emv2.jpg"> -->
 
-					}
-				}
-				return false;
-			};
-			window.prevErrorsInterval = setInterval(function() {
-				if (typeof ga != 'function') {
-					return;
-				}
-				clearInterval(window.prevErrorsInterval);
-				var e;
-				while (null != (e = prevErrors.pop())) {
-					reportError(e.errorMessage, e.url, e.lineNumber, e.columnNumber, e.errorObject);
-				}
-			}, 1000);
-		})(window);
-	</script>
-	<!-- <script src="https://js.gleam.io/oi-nb3Ust61.js" async="async"></script> -->
-	<!--<script src="https://hq.volomedia.com/vm-aplpxl.js" async="async"></script>-->
-	<!-- <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-	<script>
-		var OneSignal = window.OneSignal || [];
-		OneSignal.push(function() {
-			OneSignal.init({
-				appId: "2b21610f-8bbc-44e0-aeee-63be8a78abff",
-			});
-		});
-	</script> -->
-	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-	<link href="static/css/style.min.css?v=7" rel="stylesheet" type="text/css" />
-	<script>
-		(function() {
-			var cx = '016113424163059816509:_maspom7ffc';
-			var gcse = document.createElement('script');
-			gcse.type = 'text/javascript';
-			gcse.async = true;
-			gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
-			var s = document.getElementsByTagName('script')[0];
-			s.parentNode.insertBefore(gcse, s);
-		})();
-	</script>
+  <!-- Original trials -->
+  
+
+  <!-- Legacy Polyfills -->
+  <script nomodule="" src="https://static.parastorage.com/unpkg/core-js-bundle@3.2.1/minified.js"></script>
+  <script nomodule="" src="https://static.parastorage.com/unpkg/focus-within-polyfill@5.0.9/dist/focus-within-polyfill.js"></script>
+
+  <!-- Performance API Polyfills -->
+  <script>
+  (function () {
+    var noop = function noop() {};
+    if ("performance" in window === false) {
+      window.performance = {};
+    }
+    window.performance.mark = performance.mark || noop;
+    window.performance.measure = performance.measure || noop;
+    if ("now" in window.performance === false) {
+      var nowOffset = Date.now();
+      if (performance.timing && performance.timing.navigationStart) {
+        nowOffset = performance.timing.navigationStart;
+      }
+      window.performance.now = function now() {
+        return Date.now() - nowOffset;
+      };
+    }
+  })();
+  </script>
+
+  <!-- Globals Definitions -->
+  <script>
+    (function () {
+      var now = Date.now()
+      window.initialTimestamps = {
+        initialTimestamp: now,
+        initialRequestTimestamp: Math.round(performance.timeOrigin ? performance.timeOrigin : now - performance.now())
+      }
+
+      window.thunderboltTag = "libs-releases-GA-local"
+      window.thunderboltVersion = "1.15996.0"
+    })();
+  </script>
+
+  <!-- Essential Viewer Model -->
+  <script type="application/json" id="wix-essential-viewer-model">{"fleetConfig":{"fleetName":"wix-thunderbolt","type":"GA","code":0},"mode":{"qa":false,"enableTestApi":false,"debug":false,"ssrIndicator":false,"ssrOnly":false,"siteAssetsFallback":"enable","versionIndicator":false},"componentsLibrariesTopology":[{"artifactId":"editor-elements","namespace":"wixui","url":"https:\/\/static.parastorage.com\/services\/editor-elements\/1.14124.0"},{"artifactId":"editor-elements","namespace":"dsgnsys","url":"https:\/\/static.parastorage.com\/services\/editor-elements\/1.14124.0"}],"siteFeaturesConfigs":{"sessionManager":{"isRunningInDifferentSiteContext":false}},"language":{"userLanguage":"nl"},"siteAssets":{"clientTopology":{"mediaRootUrl":"https:\/\/static.wixstatic.com","staticMediaUrl":"https:\/\/static.wixstatic.com\/media","moduleRepoUrl":"https:\/\/static.parastorage.com\/unpkg","fileRepoUrl":"https:\/\/static.parastorage.com\/services","siteAssetsUrl":"https:\/\/siteassets.parastorage.com","pageJsonServerUrls":["https:\/\/pages.parastorage.com","https:\/\/staticorigin.wixstatic.com","https:\/\/www.030nailbar.nl","https:\/\/fallback.wix.com\/wix-html-editor-pages-webapp\/page"],"pathOfTBModulesInFileRepoForFallback":"wix-thunderbolt\/dist\/"}},"siteFeatures":["appMonitoring","assetsLoader","businessLogger","captcha","clickHandlerRegistrar","commonConfig","componentsLoader","componentsRegistry","consentPolicy","contentReflow","cyclicTabbing","dynamicPages","environmentWixCodeSdk","environment","locationWixCodeSdk","mpaNavigation","navigationManager","navigationPhases","ooi","pages","panorama","protectedPages","renderer","reporter","routerFetch","router","scrollRestoration","seoWixCodeSdk","seo","sessionManager","siteMembersWixCodeSdk","siteMembers","siteScrollBlocker","siteWixCodeSdk","speculationRules","stores","structureApi","thunderboltInitializer","tpaCommons","translations","usedPlatformApis","warmupData","windowMessageRegistrar","windowWixCodeSdk","wixCustomElementComponent","wixEmbedsApi","componentsReact","platform"],"site":{"externalBaseUrl":"https:\/\/www.030nailbar.nl","isSEO":false},"media":{"staticMediaUrl":"https:\/\/static.wixstatic.com\/media","mediaRootUrl":"https:\/\/static.wixstatic.com\/","staticVideoUrl":"https:\/\/video.wixstatic.com\/"},"requestUrl":"https:\/\/www.030nailbar.nl\/","rollout":{"siteAssetsVersionsRollout":false,"isDACRollout":0,"isTBRollout":false},"commonConfig":{"brand":"wix","host":"VIEWER","bsi":"","consentPolicy":{},"consentPolicyHeader":{},"siteRevision":"111","renderingFlow":"NONE","language":"nl","locale":"nl-nl"},"interactionSampleRatio":0.01,"dynamicModelUrl":"https:\/\/www.030nailbar.nl\/_api\/v2\/dynamicmodel","accessTokensUrl":"https:\/\/www.030nailbar.nl\/_api\/v1\/access-tokens","isExcludedFromSecurityExperiments":true,"experiments":{"specs.thunderbolt.hardenFetchAndXHR":true,"specs.thunderbolt.hardenStringAndNumber":true}}</script>
+  <script>window.viewerModel = JSON.parse(document.getElementById('wix-essential-viewer-model').textContent)</script>
+
+  <script>
+    window.commonConfig = viewerModel.commonConfig
+  </script>
+
+  
+  
+  <script data-url="https://static.parastorage.com/services/wix-thunderbolt/dist/handleAccessTokens.inline.70d46595.bundle.min.js">(()=>{"use strict";const e=e=>"string"==typeof e?decodeURIComponent(e).toLowerCase().trimStart():e,o="client-session-bind",t=new Set([o,"client-binding","svSession","smSession","server-session-bind","wixSession2"].map((e=>e.toLowerCase()))),i=Object.getOwnPropertyDescriptor(Document.prototype,"cookie"),n=(e="")=>`${o}=; ${e} max-age=0; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT`,r=o=>{const i="string"==typeof o?o.split("=")[0].trim():o.name,n=e(i).toLowerCase();return t.has(n)},s=e=>{let o;return o="string"==typeof e?e.split(";").map((e=>e.trim())):e,o.filter((e=>!r(e)))},l="tbReady",a="security_overrideGlobals",{experiments:c,siteFeaturesConfigs:d,accessTokensUrl:g}=window.viewerModel,b=g,u={},m=(()=>{const e=document.cookie.split(";").map((e=>e.trim())).filter((e=>e?.startsWith(o)))[0]?.split("=")[1];return(()=>{const e=`domain=${location.hostname};`,o=n(),t=n(e);i.set.call(document,o),i.set.call(document,t)})(),e})();m&&(u["client-binding"]=m);let h=fetch;addEventListener(l,(function e(o){const{logger:t}=o.detail;try{window.tb.init({fetch:h,fetchHeaders:u})}catch(e){const o=new Error("TB003");t.meter(`${a}_${o.message}`,{paramsOverrides:{errorType:a,eventString:o.message}}),window?.viewerModel?.mode.debug&&console.error(e)}finally{removeEventListener(l,e),h=fetch}})),c["specs.thunderbolt.hardenFetchAndXHR"]||(window.fetchDynamicModel=()=>d.sessionManager.isRunningInDifferentSiteContext?Promise.resolve({}):fetch(b,{credentials:"same-origin",headers:u}).then((function(e){if(!e.ok)throw new Error(`[${e.status}]${e.statusText}`);return e.json()})),window.dynamicModelPromise=window.fetchDynamicModel()),Object.defineProperty(document,"cookie",{get(){const e=i.get.call(document);return s(e).join("; ")},set(o){const n=e(o.split(";")[0]);[...t].every((e=>!n?.startsWith(e.toLowerCase())))&&i.set.call(document,o)},enumerable:!0,configurable:!1}),(()=>{if(!globalThis.cookieStore)return;const e=globalThis.cookieStore.get.bind(globalThis.cookieStore),o=globalThis.cookieStore.getAll.bind(globalThis.cookieStore),i=globalThis.cookieStore.set.bind(globalThis.cookieStore),n=globalThis.cookieStore.delete.bind(globalThis.cookieStore);Object.defineProperty(globalThis.CookieStore.prototype,"get",{value:async o=>t.has(o.toLowerCase())?null:e.call(void 0,o),enumerable:!0,configurable:!1}),Object.defineProperty(globalThis.CookieStore.prototype,"getAll",{value:async()=>{const e=await o.call(void 0);return s(e)},enumerable:!0,configurable:!1}),Object.defineProperty(globalThis.CookieStore.prototype,"set",{value:async(...e)=>{const o=1===e.length?e[0].name:e[0];if(!r(o))return i.call(void 0,...e)},enumerable:!0,configurable:!1}),Object.defineProperty(globalThis.CookieStore.prototype,"delete",{value:async(...e)=>{const o=1===e.length?e[0].name:e[0];if(!r(o))return n.call(void 0,...e)},enumerable:!0,configurable:!1})})()})();
+//# sourceMappingURL=https://static.parastorage.com/services/wix-thunderbolt/dist/handleAccessTokens.inline.70d46595.bundle.min.js.map</script>
+
+
+<!-- Overriding Globals JS  -->
+
+
+<script data-url="https://static.parastorage.com/services/wix-thunderbolt/dist/overrideGlobals.inline.9c53a680.bundle.min.js">(()=>{"use strict";const{ownKeys:e}=Reflect,t=["toString","toLocaleString","valueOf"],r=(r,o)=>{const n=o[r];if(!n)return;let i=!1;try{const e=Object.getOwnPropertyDescriptor(o,r);e&&(i=e.enumerable||!1)}catch(e){console.warn(`Failed to get property descriptor for key "${r}":`,e)}globalThis.defineStrictProperty(r,n,o,i);const c=n?.prototype;if(c){const e=Object.getOwnPropertyDescriptors(c);Object.keys(e).forEach((r=>{const o=e[r];o&&((e,r,o)=>{if("constructor"!==r&&"value"in o&&o.configurable&&!t.includes(String(r))){const{value:t,enumerable:n,get:i,set:c}=o,s={enumerable:n,configurable:!1,...t?{value:t,writable:!1}:{get:i,set:c}};Object.defineProperty(e,r,s)}})(c,r,o)}))}e(n).forEach((e=>{const t=Object.getOwnPropertyDescriptor(n,e);t&&(t.writable||t.configurable)&&globalThis.defineStrictProperty(e.toString(),n[e],n,t.enumerable)}))},o=e=>"string"==typeof e?decodeURIComponent(e).toLowerCase().trimStart():e,n=(e,t,r,o)=>{(e=>e?.set&&e?.get&&"function"==typeof e.set&&"function"==typeof e.get&&!e.get.toString().includes("[native code]")&&!e.set.toString().includes("[native code]"))(t)?Object.defineProperty(r||globalThis,e,{get:t.get,set:t.set,configurable:!1,enumerable:o||!1}):Object.defineProperty(r||globalThis,e,{value:t,writable:!1,configurable:!1,enumerable:o||!1})},i=()=>{const e=globalThis.open,t=document.open,r=(t,r,o)=>{const n="string"!=typeof t,i=e.call(window,t,r,o);return n||((c=t).startsWith("//")&&/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/g.test(`${location.protocol}:${c}`)&&(c=`${location.protocol}${c}`),!c.startsWith("http")||new URL(c).hostname===location.hostname)?{}:i;var c};defineStrictProperty("open",r,globalThis,!0),defineStrictProperty("open",((e,o,n)=>e?r(e,o,n):t.call(document,e,o,n)),document,!0)},c=document.createElement,s=(e,t)=>{const r=c.call(document,e,t),n=Element.prototype.setAttribute,i=Element.prototype.setAttributeNS;if("iframe"===o(e)){globalThis.defineStrictProperty("srcdoc",{get:()=>{},set:()=>{console.error("`srcdoc` is not allowed in iframe elements.")}},r,!1);const e=function(e,t){"srcdoc"!==e.toLowerCase()?n.call(r,e,t):console.error("`srcdoc` attribute is not allowed to be set.")},t=function(e,t,o){"srcdoc"!==t.toLowerCase()?i.call(r,e,t,o):console.error("`srcdoc` attribute is not allowed to be set.")};r.setAttribute=e,r.setAttributeNS=t}return r},a="client-binding",l="security_overrideGlobals",d=["/_api/v1/access-tokens","/_api/v2/dynamicmodel","/_api/one-app-session-web/v3/businesses"],p=e=>(e instanceof Headers?e.forEach(((t,r)=>{decodeURIComponent(r).toLowerCase()===a&&e.delete(r)})):Object.keys(e).forEach((t=>{decodeURIComponent(t).toLowerCase()===a&&delete e[t]})),e),u=e=>{let t=!0;const r=(e=>{let t,r;if(globalThis.Request&&e instanceof Request)t=e.url;else{if("function"!=typeof e?.toString)throw new Error("Unsupported type for url");t=e.toString()}try{return new URL(t).pathname}catch(e){return r=t.replace(/#.+/gi,"").split("?").shift(),r.startsWith("/")?r:`/${r}`}})(e),n=o(r);return d.some((e=>n.includes(e)))&&(t=!1),t},f=(e=globalThis)=>{const t=fetch;e.defineStrictProperty("fetch",(function(){const r=(o=arguments,globalThis.Request&&o[0]instanceof Request&&o[0]?.headers?p(o[0].headers):o[1]?.headers&&p(o[1].headers),o);var o;return u(arguments[0])?t.apply(e,Array.from(r)):new Promise(((e,t)=>{const r=new Error("TB002");window.fedops?.interactionStarted(r,l),t(r)}))}))};performance.mark("overrideGlobals started");const{isExcludedFromSecurityExperiments:g,experiments:b}=window.viewerModel;try{((e=globalThis)=>{Object.defineProperty(e,"defineStrictProperty",{value:n,writable:!1,enumerable:!1,configurable:!1})})(),i(),g||globalThis.defineStrictProperty("createElement",s,document,!0),b["specs.thunderbolt.hardenFetchAndXHR"]&&!g&&(f(),((e=globalThis)=>{const t=XMLHttpRequest;function r(){const e=new t,r=e.open,o=e.setRequestHeader;return e.open=function(){if(arguments.length<2||u(arguments[1]))return r.apply(e,Array.from(arguments));{const e=new Error("TB002");throw window.fedops?.interactionStarted(e,l),e}},e.setRequestHeader=function(t,r){decodeURIComponent(t).toLowerCase()!==a&&o.call(e,t,r)},e}Object.keys(t).forEach((e=>{r[e]=t[e]})),e.defineStrictProperty("XMLHttpRequest",r)})()),b["specs.thunderbolt.removeServiceWorker"]&&(()=>{if(navigator&&"serviceWorker"in navigator)navigator.serviceWorker.register=()=>console.log("Service worker registration is not allowed"),Promise.resolve()})(),(e=>{let t=[],o=[];const{experiments:n}=window.viewerModel;o=o.concat(["TextEncoder","TextDecoder"]),e||(o=o.concat(["XMLHttpRequestEventTarget","EventTarget"])),o=o.concat(["URL","JSON"]),e||(t=t.concat(["addEventListener","removeEventListener"])),t=t.concat(["encodeURI","encodeURIComponent","decodeURI","decodeURIComponent"]),n["specs.thunderbolt.hardenStringAndNumber"]&&(o=o.concat(["String","Number"])),e||o.push("Object"),o=o.concat(["Reflect"]),t.forEach((e=>{Object.freeze(globalThis[e]),["addEventListener","removeEventListener"].includes(e)&&globalThis.defineStrictProperty(e,document[e],document,!0),globalThis.defineStrictProperty(e,globalThis[e],globalThis,!0)})),o.forEach((e=>{r(e,globalThis)}))})(g),g||(defineStrictProperty("preventStringArgument",((e,t,r)=>{const o=r||globalThis,n=o[e];defineStrictProperty(e,(function(){const r=Array.from(arguments);if("string"!=typeof r[t])return n.apply(o,r);console.warn(`Calling ${e} with a String Argument at index ${t} is not allowed`)}),o)})),preventStringArgument("setTimeout",0),preventStringArgument("setInterval",0))}catch(e){window?.viewerModel?.mode.debug&&console.error(e);const t=new Error("TB006");window.fedops?.reportError(t,"security_overrideGlobals"),window.Sentry?window.Sentry.captureException(t):globalThis.defineStrictProperty("sentryBuffer",[t],window,!1)}performance.mark("overrideGlobals ended")})();
+//# sourceMappingURL=https://static.parastorage.com/services/wix-thunderbolt/dist/overrideGlobals.inline.9c53a680.bundle.min.js.map</script>
+
+
+  
+  <script>
+    window.commonConfig = viewerModel.commonConfig
+
 	
-	<script src="https://1001gedichten.nl/cmp/stub.bundle.js"></script>
-	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-	<script>
-		(adsbygoogle = window.adsbygoogle || []).push({
-			google_ad_client: "ca-pub-9607008006084851",
-			enable_page_level_ads: true
-		});
-	</script>
+  </script>
 
-	<meta name="google-site-verification" content="engSI3WJudkY03XxnT5YvGIQCyZY7TbKuSfjQtp0P6Q" />
+  <!-- Initial CSS -->
+  <style data-url="https://static.parastorage.com/services/wix-thunderbolt/dist/main.920dbebc.min.css">@keyframes slide-horizontal-new{0%{transform:translateX(100%)}}@keyframes slide-horizontal-old{80%{opacity:1}to{opacity:0;transform:translateX(-100%)}}@keyframes slide-vertical-new{0%{transform:translateY(-100%)}}@keyframes slide-vertical-old{80%{opacity:1}to{opacity:0;transform:translateY(100%)}}@keyframes out-in-new{0%{opacity:0}}@keyframes out-in-old{to{opacity:0}}html[data-page-transition=SlideHorizontal]::view-transition-old(page-group){animation:slide-horizontal-old .6s cubic-bezier(.83,0,.17,1) forwards;mix-blend-mode:normal}html[data-page-transition=SlideHorizontal]::view-transition-new(page-group){animation:slide-horizontal-new .6s cubic-bezier(.83,0,.17,1) backwards;mix-blend-mode:normal}html[data-page-transition=SlideVertical]::view-transition-old(page-group){animation:slide-vertical-old .6s cubic-bezier(.83,0,.17,1) forwards;mix-blend-mode:normal}html[data-page-transition=SlideVertical]::view-transition-new(page-group){animation:slide-vertical-new .6s cubic-bezier(.83,0,.17,1) backwards;mix-blend-mode:normal}html[data-page-transition=OutIn]::view-transition-old(page-group){animation:out-in-old .35s cubic-bezier(.64,0,.78,0) forwards}html[data-page-transition=OutIn]::view-transition-new(page-group){animation:out-in-new .35s cubic-bezier(.22,1,.36,1) .35s backwards}@media(prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-new(*),::view-transition-old(*){animation:none!important}}body,html{background:transparent;border:0;margin:0;outline:0;padding:0;vertical-align:baseline}body{--scrollbar-width:0px;font-family:Arial,Helvetica,sans-serif;font-size:10px}body,html{height:100%}body{overflow-x:auto;overflow-y:scroll}body:not(.responsive) #site-root{min-width:var(--site-width);width:100%}body:not([data-js-loaded]) [data-hide-prejs]{visibility:hidden}wix-interact-element{display:contents}#SITE_CONTAINER{position:relative}:root{--one-unit:1vw;--section-max-width:9999px;--spx-stopper-max:9999px;--spx-stopper-min:0px;--browser-zoom:1}@supports(-webkit-appearance:none) and (stroke-color:transparent){:root{--safari-sticky-fix:opacity;--experimental-safari-sticky-fix:translateZ(0)}}@supports(container-type:inline-size){:root{--one-unit:1cqw}}[id^=oldHoverBox-]{mix-blend-mode:plus-lighter;transition:opacity .5s ease,visibility .5s ease}[data-mesh-id$=inlineContent-gridContainer]:has(>[id^=oldHoverBox-]){isolation:isolate}</style>
+<style data-url="https://static.parastorage.com/services/wix-thunderbolt/dist/main.renderer.bd2d00db.min.css">a,abbr,acronym,address,applet,b,big,blockquote,button,caption,center,cite,code,dd,del,dfn,div,dl,dt,em,fieldset,font,footer,form,h1,h2,h3,h4,h5,h6,header,i,iframe,img,ins,kbd,label,legend,li,nav,object,ol,p,pre,q,s,samp,section,small,span,strike,strong,sub,sup,table,tbody,td,tfoot,th,thead,title,tr,tt,u,ul,var{background:transparent;border:0;margin:0;outline:0;padding:0;vertical-align:baseline}input,select,textarea{box-sizing:border-box;font-family:Helvetica,Arial,sans-serif}ol,ul{list-style:none}blockquote,q{quotes:none}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}a{cursor:pointer;text-decoration:none}.testStyles{overflow-y:hidden}.reset-button{-webkit-appearance:none;background:none;border:0;color:inherit;font:inherit;line-height:normal;outline:0;overflow:visible;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none}:focus{outline:none}body.device-mobile-optimized:not(.disable-site-overflow){overflow-x:hidden;overflow-y:scroll}body.device-mobile-optimized:not(.responsive) #SITE_CONTAINER{margin-left:auto;margin-right:auto;overflow-x:visible;position:relative;width:320px}body.device-mobile-optimized:not(.responsive):not(.blockSiteScrolling) #SITE_CONTAINER{margin-top:0}body.device-mobile-optimized>*{max-width:100%!important}body.device-mobile-optimized #site-root{overflow-x:hidden;overflow-y:hidden}@supports(overflow:clip){body.device-mobile-optimized #site-root{overflow-x:clip;overflow-y:clip}}body.device-mobile-non-optimized #SITE_CONTAINER #site-root{overflow-x:clip;overflow-y:clip}body.device-mobile-non-optimized.fullScreenMode{background-color:#5f6360}body.device-mobile-non-optimized.fullScreenMode #MOBILE_ACTIONS_MENU,body.device-mobile-non-optimized.fullScreenMode #SITE_BACKGROUND,body.device-mobile-non-optimized.fullScreenMode #site-root,body.fullScreenMode #WIX_ADS{visibility:hidden}body.fullScreenMode{overflow-x:hidden!important;overflow-y:hidden!important}body.fullScreenMode.device-mobile-optimized #TINY_MENU{opacity:0;pointer-events:none}body.fullScreenMode-scrollable.device-mobile-optimized{overflow-x:hidden!important;overflow-y:auto!important}body.fullScreenMode-scrollable.device-mobile-optimized #masterPage,body.fullScreenMode-scrollable.device-mobile-optimized #site-root{overflow-x:hidden!important;overflow-y:hidden!important}body.fullScreenMode-scrollable.device-mobile-optimized #SITE_BACKGROUND,body.fullScreenMode-scrollable.device-mobile-optimized #masterPage{height:auto!important}body.fullScreenMode-scrollable.device-mobile-optimized #masterPage.mesh-layout{height:0!important}body.blockSiteScrolling,body.siteScrollingBlocked{position:fixed;width:100%}body.blockSiteScrolling #SITE_CONTAINER{margin-top:calc(var(--blocked-site-scroll-margin-top)*-1)}body.blockSiteScrolling:not(.responsive) #WIX_ADS{margin-top:var(--blocked-site-scroll-margin-top)}#site-root{margin:0 auto;min-height:100%;position:relative;top:var(--wix-ads-height)}#site-root img:not([src]){visibility:hidden}#site-root svg img:not([src]){visibility:visible}.auto-generated-link{color:inherit}#SCROLL_TO_BOTTOM,#SCROLL_TO_TOP{height:0}.has-click-trigger{cursor:pointer}.fullScreenOverlay{bottom:0;display:flex;justify-content:center;left:0;overflow-y:hidden;position:fixed;right:0;top:-60px;z-index:1005}.fullScreenOverlay>.fullScreenOverlayContent{bottom:0;left:0;margin:0 auto;overflow:hidden;position:absolute;right:0;top:60px;transform:translateZ(0)}[data-mesh-id$=centeredContent],[data-mesh-id$=form],[data-mesh-id$=inlineContent]{pointer-events:none;position:relative}[data-mesh-id$=-gridWrapper],[data-mesh-id$=-rotated-wrapper]{pointer-events:none}[data-mesh-id$=-gridContainer]>*,[data-mesh-id$=-rotated-wrapper]>*,[data-mesh-id$=inlineContent]>:not([data-mesh-id$=-gridContainer]){pointer-events:auto}.device-mobile-optimized #masterPage.mesh-layout #SOSP_CONTAINER_CUSTOM_ID{grid-area:2/1/3/2;-ms-grid-row:2;position:relative}#masterPage.mesh-layout{-ms-grid-rows:max-content max-content min-content max-content;-ms-grid-columns:100%;align-items:start;display:-ms-grid;display:grid;grid-template-columns:100%;grid-template-rows:max-content max-content min-content max-content;justify-content:stretch}#masterPage.mesh-layout #PAGES_CONTAINER,#masterPage.mesh-layout #SITE_FOOTER-placeholder,#masterPage.mesh-layout #SITE_FOOTER_WRAPPER,#masterPage.mesh-layout #SITE_HEADER-placeholder,#masterPage.mesh-layout #SITE_HEADER_WRAPPER,#masterPage.mesh-layout #SOSP_CONTAINER_CUSTOM_ID[data-state~=mobileView],#masterPage.mesh-layout #soapAfterPagesContainer,#masterPage.mesh-layout #soapBeforePagesContainer{-ms-grid-row-align:start;-ms-grid-column-align:start;-ms-grid-column:1}#masterPage.mesh-layout #SITE_HEADER-placeholder,#masterPage.mesh-layout #SITE_HEADER_WRAPPER{grid-area:1/1/2/2;-ms-grid-row:1}#masterPage.mesh-layout #PAGES_CONTAINER,#masterPage.mesh-layout #soapAfterPagesContainer,#masterPage.mesh-layout #soapBeforePagesContainer{grid-area:3/1/4/2;-ms-grid-row:3}#masterPage.mesh-layout #soapAfterPagesContainer,#masterPage.mesh-layout #soapBeforePagesContainer{width:100%}#masterPage.mesh-layout #PAGES_CONTAINER{align-self:stretch}#masterPage.mesh-layout main#PAGES_CONTAINER{display:block}#masterPage.mesh-layout #SITE_FOOTER-placeholder,#masterPage.mesh-layout #SITE_FOOTER_WRAPPER{grid-area:4/1/5/2;-ms-grid-row:4}#masterPage.mesh-layout #SITE_PAGES,#masterPage.mesh-layout [data-mesh-id=PAGES_CONTAINERcenteredContent],#masterPage.mesh-layout [data-mesh-id=PAGES_CONTAINERinlineContent]{height:100%}#masterPage.mesh-layout.desktop>*{width:100%}#masterPage.mesh-layout #PAGES_CONTAINER,#masterPage.mesh-layout #SITE_FOOTER_WRAPPER,#masterPage.mesh-layout #SITE_HEADER_WRAPPER,#masterPage.mesh-layout #SITE_PAGES,#masterPage.mesh-layout #masterPageinlineContent,#masterPage.mesh-layout:not(.one-doc) #SITE_FOOTER,#masterPage.mesh-layout:not(.one-doc) #SITE_HEADER{position:relative}#masterPage.mesh-layout #SITE_HEADER{grid-area:1/1/2/2}#masterPage.mesh-layout #SITE_FOOTER{grid-area:4/1/5/2}#masterPage.mesh-layout.overflow-x-clip #SITE_FOOTER,#masterPage.mesh-layout.overflow-x-clip #SITE_HEADER{overflow-x:clip}[data-z-counter]{z-index:0}[data-z-counter="0"]{z-index:auto}.wixSiteProperties{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}:root{--wst-button-color-fill-primary:rgb(var(--color_48));--wst-button-color-border-primary:rgb(var(--color_49));--wst-button-color-text-primary:rgb(var(--color_50));--wst-button-color-fill-primary-hover:rgb(var(--color_51));--wst-button-color-border-primary-hover:rgb(var(--color_52));--wst-button-color-text-primary-hover:rgb(var(--color_53));--wst-button-color-fill-primary-disabled:rgb(var(--color_54));--wst-button-color-border-primary-disabled:rgb(var(--color_55));--wst-button-color-text-primary-disabled:rgb(var(--color_56));--wst-button-color-fill-secondary:rgb(var(--color_57));--wst-button-color-border-secondary:rgb(var(--color_58));--wst-button-color-text-secondary:rgb(var(--color_59));--wst-button-color-fill-secondary-hover:rgb(var(--color_60));--wst-button-color-border-secondary-hover:rgb(var(--color_61));--wst-button-color-text-secondary-hover:rgb(var(--color_62));--wst-button-color-fill-secondary-disabled:rgb(var(--color_63));--wst-button-color-border-secondary-disabled:rgb(var(--color_64));--wst-button-color-text-secondary-disabled:rgb(var(--color_65));--wst-color-fill-base-1:rgb(var(--color_36));--wst-color-fill-base-2:rgb(var(--color_37));--wst-color-fill-base-shade-1:rgb(var(--color_38));--wst-color-fill-base-shade-2:rgb(var(--color_39));--wst-color-fill-base-shade-3:rgb(var(--color_40));--wst-color-fill-accent-1:rgb(var(--color_41));--wst-color-fill-accent-2:rgb(var(--color_42));--wst-color-fill-accent-3:rgb(var(--color_43));--wst-color-fill-accent-4:rgb(var(--color_44));--wst-color-fill-background-primary:rgb(var(--color_11));--wst-color-fill-background-secondary:rgb(var(--color_12));--wst-color-text-primary:rgb(var(--color_15));--wst-color-text-secondary:rgb(var(--color_14));--wst-color-action:rgb(var(--color_18));--wst-color-disabled:rgb(var(--color_39));--wst-color-title:rgb(var(--color_45));--wst-color-subtitle:rgb(var(--color_46));--wst-color-line:rgb(var(--color_47));--wst-font-style-h2:var(--font_2);--wst-font-style-h3:var(--font_3);--wst-font-style-h4:var(--font_4);--wst-font-style-h5:var(--font_5);--wst-font-style-h6:var(--font_6);--wst-font-style-body-large:var(--font_7);--wst-font-style-body-medium:var(--font_8);--wst-font-style-body-small:var(--font_9);--wst-font-style-body-x-small:var(--font_10);--wst-color-custom-1:rgb(var(--color_13));--wst-color-custom-2:rgb(var(--color_16));--wst-color-custom-3:rgb(var(--color_17));--wst-color-custom-4:rgb(var(--color_19));--wst-color-custom-5:rgb(var(--color_20));--wst-color-custom-6:rgb(var(--color_21));--wst-color-custom-7:rgb(var(--color_22));--wst-color-custom-8:rgb(var(--color_23));--wst-color-custom-9:rgb(var(--color_24));--wst-color-custom-10:rgb(var(--color_25));--wst-color-custom-11:rgb(var(--color_26));--wst-color-custom-12:rgb(var(--color_27));--wst-color-custom-13:rgb(var(--color_28));--wst-color-custom-14:rgb(var(--color_29));--wst-color-custom-15:rgb(var(--color_30));--wst-color-custom-16:rgb(var(--color_31));--wst-color-custom-17:rgb(var(--color_32));--wst-color-custom-18:rgb(var(--color_33));--wst-color-custom-19:rgb(var(--color_34));--wst-color-custom-20:rgb(var(--color_35))}</style>
 
-	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-2145328-1"></script>
-	<script>
-		window.dataLayer = window.dataLayer || [];
+  <meta name="format-detection" content="telephone=no">
+  <meta name="skype_toolbar" content="skype_toolbar_parser_compatible">
+  
+  
 
-		function gtag() {
-			dataLayer.push(arguments);
-		}
-		gtag('js', new Date());
+  
 
-		gtag('config', 'UA-2145328-1');
-	</script>
+  
+      <!--pageHtmlEmbeds.head start-->
+      <script type="wix/htmlEmbeds" id="pageHtmlEmbeds.head start"></script>
+    
+      <script type="wix/htmlEmbeds" id="pageHtmlEmbeds.head end"></script>
+      <!--pageHtmlEmbeds.head end-->
+  
 
-</head>
+  <!-- head performance data start -->
+  
+  <!-- head performance data end -->
+  
 
-<body class="" data-userlevel="0">
-	<main>
-		<header>
-			<div class="container">
-				<div class="row">
-					<div id="headerTitle" class="col-md-12 col-sm-14">
-						<h2 style="dusplay:none !important;">1001 Gedichten</h2>
-						<a href="/" title="Gedichten"><img src="static/images/1001gedichten.png" class="img-responsive" alt="1001 gedichten" /></a>
-					</div>
-					<div id="headerLoggedin" class="col-md-12 col-sm-10">
-													<div class="loginBox">
-								<form action="inloggen/" method="post">
-									<fieldset>
-										<h3>Zet ook uw gedichten op 1001Gedichten.nl</h3>
-										<h4>Heeft u nog geen account? <a href="registreren/">Meld u gratis aan!</a></h4>
-										<div class="row">
-											<div class="col-md-8"><input type="text" class="text1" name="username" value="Gebruikersnaam" onfocus="this.value='';" /></div>
-											<div class="col-md-8"><input type="password" class="text1" name="password" value="Wachtwoord" onfocus="this.value='';" /></div>
-											<div class="col-md-8"><input type="submit" name="submit" class="button" value="Login" /></div>
-										</div>
-										<label style="font-size: 10px; display: block; margin-top: 0px;"><input type="checkbox" name="keep_alive" value="true" style="position: relative; top: 3px; left: 4px; margin-right: 5px;" /> Laat mij hier 14 dagen ingelogd blijven!</label>
-									</fieldset>
-								</form>
-							</div>
-											</div>
-				</div>
-			</div>
-		</header>
-		<div class="container">
-			<div class="row">
-				<nav class="navbar navbar-default">
-					<div class="container-fluid">
-						<div class="navbar-header">
-							<a id="openCat" class="hidden-lg hidden-sm hidden-md categoryShow">Bekijk categorie&euml;n</a>
-							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-								<span class="sr-only">Open/sluit navigatie</span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-							</button>
-						</div>
-						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-							<ul class="nav navbar-nav">
-																<li class="linkLogin"><a href="zoeken/">Gedichten zoeken</a>
-																	<li class="linkLogin"><a href="inloggen/">Inloggen</a>
-								<li><a href="gedichtenwedstrijd/">Gedichtenwedstrijd</a></li>
-														<li><a href="boeken/">Gedichtenbundels</a></li>
-							<li><a href="bekende-dichters/">Bekende dichters</a></li>
-							<li><a href="forum/">Forum</a></li>
-							</ul>
-							<form class="navbar-form navbar-right" action="zoek/" role="search">
-								<div class="form-group">
-									<input type="text" class="form-control" name="q" placeholder="Bijv. 'rozen verwelken'" value="">
-								</div>
-								<button type="submit" class="btn btn-default"></button>
-							</form>
-						</div><!-- /.navbar-collapse -->
-					</div><!-- /.container-fluid -->
-				</nav>
-				<div style="margin-bottom:30px;" class="hidden-sm hidden-lg"></div>
-			</div><!-- /.row -->
-		</div><!-- /.container -->
-		<div class="container">
-							<div class="row" style="background: #fff;">
-					<div class="banner-home-wide" style="display: block !important;height: 280px !important;">
+    
 
-						<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-						<!-- 1001gedichten.nl template top banner responsive -->
-						<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9607008006084851" data-ad-slot="4308317119" data-ad-format="auto" data-full-width-responsive="true"></ins>
-						<script>
-							(adsbygoogle = window.adsbygoogle || []).push({});
-						</script>
+<meta http-equiv="X-Wix-Meta-Site-Id" content="8e4146a9-bf9b-4aa8-a016-9c9f94a9422c">
+<meta http-equiv="X-Wix-Application-Instance-Id" content="e1882f08-6ec8-4a92-a492-674d5d94d2f1">
 
-					</div>
-				</div>
-						<div id="rowContent" class="row">
-				<div id="sidebarLeft" class="col-md-5 col-sm-5 col-xs-24">
-										<div class="gedichtenBox">
-						<h3 class="hidden-xs">Gedichten</h3>
-					</div>
-					<div class="linkBox" id="poemCats">
-						<ul>
-															<li><a href="beterschaps-gedichten/" title="Beterschaps gedichten">Beterschaps gedichten</a></li>
-																<li><a href="christelijke-gedichten/" title="Christelijke gedichten">Christelijke gedichten</a></li>
-																<li><a href="cultuur-gedichten/" title="Cultuur gedichten">Cultuur gedichten</a></li>
-																<li><a href="dating-gedichten/" title="Dating gedichten">Dating gedichten</a></li>
-																<li><a href="dieren-gedichten/" title="Dieren gedichten">Dieren gedichten</a></li>
-																<li><a href="duitse-gedichten/" title="Duitse gedichten">Duitse gedichten</a></li>
-																<li><a href="engelse-gedichten/" title="Engelse gedichten">Engelse gedichten</a></li>
-																<li><a href="familie-gedichten/" title="Familie gedichten">Familie gedichten</a></li>
-																<li><a href="franse-gedichten/" title="Franse gedichten">Franse gedichten</a></li>
-																<li><a href="geboorte-gedichten/" title="Geboorte gedichten">Geboorte gedichten</a></li>
-																<li><a href="humor-gedichten/" title="Humor gedichten">Humor gedichten</a></li>
-																<li><a href="huwelijks-gedichten/" title="Huwelijks gedichten">Huwelijks gedichten</a></li>
-																<li><a href="islamitische-gedichten/" title="Islamitische gedichten">Islamitische gedichten</a></li>
-																<li><a href="kerst-gedichten/" title="Kerst gedichten">Kerst gedichten</a></li>
-																<li><a href="kinder-gedichten/" title="Kinder gedichten">Kinder gedichten</a></li>
-																<li><a href="levens-gedichten/" title="Levens gedichten">Levens gedichten</a></li>
-																<li><a href="liefdes-gedichten/" title="Liefdes gedichten">Liefdes gedichten</a></li>
-																<li><a href="moederdag-gedichten/" title="Moederdag gedichten">Moederdag gedichten</a></li>
-																<li><a href="muziek-gedichten/" title="Muziek gedichten">Muziek gedichten</a></li>
-																<li><a href="natuur-en-seizoen-gedichten/" title="Natuur &amp; seizoen gedichten">Natuur &amp; seizoen gedichten</a></li>
-																<li><a href="nieuwjaars-gedichten/" title="Nieuwjaars gedichten">Nieuwjaars gedichten</a></li>
-																<li class="active"><a href="overige-gedichten/" title="Overige gedichten">Overige gedichten</a></li>
-																<li><a href="overlijdens-gedichten/" title="Overlijdens gedichten">Overlijdens gedichten</a></li>
-																<li><a href="paas-gedichten/" title="Paas gedichten">Paas gedichten</a></li>
-																<li><a href="school-gedichten/" title="School gedichten">School gedichten</a></li>
-																<li><a href="sinterklaas-gedichten/" title="Sinterklaas gedichten">Sinterklaas gedichten</a></li>
-																<li><a href="sms-gedichten/" title="Sms gedichten">Sms gedichten</a></li>
-																<li><a href="sport-gedichten/" title="Sport gedichten">Sport gedichten</a></li>
-																<li><a href="vaderdag-gedichten/" title="Vaderdag gedichten">Vaderdag gedichten</a></li>
-																<li><a href="valentijn-gedichten/" title="Valentijn gedichten">Valentijn gedichten</a></li>
-																<li><a href="verdriet-gedichten/" title="Verdriet gedichten">Verdriet gedichten</a></li>
-																<li><a href="verjaardags-gedichten/" title="Verjaardags gedichten">Verjaardags gedichten</a></li>
-																<li><a href="vriendschaps-gedichten/" title="Vriendschaps gedichten">Vriendschaps gedichten</a></li>
-																<li><a href="vrolijke-gedichten/" title="Vrolijke gedichten">Vrolijke gedichten</a></li>
-														</ul>
-					</div>
-					<br />
-					<div class="hidden-xs">
-						<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-						<!-- 1001gedichten.nl responsive sidebar -->
-						<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9607008006084851" data-ad-slot="4262751867" data-ad-format="auto" data-full-width-responsive="true"></ins>
-						<script>
-							(adsbygoogle = window.adsbygoogle || []).push({});
-						</script>
-						<br />
-					</div>
-				</div>
-				<div id="contentRight" class="col-md-19 col-sm-18 col-xs-24" >
-											<div class="banner-home-top" style="height: 280px !important;">
+    <meta http-equiv="X-Wix-Published-Version" content="111"/>
 
-							<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-							<!-- 1001gedichten.nl homepage top banner responsive -->
-							<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9607008006084851" data-ad-slot="6695860621" data-ad-format="auto" data-full-width-responsive="true"></ins>
-							<script>
-								(adsbygoogle = window.adsbygoogle || []).push({});
-							</script>
 
-						</div>
-					<div class="npBox"><span class="hidden-sm hidden-xs">U bent hier:</span><ul><li><a href="/" title="Gedichten">Gedichten</a>  &raquo; </li>
-<li><a href="overige-gedichten/" title="Overige gedichten">Overige gedichten</a>  &raquo; </li>
-<li><a href="/gedichten/42492/geluk/" title="Gedicht 'Geluk'">Gedicht 'Geluk'</a> </li>
-</ul></div>					<div class="clear"></div>
-						<div style="float: right; margin-top: -23px;"><a href="afdrukken/42492/" target="_blank" rel="nofollow"><img src="static/images/icon-print.png" alt="Print dit gedicht" /></a></div>
-	<div class="row itemBox">
-		<div class="poetLeft col-md-18">
-							<a class="pre" href="gedichten/7703/halloweennacht/" title="Halloweennacht">vorige gedicht</a>
-							<a class="next" href="gedichten/90885/rozen-zijn-rood-viooltje-zijn-blauw-vers/" title="rozen-zijn-rood-viooltje-zijn-blauw-vers">volgende gedicht</a>
-						<div class="clear"></div>
 
-			<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" type="text/javascript" data-cookieconsent="marketing"></script> <!-- 1001gedichten.nl single poem middle banner responsive --> <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9607008006084851" data-ad-slot="2336759890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-			<script type="text/javascript" data-cookieconsent="marketing">
-				(adsbygoogle = window.adsbygoogle || []).push({});
-			</script>
+    <meta http-equiv="etag" content="bug"/>
 
-			<div class="clear"></div>
-			<div style="background: #fdfdfd; padding-left: 20px; margin: 10px 0px; border-right: 1px solid #fdfdfd;">
-				<h1 style="color: #65645f; text-align: center;">Geluk</h1>
-				<p style="color: #65645f; text-align: c
+<!-- render-head end -->
+
+<style data-href="https://static.parastorage.com/services/editor-elements-library/dist/thunderbolt/rb_wixui.thunderbolt_bootstrap-responsive.5018a9e9.min.css">._pfxlW{clip-path:inset(50%);height:24px;position:absolute;width:24px}._pfxlW:active,._pfxlW:focus{clip-path:unset;right:0;top:50%;transform:translateY(-50%)}._pfxlW.RG3k61{transform:translateY(-50%) rotate(180deg)}.r4OX7l,.xTjc1A{box-sizing:border-box;height:100%;overflow:visible;position:relative;width:auto}.r4OX7l[data-state~=header] a,.r4OX7l[data-state~=header] div,[data-state~=header].xTjc1A a,[data-state~=header].xTjc1A div{cursor:default!important}.r4OX7l .UiHgGh,.xTjc1A .UiHgGh{display:inline-block;height:100%;width:100%}.xTjc1A{--display:inline-block;cursor:pointer;display:var(--display);font:var(--fnt,var(--font_1))}.xTjc1A .yRj2ms{padding:0 var(--pad,5px)}.xTjc1A .JS76Uv{color:rgb(var(--txt,var(--color_15,color_15)));display:inline-block;padding:0 10px;transition:var(--trans,color .4s ease 0s)}.xTjc1A[data-state~=drop]{display:block;width:100%}.xTjc1A[data-state~=drop] .JS76Uv{padding:0 .5em}.xTjc1A[data-state~=link]:hover .JS76Uv,.xTjc1A[data-state~=over] .JS76Uv{color:rgb(var(--txth,var(--color_14,color_14)));transition:var(--trans,color .4s ease 0s)}.xTjc1A[data-state~=selected] .JS76Uv{color:rgb(var(--txts,var(--color_14,color_14)));transition:var(--trans,color .4s ease 0s)}.NHM1d1{overflow-x:hidden}.NHM1d1 .R_TAzU{display:flex;flex-direction:column;height:100%;width:100%}.NHM1d1 .R_TAzU .aOF1ks{flex:1}.NHM1d1 .R_TAzU .y7qwii{height:calc(100% - (var(--menuTotalBordersY, 0px)));overflow:visible;white-space:nowrap;width:calc(100% - (var(--menuTotalBordersX, 0px)))}.NHM1d1 .R_TAzU .y7qwii .Tg1gOB,.NHM1d1 .R_TAzU .y7qwii .p90CkU{direction:var(--menu-direction);display:inline-block;text-align:var(--menu-align,var(--align))}.NHM1d1 .R_TAzU .y7qwii .mvZ3NH{display:block;width:100%}.NHM1d1 .h3jCPd{direction:var(--submenus-direction);display:block;opacity:1;text-align:var(--submenus-align,var(--align));z-index:99999}.NHM1d1 .h3jCPd .wkJ2fp{display:inherit;overflow:visible;visibility:inherit;white-space:nowrap;width:auto}.NHM1d1 .h3jCPd.DlGBN0{transition:visibility;transition-delay:.2s;visibility:visible}.NHM1d1 .h3jCPd .p90CkU{display:inline-block}.NHM1d1 .vh74Xw{display:none}.XwCBRN>nav{bottom:0;left:0;right:0;top:0}.XwCBRN .h3jCPd,.XwCBRN .y7qwii,.XwCBRN>nav{position:absolute}.XwCBRN .h3jCPd{margin-top:7px;visibility:hidden}.XwCBRN .h3jCPd[data-dropMode=dropUp]{margin-bottom:7px;margin-top:0}.XwCBRN .wkJ2fp{background-color:rgba(var(--bgDrop,var(--color_11,color_11)),var(--alpha-bgDrop,1));border-radius:var(--rd,0);box-shadow:var(--shd,0 1px 4px rgba(0,0,0,.6))}.P0dCOY .PJ4KCX{background-color:rgba(var(--bg,var(--color_11,color_11)),var(--alpha-bg,1));bottom:0;left:0;overflow:hidden;position:absolute;right:0;top:0}.xpmKd_{border-radius:var(--overflow-wrapper-border-radius)}</style>
+<style data-href="https://static.parastorage.com/services/editor-elements-library/dist/thunderbolt/rb_wixui.thunderbolt[VerticalMenu_VerticalMenuSolidColorSkin].f3d639a0.min.css">.VUs9VM{margin:0 10px;opacity:.6}.m48Yht{height:auto!important}.fIxawB{direction:var(--direction)}.Ur5Vmd{direction:var(--item-direction);justify-content:var(--menu-item-align,var(--text-align,flex-start))}.A47Z2B{direction:var(--sub-menu-item-direction);justify-content:var(--sub-menu-item-align,var(--text-align,flex-start))}.IOfTmr .Z7cwZn{height:100%;position:relative;width:100%}.IOfTmr .E_2Q_U{min-width:100%;position:absolute;visibility:hidden;z-index:999}.IOfTmr .E_2Q_U.uf9Zs0{left:calc(100% + var(--SKINS_submenuMargin, 8px) - var(--brw, 1px))}.IOfTmr .E_2Q_U.pYmDZK{right:calc(100% + var(--SKINS_submenuMargin, 8px) - var(--brw, 1px))}.IOfTmr .E_2Q_U.OSGBAh{bottom:0}.IOfTmr .E_2Q_U.F8Lkq5{top:0}.IOfTmr .E_2Q_U:before{content:" ";height:100%;left:var(--sub-menu-open-direction-left,0);margin-left:calc(-1*var(--SKINS_submenuMargin, 8px));margin-right:calc(-1*var(--SKINS_submenuMargin, 8px));position:absolute;right:var(--sub-menu-open-direction-right,auto);top:0;width:var(--SKINS_submenuMargin,8px)}.IOfTmr .YGlZMx{background-color:rgba(var(--bg,var(--color_11,color_11)),var(--alpha-bg,1));border:solid var(--brw,1px) rgba(var(--brd,var(--color_15,color_15)),var(--alpha-brd,1));border-radius:var(--rd,0);box-shadow:var(--shd,0 1px 4px rgba(0,0,0,.6));box-sizing:border-box;height:calc(var(--item-height, 50px) - var(--separator-height-adjusted, 0px));transition:var(--itemBGColorTrans,background-color .4s ease 0s)}.IOfTmr .YGlZMx.amuh9Z>.DzUZFw>.a50_l6{cursor:default}.IOfTmr .YGlZMx.lBccMF{background-color:rgba(var(--bgs,var(--color_15,color_15)),var(--alpha-bgs,1))}.IOfTmr .YGlZMx.lBccMF>.DzUZFw>.a50_l6{color:rgb(var(--txts,var(--color_13,color_13)))}.IOfTmr .YGlZMx.F95vTA>.E_2Q_U{visibility:visible}.IOfTmr .YGlZMx.F95vTA:not(.amuh9Z){background-color:rgba(var(--bgh,var(--color_15,color_15)),var(--alpha-bgh,1))}.IOfTmr .YGlZMx.F95vTA:not(.amuh9Z)>.DzUZFw>.a50_l6{color:rgb(var(--txth,var(--color_13,color_13)))}.IOfTmr .E_2Q_U .YGlZMx{background-color:rgba(var(--SKINS_bgSubmenu,var(--color_11,color_11)),var(--alpha-SKINS_bgSubmenu,1));border-radius:var(--SKINS_submenuBR,0)}.IOfTmr .a50_l6{align-items:center;box-sizing:border-box;color:rgb(var(--txt,var(--color_15,color_15)));cursor:pointer;display:flex;font:var(--fnt,var(--font_1));height:100%;padding-left:var(--textSpacing,10px);padding-right:var(--textSpacing,10px);position:relative;white-space:nowrap}.IOfTmr .a50_l6,.IOfTmr .a50_l6:after{background-color:transparent;width:100%}.IOfTmr .a50_l6:after{content:" ";height:var(--separator-height-adjusted,0);left:0;position:absolute;top:100%}.IOfTmr .Z7cwZn .YGlZMx .a50_l6{line-height:calc(var(--item-height, 50px) - var(--separator-height-adjusted, 0px))}.IOfTmr .E_2Q_U .a50_l6{font:var(--SKINS_fntSubmenu,var(--font_1))}.IOfTmr .MfQCD7{height:var(--separator-height-adjusted,0);min-height:0;width:100%}.xyNFD3{margin:0 10px;opacity:.6}.gxChTi{height:auto!important}.J5AcBQ .ADkeoY{border:solid var(--brw,1px) rgba(var(--brd,var(--color_15,color_15)),var(--alpha-brd,1));border-radius:var(--rd,0);box-shadow:var(--shd,0 1px 4px rgba(0,0,0,.6))}.J5AcBQ .ybGdqG{border-bottom:solid var(--sepw,1px) rgba(var(--sep,var(--color_15,color_15)),var(--alpha-sep,1));height:100%;position:relative;width:100%}.J5AcBQ .ybGdqG:last-child{border-bottom:0}.J5AcBQ .niKtuR{border:solid var(--brw,1px) rgba(var(--brd,var(--color_15,color_15)),var(--alpha-brd,1));border-radius:var(--SKINS_submenuBR,0);box-shadow:var(--shd,0 1px 4px rgba(0,0,0,.6));box-sizing:border-box;min-width:100%;position:absolute;visibility:hidden;z-index:999}.J5AcBQ .niKtuR.pLtej1{left:calc(100% + var(--SKINS_submenuMargin, 8px))}.J5AcBQ .niKtuR.UPEerR{right:calc(100% + var(--SKINS_submenuMargin, 8px))}.J5AcBQ .niKtuR.sKAPJX{bottom:var(--brw,1px)}.J5AcBQ .niKtuR.asC21j{top:calc(-1*var(--brw, 1px))}.J5AcBQ .niKtuR:before{content:" ";height:100%;left:var(--sub-menu-open-direction-left,0);margin-left:calc(-1*var(--SKINS_submenuMargin, 8px));margin-right:calc(-1*var(--SKINS_submenuMargin, 8px));position:absolute;right:var(--sub-menu-open-direction-right,auto);top:0;width:var(--SKINS_submenuMargin,8px)}.J5AcBQ .i4bvwx{background-color:rgba(var(--bg,var(--color_11,color_11)),var(--alpha-bg,1));height:var(--item-height,50px);transition:var(--itemBGColorTrans,background-color .4s ease 0s)}.J5AcBQ .i4bvwx.yL5MMl>.qFH5R7>.kFPGSw{cursor:default}.J5AcBQ .i4bvwx.iLEOZ6{background-color:rgba(var(--bgs,var(--color_15,color_15)),var(--alpha-bgs,1))}.J5AcBQ .i4bvwx.iLEOZ6>.qFH5R7>.kFPGSw{color:rgb(var(--txts,var(--color_13,color_13)))}.J5AcBQ .i4bvwx.Bf9iOm>.niKtuR{visibility:visible}.J5AcBQ .i4bvwx.Bf9iOm:not(.yL5MMl){background-color:rgba(var(--bgh,var(--color_15,color_15)),var(--alpha-bgh,1))}.J5AcBQ .i4bvwx.Bf9iOm:not(.yL5MMl)>.qFH5R7>.kFPGSw{color:rgb(var(--txth,var(--color_13,color_13)))}.J5AcBQ .niKtuR .i4bvwx{background-color:rgba(var(--SKINS_bgSubmenu,var(--color_11,color_11)),var(--alpha-SKINS_bgSubmenu,1))}.J5AcBQ .niKtuR .ybGdqG .i4bvwx{border-radius:0}.J5AcBQ .ybGdqG:first-child .i4bvwx{border-radius:var(--rd,0);border-bottom-left-radius:0;border-bottom-right-radius:0}.J5AcBQ .ybGdqG:last-child .i4bvwx{border-bottom:0 solid transparent;border-radius:var(--rd,0);border-top-left-radius:0;border-top-right-radius:0}.J5AcBQ .kFPGSw{box-sizing:border-box;color:rgb(var(--txt,var(--color_15,color_15)));cursor:pointer;display:flex;font:var(--fnt,var(--font_1));height:100%;padding-left:var(--textSpacing,10px);padding-right:var(--textSpacing,10px);position:relative;white-space:nowrap}.J5AcBQ .kFPGSw,.J5AcBQ .kFPGSw:after{background-color:transparent;width:100%}.J5AcBQ .kFPGSw:after{content:" ";cursor:default;height:var(--sepw,1px);left:0;position:absolute;top:100%}.J5AcBQ .ybGdqG .i4bvwx .kFPGSw{line-height:var(--item-height,50px)}.J5AcBQ .niKtuR .kFPGSw{font:var(--SKINS_fntSubmenu,var(--font_1))}</style>
+<style data-href="https://static.parastorage.com/services/editor-elements-library/dist/thunderbolt/rb_wixui.thunderbolt_bootstrap.2de87613.min.css">.J6KGih{cursor:pointer}.sNF2R0{opacity:0}.hLoBV3{transition:opacity var(--transition-duration) cubic-bezier(.37,0,.63,1)}.Rdf41z,.hLoBV3{opacity:1}.ftlZWo{transition:opacity var(--transition-duration) cubic-bezier(.37,0,.63,1)}.ATGlOr,.ftlZWo{opacity:0}.KQSXD0{transition:opacity var(--transition-duration) cubic-bezier(.64,0,.78,0)}.KQSXD0,.pagQKE{opacity:1}._6zG5H{opacity:0;transition:opacity var(--transition-duration) cubic-bezier(.22,1,.36,1)}.BB49uC{transform:translateX(100%)}.j9xE1V{transition:transform var(--transition-duration) cubic-bezier(.87,0,.13,1)}.ICs7Rs,.j9xE1V{transform:translateX(0)}.DxijZJ{transition:transform var(--transition-duration) cubic-bezier(.87,0,.13,1)}.B5kjYq,.DxijZJ{transform:translateX(-100%)}.cJijIV{transition:transform var(--transition-duration) cubic-bezier(.87,0,.13,1)}.cJijIV,.hOxaWM{transform:translateX(0)}.T9p3fN{transform:translateX(100%);transition:transform var(--transition-duration) cubic-bezier(.87,0,.13,1)}.qDxYJm{transform:translateY(100%)}.aA9V0P{transition:transform var(--transition-duration) cubic-bezier(.87,0,.13,1)}.YPXPAS,.aA9V0P{transform:translateY(0)}.Xf2zsA{transition:transform var(--transition-duration) cubic-bezier(.87,0,.13,1)}.Xf2zsA,.y7Kt7s{transform:translateY(-100%)}.EeUgMu{transition:transform var(--transition-duration) cubic-bezier(.87,0,.13,1)}.EeUgMu,.fdHrtm{transform:translateY(0)}.WIFaG4{transform:translateY(100%);transition:transform var(--transition-duration) cubic-bezier(.87,0,.13,1)}body:not(.responsive) .JsJXaX{overflow-x:clip}:root:active-view-transition .JsJXaX{view-transition-name:page-group}.AnQkDU{display:grid;grid-template-columns:1fr;grid-template-rows:1fr;height:100%}.AnQkDU>div{align-self:stretch!important;grid-area:1/1/2/2;justify-self:stretch!important}.StylableButton2545352419__root{-archetype:box;border:none;box-sizing:border-box;cursor:pointer;display:block;height:100%;min-height:10px;min-width:10px;padding:0;touch-action:manipulation;width:100%}.StylableButton2545352419__root[disabled]{pointer-events:none}.StylableButton2545352419__root:not(:hover):not([disabled]).StylableButton2545352419--hasBackgroundColor{background-color:var(--corvid-background-color)!important}.StylableButton2545352419__root:hover:not([disabled]).StylableButton2545352419--hasHoverBackgroundColor{background-color:var(--corvid-hover-background-color)!important}.StylableButton2545352419__root:not(:hover)[disabled].StylableButton2545352419--hasDisabledBackgroundColor{background-color:var(--corvid-disabled-background-color)!important}.StylableButton2545352419__root:not(:hover):not([disabled]).StylableButton2545352419--hasBorderColor{border-color:var(--corvid-border-color)!important}.StylableButton2545352419__root:hover:not([disabled]).StylableButton2545352419--hasHoverBorderColor{border-color:var(--corvid-hover-border-color)!important}.StylableButton2545352419__root:not(:hover)[disabled].StylableButton2545352419--hasDisabledBorderColor{border-color:var(--corvid-disabled-border-color)!important}.StylableButton2545352419__root.StylableButton2545352419--hasBorderRadius{border-radius:var(--corvid-border-radius)!important}.StylableButton2545352419__root.StylableButton2545352419--hasBorderWidth{border-width:var(--corvid-border-width)!important}.StylableButton2545352419__root:not(:hover):not([disabled]).StylableButton2545352419--hasColor,.StylableButton2545352419__root:not(:hover):not([disabled]).StylableButton2545352419--hasColor .StylableButton2545352419__label{color:var(--corvid-color)!important}.StylableButton2545352419__root:hover:not([disabled]).StylableButton2545352419--hasHoverColor,.StylableButton2545352419__root:hover:not([disabled]).StylableButton2545352419--hasHoverColor .StylableButton2545352419__label{color:var(--corvid-hover-color)!important}.StylableButton2545352419__root:not(:hover)[disabled].StylableButton2545352419--hasDisabledColor,.StylableButton2545352419__root:not(:hover)[disabled].StylableButton2545352419--hasDisabledColor .StylableButton2545352419__label{color:var(--corvid-disabled-color)!important}.StylableButton2545352419__link{-archetype:box;box-sizing:border-box;color:#000;text-decoration:none}.StylableButton2545352419__container{align-items:center;display:flex;flex-basis:auto;flex-direction:row;flex-grow:1;height:100%;justify-content:center;overflow:hidden;transition:all .2s ease,visibility 0s;width:100%}.StylableButton2545352419__label{-archetype:text;-controller-part-type:LayoutChildDisplayDropdown,LayoutFlexChildSpacing(first);max-width:100%;min-width:1.8em;overflow:hidden;text-align:center;text-overflow:ellipsis;transition:inherit;white-space:nowrap}.StylableButton2545352419__root.StylableButton2545352419--isMaxContent .StylableButton2545352419__label{text-overflow:unset}.StylableButton2545352419__root.StylableButton2545352419--isWrapText .StylableButton2545352419__label{min-width:10px;overflow-wrap:break-word;white-space:break-spaces;word-break:break-word}.StylableButton2545352419__icon{-archetype:icon;-controller-part-type:LayoutChildDisplayDropdown,LayoutFlexChildSpacing(last);flex-shrink:0;height:50px;min-width:1px;transition:inherit}.StylableButton2545352419__icon.StylableButton2545352419--override{display:block!important}.StylableButton2545352419__icon svg,.StylableButton2545352419__icon>span{display:flex;height:inherit;width:inherit}.StylableButton2545352419__root:not(:hover):not([disalbed]).StylableButton2545352419--hasIconColor .StylableButton2545352419__icon svg{fill:var(--corvid-icon-color)!important;stroke:var(--corvid-icon-color)!important}.StylableButton2545352419__root:hover:not([disabled]).StylableButton2545352419--hasHoverIconColor .StylableButton2545352419__icon svg{fill:var(--corvid-hover-icon-color)!important;stroke:var(--corvid-hover-icon-color)!important}.StylableButton2545352419__root:not(:hover)[disabled].StylableButton2545352419--hasDisabledIconColor .StylableButton2545352419__icon svg{fill:var(--corvid-disabled-icon-color)!important;stroke:var(--corvid-disabled-icon-color)!important}.aeyn4z{bottom:0;left:0;position:absolute;right:0;top:0}.qQrFOK{cursor:pointer}.VDJedC{-webkit-tap-highlight-color:rgba(0,0,0,0);fill:var(--corvid-fill-color,var(--fill));fill-opacity:var(--fill-opacity);stroke:var(--corvid-stroke-color,var(--stroke));stroke-opacity:var(--stroke-opacity);stroke-width:var(--stroke-width);filter:var(--drop-shadow,none);opacity:var(--opacity);transform:var(--flip)}.VDJedC,.VDJedC svg{bottom:0;left:0;position:absolute;right:0;top:0}.VDJedC svg{height:var(--svg-calculated-height,100%);margin:auto;padding:var(--svg-calculated-padding,0);width:var(--svg-calculated-width,100%)}.VDJedC svg:not([data-type=ugc]){overflow:visible}.l4CAhn *{vector-effect:n
