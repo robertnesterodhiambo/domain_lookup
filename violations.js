@@ -43,7 +43,7 @@ async function writeSingleResult(record) {
 
 async function processDomain(domain, originalRow) {
   const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext();
+  const context = await browser.newContext({ ignoreHTTPSErrors: true });
   const page = await context.newPage();
   const url = `https://${domain}`;
 
@@ -72,7 +72,22 @@ async function processDomain(domain, originalRow) {
     await writeSingleResult(output); // ✅ Save immediately
   } catch (e) {
     console.log(`⚠️ Skipped ${url} due to error: ${e.message}`);
-    // skipped — do not write
+
+    // ⛔ Save entry if SSL or other invalid response occurred
+    const errorMessage = e.message.toLowerCase();
+    if (
+      errorMessage.includes('err_ssl_protocol_error') ||
+      errorMessage.includes('err_connection_reset') ||
+      errorMessage.includes('err_cert') ||
+      errorMessage.includes('net::')
+    ) {
+      const failedOutput = {
+        ...originalRow,
+        domain: domain,
+        status: 'invalid response'
+      };
+      await writeSingleResult(failedOutput);
+    }
   } finally {
     await browser.close();
   }
