@@ -7,7 +7,7 @@ const AxeBuilder = require('@axe-core/playwright').default;
 const INPUT_CSV = 'page_count.csv';
 const OUTPUT_CSV = 'violations.csv';
 const CHUNK_SIZE = 100;
-const CONCURRENCY = 5; // ✅ Number of pages to run in parallel
+const CONCURRENCY = 5;
 
 function fileExists(file) {
   return fs.existsSync(file);
@@ -27,22 +27,31 @@ function readProcessedDomains() {
   });
 }
 
-async function writeSingleResult(record) {
+let csvHeadersInitialized = false;
+let writer;
+
+async function initCsvWriterIfNeeded(record) {
+  if (csvHeadersInitialized) return;
+
   const headers = Object.keys(record).map((key) => ({
     id: key,
     title: key
   }));
 
-  const writer = createObjectCsvWriter({
+  writer = createObjectCsvWriter({
     path: OUTPUT_CSV,
     header: headers,
     append: fileExists(OUTPUT_CSV)
   });
 
+  csvHeadersInitialized = true;
+}
+
+async function writeSingleResult(record) {
+  await initCsvWriterIfNeeded(record);
   await writer.writeRecords([record]);
 }
 
-// ✅ Now accepts shared browser
 async function processDomain(browser, domain, originalRow) {
   const context = await browser.newContext({ ignoreHTTPSErrors: true });
   const page = await context.newPage();
@@ -74,17 +83,11 @@ async function processDomain(browser, domain, originalRow) {
   } catch (e) {
     console.log(`⚠️ Skipped ${url} due to error: ${e.message}`);
 
-    const errorMessage = e.message.toLowerCase();
-    let status = 'webpage not found';
-
-    if (errorMessage.includes('err_address_unreachable')) {
-      status = 'website unreachable';
-    }
-
     const failedOutput = {
       ...originalRow,
-      domain: domain,
-      status: status
+      violations: 'site unreachable',
+      passes: 'site unreachable',
+      incomplete: 'site unreachable'
     };
 
     await writeSingleResult(failedOutput);
@@ -116,7 +119,6 @@ function readCSVInChunks(filePath, chunkSize, callback) {
   });
 }
 
-// ✅ Concurrency without external libs
 async function runWithConcurrencyLimit(tasks, limit) {
   const results = [];
   const executing = [];
@@ -146,14 +148,13 @@ async function main() {
     for (const row of chunk) {
       if (row.domain && !processed.has(row.domain.trim())) {
         const domain = row.domain.trim();
-        tasks.push(() => processDomain(browser, domain, row)); // ✅ Use shared browser
+        tasks.push(() => processDomain(browser, domain, row));
       }
     }
 
     await runWithConcurrencyLimit(tasks, CONCURRENCY);
   });
 
-  // ✅ Close browser after all chunks are processed
   process.on('exit', async () => {
     await browser.close();
   });
