@@ -9,6 +9,8 @@ subdomaincount.py
 nslookup.py
 pagecount.py
 
+ assetfinder --subs-only 0303.nl -subdomains 
+
 accessibility_checker.js
 
 accesiility.js is run from node js have it installed and install all its dependency
