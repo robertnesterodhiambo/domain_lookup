@@ -73,21 +73,20 @@ async function processDomain(domain, originalRow) {
   } catch (e) {
     console.log(`⚠️ Skipped ${url} due to error: ${e.message}`);
 
-    // ⛔ Save entry if SSL or other invalid response occurred
     const errorMessage = e.message.toLowerCase();
-    if (
-      errorMessage.includes('err_ssl_protocol_error') ||
-      errorMessage.includes('err_connection_reset') ||
-      errorMessage.includes('err_cert') ||
-      errorMessage.includes('net::')
-    ) {
-      const failedOutput = {
-        ...originalRow,
-        domain: domain,
-        status: 'invalid response'
-      };
-      await writeSingleResult(failedOutput);
+    let status = 'webpage not found'; // Default for any other error
+
+    if (errorMessage.includes('err_address_unreachable')) {
+      status = 'website unreachable';
     }
+
+    const failedOutput = {
+      ...originalRow,
+      domain: domain,
+      status: status
+    };
+
+    await writeSingleResult(failedOutput);
   } finally {
     await browser.close();
   }
