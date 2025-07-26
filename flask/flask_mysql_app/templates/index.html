@@ -7,6 +7,14 @@
 </head>
 <body class="container mt-5">
     <h2 class="mb-4">Domain Database</h2>
+
+    <div class="alert alert-info">
+        <strong>📊 Data Stats:</strong><br>
+        ✅ Data collected already: <strong>{{ total_collected }}</strong><br>
+        🎯 Data total to collect: <strong>{{ total_possible }}</strong><br>
+        📈 Percentage collected: <strong>{{ percent_collected }}%</strong>
+    </div>
+
     <form method="POST" action="/download">
         <div class="mb-3">
             <label for="tld" class="form-label">TLD</label>
@@ -19,7 +27,7 @@
         </div>
         <div class="mb-3">
             <label for="registrar" class="form-label">Registrar</label>
-            <select class="form-select" id="registrar" name="registrar">
+            <select class="form-select" id="registrar" name="registrar_name">
                 <option value="">-- All --</option>
                 {% for value in registrars %}
                     <option value="{{ value }}">{{ value }}</option>

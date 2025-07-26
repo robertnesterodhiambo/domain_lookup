@@ -14,7 +14,7 @@ os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 def get_unique_values(column):
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
-    query = f"SELECT DISTINCT {column} FROM complete WHERE {column} IS NOT NULL AND {column} != ''"
+    query = f"SELECT DISTINCT {column} FROM finalboss WHERE {column} IS NOT NULL AND {column} != ''"
     cursor.execute(query)
     results = [row[0] for row in cursor.fetchall()]
     cursor.close()
@@ -23,14 +23,35 @@ def get_unique_values(column):
 
 @app.route('/', methods=['GET'])
 def index():
+    conn = mysql.connector.connect(**DB_CONFIG)
+    cursor = conn.cursor()
+
+    # Total rows collected in finalboss
+    cursor.execute("SELECT COUNT(*) FROM finalboss")
+    total_collected = cursor.fetchone()[0]
+
+    # Get the highest value in the 'count' column in complete
+    cursor.execute("SELECT MAX(count) FROM complete")
+    total_possible = cursor.fetchone()[0] or 1  # Prevent divide by zero
+
+    percent_collected = round((total_collected / total_possible) * 100, 2)
+
+    cursor.close()
+    conn.close()
+
+    # Dropdown data
     tlds = get_unique_values('tld')
     registrars = get_unique_values('registrar_name')
     countries = get_unique_values('registrar_country')
+
     return render_template(
         'index.html',
         tlds=tlds,
         registrars=registrars,
-        countries=countries
+        countries=countries,
+        total_collected=total_collected,
+        total_possible=total_possible,
+        percent_collected=percent_collected
     )
 
 @app.route('/download', methods=['POST'])
@@ -38,8 +59,6 @@ def download():
     tld = request.form.get('tld')
     registrar = request.form.get('registrar_name')
     country = request.form.get('country')
-
-    print("Download requested with filters:", tld, registrar, country)
 
     conditions = []
     values = []
@@ -55,10 +74,7 @@ def download():
         values.append(country)
 
     where_clause = "WHERE " + " AND ".join(conditions) if conditions else ""
-
-    query = f"SELECT * FROM complete {where_clause}"
-    print("Query:", query)
-    print("Values:", values)
+    query = f"SELECT * FROM finalboss {where_clause}"
 
     conn = mysql.connector.connect(**DB_CONFIG)
     df = pd.read_sql(query, conn, params=values)
@@ -67,7 +83,11 @@ def download():
         conn.close()
         return "No data matched the filters selected."
 
-    # Query to get count of unique domains per tld with same filters
+    # Count selected rows
+    selected_count = len(df)
+    print(f"User selected {selected_count} rows.")
+
+    # Get site_count per tld from complete
     count_query = f"""
         SELECT tld, COUNT(DISTINCT domain) AS site_count
         FROM complete
@@ -80,15 +100,14 @@ def download():
     cursor.close()
     conn.close()
 
-    # Create dictionary {tld: site_count}
+    # Add site_count column
     tld_counts = {row[0]: row[1] for row in count_results}
-
-    # Add site_count column to dataframe
     df['site_count'] = df['tld'].map(tld_counts).fillna(0).astype(int)
 
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     filename = f"filtered_nslookup_{timestamp}.xlsx"
     filepath = os.path.join(DOWNLOAD_DIR, filename)
+
     df.to_excel(filepath, index=False)
 
     return send_file(filepath, as_attachment=True)
