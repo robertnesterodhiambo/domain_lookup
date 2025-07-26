@@ -1,0 +1,8 @@
+www.0-bird.nl
+mail.0-bird.nl
+ftp.0-bird.nl
+ns1.0-bird.nl
+ns2.0-bird.nl
+webmail.0-bird.nl
+blog.0-bird.nl
+cpanel.0-bird.nl
