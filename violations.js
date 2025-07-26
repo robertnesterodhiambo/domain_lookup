@@ -7,6 +7,7 @@ const AxeBuilder = require('@axe-core/playwright').default;
 const INPUT_CSV = 'page_count.csv';
 const OUTPUT_CSV = 'violations.csv';
 const CHUNK_SIZE = 100;
+const CONCURRENCY = 5; // ✅ Number of pages to run in parallel
 
 function fileExists(file) {
   return fs.existsSync(file);
@@ -38,11 +39,11 @@ async function writeSingleResult(record) {
     append: fileExists(OUTPUT_CSV)
   });
 
-  await writer.writeRecords([record]); // Write one record immediately
+  await writer.writeRecords([record]);
 }
 
-async function processDomain(domain, originalRow) {
-  const browser = await chromium.launch({ headless: true });
+// ✅ Now accepts shared browser
+async function processDomain(browser, domain, originalRow) {
   const context = await browser.newContext({ ignoreHTTPSErrors: true });
   const page = await context.newPage();
   const url = `https://${domain}`;
@@ -69,12 +70,12 @@ async function processDomain(domain, originalRow) {
       incomplete: incomplete.length
     };
 
-    await writeSingleResult(output); // ✅ Save immediately
+    await writeSingleResult(output);
   } catch (e) {
     console.log(`⚠️ Skipped ${url} due to error: ${e.message}`);
 
     const errorMessage = e.message.toLowerCase();
-    let status = 'webpage not found'; // Default for any other error
+    let status = 'webpage not found';
 
     if (errorMessage.includes('err_address_unreachable')) {
       status = 'website unreachable';
@@ -88,7 +89,8 @@ async function processDomain(domain, originalRow) {
 
     await writeSingleResult(failedOutput);
   } finally {
-    await browser.close();
+    await page.close();
+    await context.close();
   }
 }
 
@@ -114,15 +116,46 @@ function readCSVInChunks(filePath, chunkSize, callback) {
   });
 }
 
+// ✅ Concurrency without external libs
+async function runWithConcurrencyLimit(tasks, limit) {
+  const results = [];
+  const executing = [];
+
+  for (const task of tasks) {
+    const p = task().then((res) => {
+      executing.splice(executing.indexOf(p), 1);
+      return res;
+    });
+    results.push(p);
+    executing.push(p);
+    if (executing.length >= limit) {
+      await Promise.race(executing);
+    }
+  }
+
+  return Promise.all(results);
+}
+
 async function main() {
   const processed = await readProcessedDomains();
+  const browser = await chromium.launch({ headless: true });
 
   readCSVInChunks(INPUT_CSV, CHUNK_SIZE, async (chunk) => {
+    const tasks = [];
+
     for (const row of chunk) {
       if (row.domain && !processed.has(row.domain.trim())) {
-        await processDomain(row.domain.trim(), row);
+        const domain = row.domain.trim();
+        tasks.push(() => processDomain(browser, domain, row)); // ✅ Use shared browser
       }
     }
+
+    await runWithConcurrencyLimit(tasks, CONCURRENCY);
+  });
+
+  // ✅ Close browser after all chunks are processed
+  process.on('exit', async () => {
+    await browser.close();
   });
 }
 
