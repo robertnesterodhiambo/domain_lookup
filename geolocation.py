@@ -26,15 +26,24 @@ cache_lock = Lock()
 write_lock = Lock()
 
 processed_domains = set()
+complete_data_map = {}  # domain -> geo_fields
 rows_collected = 0
 rows_skipped = 0
+rows_filled_from_complete = 0
 
+# === Load complete.csv into map ===
 if os.path.exists(output_file):
     try:
-        existing_df = pd.read_csv(output_file, usecols=['domain'])
-        processed_domains = set(existing_df['domain'].dropna().astype(str))
-        rows_collected = len(processed_domains)
-        print(f"✅ Already collected: {rows_collected} rows")
+        existing_df = pd.read_csv(output_file, usecols=['domain'] + geo_fields)
+        existing_df = existing_df.dropna(subset=['domain'])
+
+        for _, row in existing_df.iterrows():
+            domain = str(row['domain']).strip()
+            complete_data_map[domain] = {field: row.get(field, '') for field in geo_fields}
+            processed_domains.add(domain)
+
+        rows_collected = len(complete_data_map)
+        print(f"✅ Already collected: {rows_collected} rows from complete.csv")
     except Exception as e:
         print(f"⚠️ Could not read existing {output_file}: {e}")
 
@@ -54,16 +63,28 @@ def fetch_ipinfo_with_proxies(ip):
             continue
     return None
 
-def process_row(row_number, row, writer, processed_domains):
-    global rows_collected, rows_skipped
+def process_row(row_number, row, writer):
+    global rows_collected, rows_skipped, rows_filled_from_complete
+
     domain = str(row.get('domain', '')).strip()
     print(f"📄 Processing row {row_number} - domain: {domain}")
 
-    if not domain or domain in processed_domains:
+    if not domain:
         with write_lock:
             rows_skipped += 1
         return
 
+    # === Reuse geo data if in complete_data_map ===
+    if domain in complete_data_map:
+        with write_lock:
+            geo_data = complete_data_map[domain]
+            for field in geo_fields:
+                row[field] = geo_data[field]
+            writer.writerow(row.to_dict())
+            rows_filled_from_complete += 1
+        return
+
+    # === Else fetch from IP ===
     nslookupA = row.get('nslookupA', '')
     ip_list = [ip.strip() for ip in str(nslookupA).split('|') if ip.strip()] if pd.notna(nslookupA) else []
     geo_data = {field: '' for field in geo_fields}
@@ -98,23 +119,27 @@ def process_row(row_number, row, writer, processed_domains):
         processed_domains.add(domain)
         rows_collected += 1
 
+# === Write updated rows to complete.csv ===
 with open(output_file, mode='a', newline='', encoding='utf-8') as out_csv:
     writer = None
     file_empty = os.stat(output_file).st_size == 0
 
     for chunk_number, chunk in enumerate(pd.read_csv(input_file, chunksize=100, quotechar='"', on_bad_lines='skip')):
+        print(f"\n📦 Importing chunk {chunk_number + 1}")
         if writer is None:
             writer = csv.DictWriter(out_csv, fieldnames=chunk.columns.tolist() + geo_fields)
             if file_empty:
                 writer.writeheader()
 
-        with ThreadPoolExecutor(max_workers=206) as executor:
+        with ThreadPoolExecutor(max_workers=10) as executor:
             futures = [
-                executor.submit(process_row, idx + 1 + chunk_number * 100, row, writer, processed_domains.copy())
+                executor.submit(process_row, idx + 1 + chunk_number * 100, row, writer)
                 for idx, (_, row) in enumerate(chunk.iterrows())
             ]
             for future in as_completed(futures):
-                pass
+                pass  # We don't need results; just ensure completion
 
-print(f"✅ Total collected now: {rows_collected}")
-print(f"⏩ Total skipped (already processed): {rows_skipped}")
+# === Final summary ===
+print(f"\n✅ Total fetched from IP: {rows_collected}")
+print(f"⏩ Total skipped (no domain): {rows_skipped}")
+print(f"♻️ Reused from complete.csv: {rows_filled_from_complete}")
