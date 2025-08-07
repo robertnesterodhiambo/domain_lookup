@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Preview Results</title>
+</head>
+<body>
+    <h3>✅ Query Completed</h3>
+    <p><strong>Rows Found:</strong> {{ count }}</p>
+
+    <form action="/download/{{ token }}" method="get">
+        <button type="submit">⬇️ Download CSV ({{ limit }})</button>
+    </form>
+
+    <br>
+    <a href="/">← Go Back</a>
+</body>
+</html>

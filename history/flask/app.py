@@ -1,68 +1,91 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, redirect, url_for
 import pandas as pd
-import pymysql
 import io
-
-pymysql.install_as_MySQLdb()
-import MySQLdb
+import pymysql
+from datetime import datetime
+import uuid
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key_here'  # Required for session
 
+# DB config
 DB_CONFIG = {
     'user': 'root',
-    'passwd': 'root235',
+    'password': 'root235',
     'host': '46.62.140.165',
-    'db': 'history'
+    'database': 'history'
 }
 
+# Store results in-memory (simple cache for this use case)
+query_cache = {}
+
 def get_db_connection():
-    return MySQLdb.connect(**DB_CONFIG)
+    return pymysql.connect(
+        user=DB_CONFIG['user'],
+        password=DB_CONFIG['password'],
+        host=DB_CONFIG['host'],
+        database=DB_CONFIG['database']
+    )
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
-    start_date = end_date = ""
-    download_ready = False
+    return render_template('index.html')
 
-    if request.method == 'POST':
-        start_date = request.form['start_date']
-        end_date = request.form['end_date']
-        download_ready = True  # show buttons immediately
-
-    return render_template('index.html',
-                           start_date=start_date,
-                           end_date=end_date,
-                           download_ready=download_ready)
-
-@app.route('/download')
-def download():
+@app.route('/preview', methods=['GET'])
+def preview():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
     limit = request.args.get('limit')
 
-    if not start_date or not end_date:
-        return "Missing date range."
+    filters = {
+        'domain_registrar_name': request.args.get('domain_registrar_name', ''),
+        'registrant_name': request.args.get('registrant_name', ''),
+        'registrant_company': request.args.get('registrant_company', ''),
+        'registrant_address': request.args.get('registrant_address', ''),
+        'registrant_city': request.args.get('registrant_city', ''),
+        'registrant_state': request.args.get('registrant_state', ''),
+        'registrant_zip': request.args.get('registrant_zip', ''),
+        'registrant_country': request.args.get('registrant_country', ''),
+    }
 
-    conn = get_db_connection()
+    query = "SELECT * FROM group_1 WHERE DATE(create_date) BETWEEN %s AND %s"
+    params = [start_date, end_date]
 
-    query = """
-        SELECT * FROM group_1
-        WHERE create_date BETWEEN %s AND %s
-    """
+    for key, value in filters.items():
+        if value:
+            query += f" AND {key} LIKE %s"
+            params.append(f"%{value}%")
+
     if limit == "1000":
         query += " LIMIT 1000"
 
-    df = pd.read_sql(query, conn, params=(start_date, end_date))
+    conn = get_db_connection()
+    df = pd.read_sql(query, conn, params=params)
     conn.close()
 
-    output = io.BytesIO()
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False)
+    # Store result in memory with a token
+    token = str(uuid.uuid4())
+    query_cache[token] = df
+
+    return render_template('preview.html', count=len(df), token=token, limit=limit, start_date=start_date, end_date=end_date)
+
+@app.route('/download/<token>')
+def download(token):
+    df = query_cache.get(token)
+    if df is None:
+        return "Session expired or invalid download token", 404
+
+    output = io.StringIO()
+    df.to_csv(output, index=False)
     output.seek(0)
 
-    suffix = "limited_1000" if limit == "1000" else "full"
-    filename = f"filtered_data_{suffix}_{start_date}_to_{end_date}.xlsx"
-
-    return send_file(output, download_name=filename, as_attachment=True)
+    filename = f"filtered_data_{token}.csv"
+    return send_file(
+        io.BytesIO(output.getvalue().encode('utf-8')),
+        download_name=filename,
+        as_attachment=True,
+        mimetype='text/csv'
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)

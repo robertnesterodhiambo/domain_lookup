@@ -1,33 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Group 1 Data Export</title>
-    <script>
-        function confirmDownload() {
-            return confirm("This may download a large file. Continue?");
-        }
-    </script>
+    <title>Filter Domains</title>
 </head>
 <body>
-    <h2>Select Date Range</h2>
-    <form method="POST">
+    <h2>Filter and Prepare Data</h2>
+    <form action="/preview" method="get">
         <label>Start Date:</label>
-        <input type="date" name="start_date" required value="{{ start_date }}">
-        <br><br>
+        <input type="date" name="start_date" required><br><br>
         <label>End Date:</label>
-        <input type="date" name="end_date" required value="{{ end_date }}">
-        <br><br>
-        <button type="submit">Show Download Options</button>
-    </form>
+        <input type="date" name="end_date" required><br><br>
 
-    {% if download_ready %}
-        <h3>Download Options:</h3>
-        <a href="/download?start_date={{ start_date }}&end_date={{ end_date }}&limit=1000">
-            <button>Download 1,000 Rows</button>
-        </a>
-        <a href="/download?start_date={{ start_date }}&end_date={{ end_date }}&limit=all" onclick="return confirmDownload();">
-            <button>Download Full Data</button>
-        </a>
-    {% endif %}
+        <!-- Optional filters -->
+        <label>Domain Registrar Name:</label>
+        <input type="text" name="domain_registrar_name"><br>
+
+        <label>Registrant Name:</label>
+        <input type="text" name="registrant_name"><br>
+
+        <label>Registrant Company:</label>
+        <input type="text" name="registrant_company"><br>
+
+        <label>Registrant Address:</label>
+        <input type="text" name="registrant_address"><br>
+
+        <label>Registrant City:</label>
+        <input type="text" name="registrant_city"><br>
+
+        <label>Registrant State:</label>
+        <input type="text" name="registrant_state"><br>
+
+        <label>Registrant Zip:</label>
+        <input type="text" name="registrant_zip"><br>
+
+        <label>Registrant Country:</label>
+        <input type="text" name="registrant_country"><br><br>
+
+        <button type="submit" name="limit" value="1000">🔍 Preview 1000 Rows</button>
+        <button type="submit" name="limit" value="all">🔍 Preview Full Data</button>
+    </form>
 </body>
 </html>
