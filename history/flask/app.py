@@ -3,13 +3,11 @@ import pandas as pd
 import pymysql
 import io
 
-# Replace MySQLdb with pymysql (avoids build errors)
 pymysql.install_as_MySQLdb()
 import MySQLdb
 
 app = Flask(__name__)
 
-# Database connection config
 DB_CONFIG = {
     'user': 'root',
     'passwd': 'root235',
@@ -22,28 +20,15 @@ def get_db_connection():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    count = None
     start_date = end_date = ""
     download_ready = False
 
     if request.method == 'POST':
         start_date = request.form['start_date']
         end_date = request.form['end_date']
-
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        count_query = """
-            SELECT COUNT(*) FROM group_1
-            WHERE create_date BETWEEN %s AND %s
-        """
-        cursor.execute(count_query, (start_date, end_date))
-        count = cursor.fetchone()[0]
-        conn.close()
-
-        download_ready = True
+        download_ready = True  # show buttons immediately
 
     return render_template('index.html',
-                           count=count,
                            start_date=start_date,
                            end_date=end_date,
                            download_ready=download_ready)
@@ -58,7 +43,6 @@ def download():
         return "Missing date range."
 
     conn = get_db_connection()
-    cursor = conn.cursor()
 
     query = """
         SELECT * FROM group_1

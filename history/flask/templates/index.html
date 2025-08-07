@@ -12,24 +12,22 @@
     <h2>Select Date Range</h2>
     <form method="POST">
         <label>Start Date:</label>
-        <input type="date" name="start_date" value="{{ start_date }}" required>
+        <input type="date" name="start_date" required value="{{ start_date }}">
         <br><br>
         <label>End Date:</label>
-        <input type="date" name="end_date" value="{{ end_date }}" required>
+        <input type="date" name="end_date" required value="{{ end_date }}">
         <br><br>
-        <button type="submit">Get Count</button>
+        <button type="submit">Show Download Options</button>
     </form>
 
-    {% if count is not none %}
-        <h3>Total Records Found: {{ count }}</h3>
-        {% if download_ready %}
-            <a href="/download?start_date={{ start_date }}&end_date={{ end_date }}&limit=1000">
-                <button>Download 1,000 Rows</button>
-            </a>
-            <a href="/download?start_date={{ start_date }}&end_date={{ end_date }}&limit=all" onclick="return confirmDownload();">
-                <button>Download Full Data</button>
-            </a>
-        {% endif %}
+    {% if download_ready %}
+        <h3>Download Options:</h3>
+        <a href="/download?start_date={{ start_date }}&end_date={{ end_date }}&limit=1000">
+            <button>Download 1,000 Rows</button>
+        </a>
+        <a href="/download?start_date={{ start_date }}&end_date={{ end_date }}&limit=all" onclick="return confirmDownload();">
+            <button>Download Full Data</button>
+        </a>
     {% endif %}
 </body>
 </html>
