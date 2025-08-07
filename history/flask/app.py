@@ -6,7 +6,7 @@ from datetime import datetime
 import uuid
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # Required for session
+app.secret_key = '556'  # Required for session
 
 # DB config
 DB_CONFIG = {
@@ -88,4 +88,5 @@ def download(token):
     )
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)
+
