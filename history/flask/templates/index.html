@@ -1,9 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Database Connection Status</title>
+    <title>Group 1 Data Export</title>
+    <script>
+        function confirmDownload() {
+            return confirm("This may download a large file. Continue?");
+        }
+    </script>
 </head>
 <body>
-    <h1>{{ message }}</h1>
+    <h2>Select Date Range</h2>
+    <form method="POST">
+        <label>Start Date:</label>
+        <input type="date" name="start_date" value="{{ start_date }}" required>
+        <br><br>
+        <label>End Date:</label>
+        <input type="date" name="end_date" value="{{ end_date }}" required>
+        <br><br>
+        <button type="submit">Get Count</button>
+    </form>
+
+    {% if count is not none %}
+        <h3>Total Records Found: {{ count }}</h3>
+        {% if download_ready %}
+            <a href="/download?start_date={{ start_date }}&end_date={{ end_date }}&limit=1000">
+                <button>Download 1,000 Rows</button>
+            </a>
+            <a href="/download?start_date={{ start_date }}&end_date={{ end_date }}&limit=all" onclick="return confirmDownload();">
+                <button>Download Full Data</button>
+            </a>
+        {% endif %}
+    {% endif %}
 </body>
 </html>
