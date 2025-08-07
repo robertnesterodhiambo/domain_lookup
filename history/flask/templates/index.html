@@ -1,43 +1,123 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Filter Domains</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="date"],
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.2s ease;
+        }
+
+        input:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.25s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 500px) {
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h2>Filter and Prepare Data</h2>
-    <form action="/preview" method="get">
-        <label>Start Date:</label>
-        <input type="date" name="start_date" required><br><br>
-        <label>End Date:</label>
-        <input type="date" name="end_date" required><br><br>
+    <div class="container">
+        <h2>Filter and Prepare Data</h2>
+        <form action="/preview" method="get">
+            <label for="start_date">Start Date:</label>
+            <input type="date" name="start_date" id="start_date" required>
 
-        <!-- Optional filters -->
-        <label>Domain Registrar Name:</label>
-        <input type="text" name="domain_registrar_name"><br>
+            <label for="end_date">End Date:</label>
+            <input type="date" name="end_date" id="end_date" required>
 
-        <label>Registrant Name:</label>
-        <input type="text" name="registrant_name"><br>
+            <label for="domain_registrar_name">Domain Registrar Name:</label>
+            <input type="text" name="domain_registrar_name" id="domain_registrar_name">
 
-        <label>Registrant Company:</label>
-        <input type="text" name="registrant_company"><br>
+            <label for="registrant_name">Registrant Name:</label>
+            <input type="text" name="registrant_name" id="registrant_name">
 
-        <label>Registrant Address:</label>
-        <input type="text" name="registrant_address"><br>
+            <label for="registrant_company">Registrant Company:</label>
+            <input type="text" name="registrant_company" id="registrant_company">
 
-        <label>Registrant City:</label>
-        <input type="text" name="registrant_city"><br>
+            <label for="registrant_address">Registrant Address:</label>
+            <input type="text" name="registrant_address" id="registrant_address">
 
-        <label>Registrant State:</label>
-        <input type="text" name="registrant_state"><br>
+            <label for="registrant_city">Registrant City:</label>
+            <input type="text" name="registrant_city" id="registrant_city">
 
-        <label>Registrant Zip:</label>
-        <input type="text" name="registrant_zip"><br>
+            <label for="registrant_state">Registrant State:</label>
+            <input type="text" name="registrant_state" id="registrant_state">
 
-        <label>Registrant Country:</label>
-        <input type="text" name="registrant_country"><br><br>
+            <label for="registrant_zip">Registrant Zip:</label>
+            <input type="text" name="registrant_zip" id="registrant_zip">
 
-        <button type="submit" name="limit" value="1000">🔍 Preview 1000 Rows</button>
-        <button type="submit" name="limit" value="all">🔍 Preview Full Data</button>
-    </form>
+            <label for="registrant_country">Registrant Country:</label>
+            <input type="text" name="registrant_country" id="registrant_country">
+
+            <div class="button-group">
+                <button type="submit" name="limit" value="1000">🔍 Preview 1000 Rows</button>
+                <button type="submit" name="limit" value="all">🔍 Preview Full Data</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
