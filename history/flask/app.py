@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for
+from flask import Flask, render_template, request, send_file, jsonify
 import pandas as pd
 import io
 import pymysql
-from datetime import datetime
+import os
 import uuid
 
 app = Flask(__name__)
@@ -27,11 +27,55 @@ def get_db_connection():
         database=DB_CONFIG['database']
     )
 
+# ---------- AUTOCOMPLETE SETUP ----------
+SUGGESTION_FIELDS = {
+    'domain_registrar_name': 'domain_registrar_name.xlsx',
+    'registrant_name': 'registrant_name.xlsx',
+    'registrant_company': 'registrant_company.xlsx',
+    'registrant_address': 'registrant_address.xlsx',
+    'registrant_city': 'registrant_city.xlsx',
+    'registrant_state': 'registrant_state.xlsx',
+    'registrant_zip': 'registrant_zip.xlsx',
+    'registrant_country': 'registrant_country.xlsx',
+}
+
+suggestions_data = {}
+
+def load_suggestions():
+    """Load Excel data into memory for autocomplete."""
+    data_folder = os.path.join(os.path.dirname(__file__), 'data')
+    for field, filename in SUGGESTION_FIELDS.items():
+        filepath = os.path.join(data_folder, filename)
+        if os.path.exists(filepath):
+            df = pd.read_excel(filepath, header=None)
+            # Flatten, drop NaN, deduplicate, and sort
+            values = sorted(set(df.iloc[:, 0].dropna().astype(str)))
+            suggestions_data[field] = values
+        else:
+            suggestions_data[field] = []
+
+load_suggestions()
+
+@app.route('/suggest/<field>')
+def suggest(field):
+    """Return JSON suggestions for the given field."""
+    query = request.args.get('q', '').strip().lower()
+    if field not in suggestions_data:
+        return jsonify([])
+
+    matches = []
+    if query:
+        matches = [v for v in suggestions_data[field] if query in v.lower()]
+
+    return jsonify(matches[:20])  # Limit to 20 matches
+
+# ---------- ROUTES ----------
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
 
 @app.route('/preview', methods=['GET'])
+
 def preview():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
@@ -53,7 +97,7 @@ def preview():
 
     for key, value in filters.items():
         if value:
-            query += f" AND {key} LIKE %s"
+            query += f" OR {key} LIKE %s"
             params.append(f"%{value}%")
 
     if limit == "1000":
@@ -67,7 +111,18 @@ def preview():
     token = str(uuid.uuid4())
     query_cache[token] = df
 
-    return render_template('preview.html', count=len(df), token=token, limit=limit, start_date=start_date, end_date=end_date)
+    # Convert DataFrame to HTML table (small preview)
+    preview_html = df.head(20).to_html(classes="table table-striped", index=False, border=0)
+
+    return render_template(
+        'preview.html',
+        count=len(df),
+        token=token,
+        limit=limit,
+        start_date=start_date,
+        end_date=end_date,
+        preview_table=preview_html
+    )
 
 @app.route('/download/<token>')
 def download(token):
@@ -88,5 +143,4 @@ def download(token):
     )
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
-
+    app.run(host='0.0.0.0', port=5050, debug=True)

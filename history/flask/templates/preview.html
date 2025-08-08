@@ -88,15 +88,41 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h3>✅ Query Completed</h3>
-        <p><strong>Rows Found:</strong> {{ count }}</p>
+   <div class="container" style="max-width: 90%; width: 90%; height: 75vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
+    <h3>✅ Query Completed</h3>
+    <p><strong>Rows Found:</strong> {{ count }}</p>
 
-        <form action="/download/{{ token }}" method="get">
-            <button type="submit">⬇️ Download CSV ({{ limit }})</button>
-        </form>
+    <form action="/download/{{ token }}" method="get" style="margin-bottom: 15px;">
+        <button type="submit">⬇️ Download CSV ({{ limit }})</button>
+    </form>
 
-        <a href="/">← Go Back</a>
+    <div style="flex: 1; width: 100%; overflow-y: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px; background: #fff;">
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 14px;
+            }
+            table th, table td {
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: left;
+            }
+            table th {
+                background: #f2f2f2;
+                position: sticky;
+                top: 0;
+                z-index: 1;
+            }
+            table tr:nth-child(even) {
+                background-color: #fafafa;
+            }
+        </style>
+        {{ preview_table|safe }}
     </div>
+
+    <a href="/" style="margin-top: 15px;">← Go Back</a>
+</div>
+
 </body>
 </html>
