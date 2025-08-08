@@ -1,0 +1,59 @@
+
+
+Thu Aug  7 22:48:57 2025
+Command line: TestDisk
+
+TestDisk 7.1, Data Recovery Utility, July 2019
+Christophe GRENIER <grenier@cgsecurity.org>
+https://www.cgsecurity.org
+OS: Linux, kernel 6.14.0-27-generic (#27~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Jul 22 17:38:49 UTC 2) x86_64
+Compiler: GCC 13.2
+ext2fs lib: 1.47.0, ntfs lib: libntfs-3g, reiserfs lib: none, ewf lib: none, curses lib: ncurses 6.4
+/dev/sda: LBA, LBA48, DCO support
+/dev/sda: size       1953525168 sectors
+/dev/sda: user_max   1953525168 sectors
+/dev/sda: dco        1953525168 sectors
+Warning: can't get size for Disk /dev/mapper/control - 0 B - 0 sectors, sector size=512
+/dev/sr0 is not an ATA disk
+Warning: can't get size for Disk /dev/loop35 - 0 B - 0 sectors, sector size=512
+Hard disk list
+Disk /dev/sda - 1000 GB / 931 GiB - CHS 121601 255 63, sector size=512 - WDC WD10EZEX-60M2NA0, S/N:WD-WCC3F2SK3AD0, FW:03.01A03
+Disk /dev/sdb - 500 GB / 465 GiB - CHS 60801 255 63, sector size=512 - StoreJet Transcend
+Disk /dev/sr0 - 1114 MB / 1062 MiB - 544096 sectors (RO), sector size=2048 - hp      DVD A  DS8ACSH, S/N:446450910245, FW:LHS3
+Disk /dev/loop0 - 20 MB / 19 MiB - 40592 sectors (RO), sector size=512
+Disk /dev/loop1 - 4096 B - 8 sectors (RO), sector size=512
+Disk /dev/loop10 - 77 MB / 73 MiB - 151376 sectors (RO), sector size=512
+Disk /dev/loop11 - 70 MB / 66 MiB - 136736 sectors (RO), sector size=512
+Disk /dev/loop12 - 70 MB / 66 MiB - 136776 sectors (RO), sector size=512
+Disk /dev/loop13 - 70 MB / 67 MiB - 137568 sectors (RO), sector size=512
+Disk /dev/loop14 - 2084 KB / 2036 KiB - 4072 sectors (RO), sector size=512
+Disk /dev/loop15 - 257 MB / 245 MiB - 502400 sectors (RO), sector size=512
+Disk /dev/loop16 - 257 MB / 245 MiB - 502024 sectors (RO), sector size=512
+Disk /dev/loop17 - 11 MB / 11 MiB - 22800 sectors (RO), sector size=512
+Disk /dev/loop18 - 541 MB / 516 MiB - 1056784 sectors (RO), sector size=512
+Disk /dev/loop19 - 618 MB / 589 MiB - 1207552 sectors (RO), sector size=512
+Disk /dev/loop2 - 193 MB / 184 MiB - 377072 sectors (RO), sector size=512
+Disk /dev/loop20 - 96 MB / 91 MiB - 187776 sectors (RO), sector size=512
+Disk /dev/loop21 - 304 MB / 290 MiB - 595512 sectors (RO), sector size=512
+Disk /dev/loop22 - 304 MB / 290 MiB - 595504 sectors (RO), sector size=512
+Disk /dev/loop23 - 603 MB / 575 MiB - 1178784 sectors (RO), sector size=512
+Disk /dev/loop24 - 11 MB / 10 MiB - 22056 sectors (RO), sector size=512
+Disk /dev/loop25 - 11 MB / 10 MiB - 22176 sectors (RO), sector size=512
+Disk /dev/loop26 - 53 MB / 50 MiB - 104240 sectors (RO), sector size=512
+Disk /dev/loop27 - 51 MB / 49 MiB - 100952 sectors (RO), sector size=512
+Disk /dev/loop28 - 581 KB / 568 KiB - 1136 sectors (RO), sector size=512
+Disk /dev/loop29 - 589 KB / 576 KiB - 1152 sectors (RO), sector size=512
+Disk /dev/loop3 - 192 MB / 183 MiB - 375944 sectors (RO), sector size=512
+Disk /dev/loop30 - 82 MB / 78 MiB - 160232 sectors (RO), sector size=512
+Disk /dev/loop31 - 82 MB / 78 MiB - 160328 sectors (RO), sector size=512
+Disk /dev/loop32 - 220 MB / 210 MiB - 430832 sectors (RO), sector size=512
+Disk /dev/loop33 - 220 MB / 209 MiB - 430032 sectors (RO), sector size=512
+Disk /dev/loop34 - 336 MB / 321 MiB - 657616 sectors (RO), sector size=512
+Disk /dev/loop4 - 109 MB / 104 MiB - 213392 sectors (RO), sector size=512
+Disk /dev/loop5 - 58 MB / 55 MiB - 113624 sectors (RO), sector size=512
+Disk /dev/loop6 - 58 MB / 55 MiB - 113624 sectors (RO), sector size=512
+Disk /dev/loop7 - 66 MB / 63 MiB - 130592 sectors (RO), sector size=512
+Disk /dev/loop8 - 77 MB / 73 MiB - 151352 sectors (RO), sector size=512
+Disk /dev/loop9 - 66 MB / 63 MiB - 130592 sectors (RO), sector size=512
+
+SIGINT detected! TestDisk has been killed.
