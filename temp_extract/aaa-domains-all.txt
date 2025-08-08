@@ -1,7 +1,0 @@
-990.aaa
-_forcedupdate.aaa
-aaa.aaa
-myetherwallet.aaa
-nic.aaa
-sm.aaa
-test.aaa

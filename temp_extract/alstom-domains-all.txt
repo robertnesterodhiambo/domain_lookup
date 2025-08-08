@@ -1,3 +1,0 @@
-customerportal.alstom
-nic.alstom
-www.alstom

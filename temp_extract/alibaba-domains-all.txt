@@ -1,5 +1,0 @@
-cn.alibaba
-myetherwallet.alibaba
-nic.alibaba
-onetouch.alibaba
-www.alibaba
