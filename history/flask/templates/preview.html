@@ -2,126 +2,120 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Preview Results</title>
+    <title>Query Results</title>
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #e0e5ec;
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             height: 100vh;
-            overflow: hidden;
         }
 
-        .container {
-            background: #e0e5ec;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            animation: popIn 0.8s ease-out;
+        header {
+            background: #fff;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        @keyframes popIn {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        h3 {
-            font-size: 24px;
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-
-        p {
+        header h3 {
+            margin: 0;
             font-size: 18px;
             color: #333;
-            margin-bottom: 30px;
+        }
+
+        header p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        header .actions {
+            display: flex;
+            gap: 10px;
         }
 
         button {
-            padding: 14px 24px;
+            padding: 8px 14px;
             border: none;
-            border-radius: 15px;
-            font-size: 16px;
-            color: #333;
-            background: #e0e5ec;
-            box-shadow: 5px 5px 15px #babecc, -5px -5px 15px #ffffff;
-            transition: all 0.3s ease;
+            border-radius: 4px;
+            font-size: 14px;
+            background: #007bff;
+            color: white;
             cursor: pointer;
         }
 
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 5px 5px 10px #babecc, -5px -5px 10px #ffffff, inset 0 0 5px rgba(0,0,0,0.1);
-            color: #007BFF;
-        }
-
-        button:active {
-            transform: scale(0.98);
-            box-shadow: inset 5px 5px 10px #babecc, inset -5px -5px 10px #ffffff;
+            background: #0056b3;
         }
 
         a {
-            display: inline-block;
-            margin-top: 25px;
             text-decoration: none;
-            color: #007BFF;
-            font-weight: 500;
-            transition: color 0.2s ease;
+            color: #007bff;
+            font-size: 14px;
+            padding: 8px 14px;
+            border: 1px solid #007bff;
+            border-radius: 4px;
         }
 
         a:hover {
-            color: #0056b3;
+            background: #007bff;
+            color: white;
+        }
+
+        .table-container {
+            flex: 1;
+            overflow: auto;
+            background: white;
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        table th {
+            background: #f1f1f1;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #fafafa;
         }
     </style>
 </head>
 <body>
-   <div class="container" style="max-width: 90%; width: 90%; height: 75vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
-    <h3>✅ Query Completed</h3>
-    <p><strong>Rows Found:</strong> {{ count }}</p>
 
-    <form action="/download/{{ token }}" method="get" style="margin-bottom: 15px;">
-        <button type="submit">⬇️ Download CSV ({{ limit }})</button>
-    </form>
-
-    <div style="flex: 1; width: 100%; overflow-y: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px; background: #fff;">
-        <style>
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                font-size: 14px;
-            }
-            table th, table td {
-                border: 1px solid #ccc;
-                padding: 8px;
-                text-align: left;
-            }
-            table th {
-                background: #f2f2f2;
-                position: sticky;
-                top: 0;
-                z-index: 1;
-            }
-            table tr:nth-child(even) {
-                background-color: #fafafa;
-            }
-        </style>
-        {{ preview_table|safe }}
+<header>
+    <div>
+        <h3>✅ Query Completed</h3>
+        <p><strong>Rows Found:</strong> {{ count }}</p>
     </div>
+    <div class="actions">
+        <form action="/download/{{ token }}" method="get">
+            <button type="submit">⬇ Download CSV ({{ limit }})</button>
+        </form>
+        <a href="/">← Go Back</a>
+    </div>
+</header>
 
-    <a href="/" style="margin-top: 15px;">← Go Back</a>
+<div class="table-container">
+    {{ preview_table|safe }}
 </div>
 
 </body>
