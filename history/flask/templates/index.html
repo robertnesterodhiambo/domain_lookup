@@ -6,106 +6,89 @@
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: #e0e5ec;
+            background: #f8f9fa;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
         .container {
-            background: #e0e5ec;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+            background: #fff;
+            padding: 25px 30px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             width: 100%;
             max-width: 600px;
-            animation: popIn 0.8s ease-out;
-        }
-
-        @keyframes popIn {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
         }
 
         h2 {
             text-align: center;
+            margin-bottom: 20px;
             color: #333;
-            margin-bottom: 30px;
+            font-weight: 500;
         }
 
         label {
             display: block;
-            margin-top: 20px;
-            color: #333;
-            font-weight: 500;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
         }
 
         input[type="text"],
         input[type="date"] {
             width: 100%;
-            padding: 12px;
-            margin-top: 8px;
-            border: none;
-            border-radius: 12px;
-            background: #e0e5ec;
-            box-shadow: inset 5px 5px 10px #babecc, inset -5px -5px 10px #ffffff;
-            font-size: 15px;
-            transition: all 0.3s ease;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
         }
 
         input:focus {
             outline: none;
-            box-shadow: inset 2px 2px 5px #babecc, inset -2px -2px 5px #ffffff, 0 0 0 2px #007BFF;
+            border-color: #007BFF;
         }
 
         .button-group {
             display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            margin-top: 30px;
+            gap: 10px;
+            margin-top: 20px;
         }
 
         button {
             flex: 1;
-            padding: 15px;
+            padding: 10px;
             border: none;
-            border-radius: 15px;
-            font-size: 16px;
-            color: #333;
-            background: #e0e5ec;
-            box-shadow: 5px 5px 15px #babecc, -5px -5px 15px #ffffff;
-            transition: all 0.3s ease;
+            border-radius: 4px;
+            font-size: 14px;
             cursor: pointer;
+            transition: background 0.3s;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 5px 5px 10px #babecc, -5px -5px 10px #ffffff, inset 0 0 5px rgba(0,0,0,0.1);
-            color: #007BFF;
+        button:first-child {
+            background: #007BFF;
+            color: white;
         }
 
-        button:active {
-            transform: scale(0.98);
-            box-shadow: inset 5px 5px 10px #babecc, inset -5px -5px 10px #ffffff;
+        button:first-child:hover {
+            background: #0056b3;
         }
 
-        @media (max-width: 600px) {
-            .button-group {
-                flex-direction: column;
-            }
+        button:last-child {
+            background: #28a745;
+            color: white;
         }
 
-        /* Autocomplete dropdown style */
+        button:last-child:hover {
+            background: #1e7e34;
+        }
+
+        /* Autocomplete dropdown */
         .autocomplete-list {
             position: absolute;
             background: white;
@@ -113,11 +96,14 @@
             z-index: 9999;
             max-height: 200px;
             overflow-y: auto;
+            font-size: 14px;
         }
+
         .autocomplete-item {
             padding: 8px;
             cursor: pointer;
         }
+
         .autocomplete-item:hover {
             background-color: #f0f0f0;
         }
