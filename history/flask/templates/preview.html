@@ -98,6 +98,11 @@
             background-color: #fafafa;
         }
     </style>
+
+    <!-- DataTables CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
 
@@ -117,6 +122,18 @@
 <div class="table-container">
     {{ preview_table|safe }}
 </div>
+
+<script>
+$(document).ready(function() {
+    $("table").DataTable({
+        pageLength: 100,       // Show 50 rows per page
+        lengthChange: false,  // Hide "Show X entries" dropdown
+        ordering: true,       // Enable column sorting
+        searching: true,      // Enable search bar
+        scrollX: true         // Allow horizontal scroll if too wide
+    });
+});
+</script>
 
 </body>
 </html>

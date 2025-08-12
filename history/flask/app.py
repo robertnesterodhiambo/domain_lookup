@@ -75,7 +75,6 @@ def index():
     return render_template('index.html')
 
 @app.route('/preview', methods=['GET'])
-
 def preview():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
@@ -111,8 +110,8 @@ def preview():
     token = str(uuid.uuid4())
     query_cache[token] = df
 
-    # Convert DataFrame to HTML table (small preview)
-    preview_html = df.head(20).to_html(classes="table table-striped", index=False, border=0)
+    # ✅ Send ALL rows to DataTables (pagination now works in preview.html)
+    preview_html = df.to_html(classes="table table-striped", index=False, border=0)
 
     return render_template(
         'preview.html',
@@ -144,4 +143,3 @@ def download(token):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050, debug=True)
-
