@@ -11,7 +11,7 @@ INPUT_CSV = 'data_rdap.csv'
 OUTPUT_CSV = 'data_rdap_parsed.csv'
 CHUNK_SIZE = 50000
 LAST_CHUNK_FILE = 'last_chunk.txt'
-THREADS = 305
+THREADS = 10
 
 write_lock = threading.Lock()
 proxy_lock = threading.Lock()
@@ -176,13 +176,8 @@ for chunk in pd.read_csv(INPUT_CSV, chunksize=CHUNK_SIZE):
     chunk['rdap_link'] = chunk['rdap_link'].astype(str).str.strip()
     chunk = chunk[chunk['rdap_link'] != '']
 
-    # Process .nl first
-    nl_chunk = chunk[chunk['tld'] == 'nl']
-    if nl_chunk.empty:
-        print(f"No .nl domains in chunk #{chunk_number}, skipping entire chunk.")
-        continue
-
-    chunk_sorted = pd.concat([nl_chunk, chunk[chunk['tld'] != 'nl']])
+    # Process entire chunk without .nl filtering
+    chunk_sorted = chunk
 
     with ThreadPoolExecutor(max_workers=THREADS) as executor:
         executor.map(process_row, [row for _, row in chunk_sorted.iterrows()])
