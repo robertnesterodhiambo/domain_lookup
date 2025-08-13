@@ -99,8 +99,7 @@ def preview():
             query += f" OR {key} LIKE %s"
             params.append(f"%{value}%")
 
-    if limit == "1000":
-        query += " LIMIT 1000"
+
 
     conn = get_db_connection()
     df = pd.read_sql(query, conn, params=params)

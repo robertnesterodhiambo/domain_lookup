@@ -97,6 +97,18 @@
         table tr:nth-child(even) {
             background-color: #fafafa;
         }
+
+        .filters th {
+            background: #fff !important;
+        }
+
+        .filters input {
+            width: 100%;
+            padding: 4px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            font-size: 13px;
+        }
     </style>
 
     <!-- DataTables CSS & JS -->
@@ -112,9 +124,7 @@
         <p><strong>Rows Found:</strong> {{ count }}</p>
     </div>
     <div class="actions">
-        <form action="/download/{{ token }}" method="get">
-            <button type="submit">⬇ Download CSV ({{ limit }})</button>
-        </form>
+        <button id="downloadFiltered">⬇ Download Filtered CSV</button>
         <a href="/">← Go Back</a>
     </div>
 </header>
@@ -125,12 +135,68 @@
 
 <script>
 $(document).ready(function() {
-    $("table").DataTable({
-        pageLength: 100,       // Show 50 rows per page
-        lengthChange: false,  // Hide "Show X entries" dropdown
-        ordering: true,       // Enable column sorting
-        searching: true,      // Enable search bar
-        scrollX: true         // Allow horizontal scroll if too wide
+    // Ensure table has an ID for DataTables
+    $("table").attr("id", "resultTable");
+
+    // Clone header row for filters
+    $('#resultTable thead tr')
+        .clone(true)
+        .addClass('filters')
+        .appendTo('#resultTable thead');
+
+    var table = $('#resultTable').DataTable({
+        pageLength: 100,
+        lengthChange: false,
+        ordering: true,
+        searching: true,
+        scrollX: true,
+        orderCellsTop: true,
+        initComplete: function () {
+            var api = this.api();
+
+            api.columns().eq(0).each(function (colIdx) {
+                var cell = $('.filters th').eq($(api.column(colIdx).header()).index());
+                var title = $(cell).text();
+                $(cell).html('<input type="text" placeholder="Search '+title+'" />');
+
+                $('input', cell).on('keyup change', function () {
+                    api.column(colIdx)
+                        .search(this.value)
+                        .draw();
+                });
+            });
+        }
+    });
+
+    // Download filtered data
+    $('#downloadFiltered').on('click', function() {
+        var csv = [];
+        var headers = [];
+
+        // Get table headers (from first row, not filter row)
+        $('#resultTable thead tr:eq(0) th').each(function() {
+            headers.push($(this).text().trim());
+        });
+        csv.push(headers.join(","));
+
+        // Get only filtered rows
+        table.rows({ search: 'applied' }).every(function() {
+            var row = this.data();
+            var cleanRow = row.map(function(cell) {
+                return '"' + $('<div>').html(cell).text().replace(/"/g, '""') + '"';
+            });
+            csv.push(cleanRow.join(","));
+        });
+
+        // Create downloadable CSV
+        var csvString = csv.join("\n");
+        var blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+        var link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "filtered_data.csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     });
 });
 </script>
