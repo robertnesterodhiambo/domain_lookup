@@ -1,25 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Live Paginated Data</title>
-    <script src="/static/script.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #fff;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        header .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 14px;
+            padding: 8px 14px;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+        }
+
+        a:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        form {
+            padding: 20px;
+            background: #fff;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        form input, form button {
+            padding: 6px 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .table-container {
+            flex: 1;
+            overflow: auto;
+            background: white;
+            padding: 10px 20px 20px 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        table th {
+            background: #f1f1f1;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        #paginationControls {
+            margin: 10px 20px;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Select Date Range</h2>
-    <form id="dateForm">
-        Start date: <input type="date" name="start" id="start" required>
-        End date: <input type="date" name="end" id="end" required>
-        <button type="submit">Load Data</button>
-    </form>
 
-    <button id="downloadBtn" style="display:none;">Download CSV</button>
-    <button id="nextBtn" style="display:none;">Next Page</button>
+<header>
+    <h3>📊 Live Paginated Data</h3>
+    <div class="actions">
+        <button id="downloadBtn" style="display:none;">⬇ Download CSV</button>
+        <a href="/">← Go Back</a>
+    </div>
+</header>
 
-    <table border="1" id="dataTable" style="margin-top:20px; border-collapse: collapse;">
+<form id="dateForm">
+    Start date: <input type="date" name="start" id="start" required>
+    End date: <input type="date" name="end" id="end" required>
+    <button type="submit">Load Data</button>
+</form>
+
+<div class="table-container">
+    <table id="dataTable">
         <thead>
             <tr id="tableHeader"></tr>
         </thead>
         <tbody id="tableBody"></tbody>
     </table>
+</div>
+
+<div id="paginationControls">
+    <button id="nextBtn" style="display:none;">Next Page →</button>
+</div>
+
+<script src="/static/script.js"></script>
+
 </body>
 </html>
