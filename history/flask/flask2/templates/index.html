@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Live Data Stream</title>
+    <title>Live Paginated Data</title>
+    <script src="/static/script.js"></script>
 </head>
 <body>
     <h2>Select Date Range</h2>
-    <form action="/stream" method="get" target="_blank">
-        Start date: <input type="date" name="start" required>
-        End date: <input type="date" name="end" required>
-        <button type="submit">Stream Data</button>
+    <form id="dateForm">
+        Start date: <input type="date" name="start" id="start" required>
+        End date: <input type="date" name="end" id="end" required>
+        <button type="submit">Load Data</button>
     </form>
+
+    <button id="downloadBtn" style="display:none;">Download CSV</button>
+    <button id="nextBtn" style="display:none;">Next Page</button>
+
+    <table border="1" id="dataTable" style="margin-top:20px; border-collapse: collapse;">
+        <thead>
+            <tr id="tableHeader"></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
 </body>
 </html>
-
