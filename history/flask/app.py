@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, send_file, jsonify
+from flask import Flask, render_template, request, send_file, jsonify, Response
 import pandas as pd
 import io
 import pymysql
 import os
 import uuid
+import html
 
 app = Flask(__name__)
 app.secret_key = '556'  # Required for session
@@ -48,7 +49,6 @@ def load_suggestions():
         filepath = os.path.join(data_folder, filename)
         if os.path.exists(filepath):
             df = pd.read_excel(filepath, header=None)
-            # Flatten, drop NaN, deduplicate, and sort
             values = sorted(set(df.iloc[:, 0].dropna().astype(str)))
             suggestions_data[field] = values
         else:
@@ -99,27 +99,50 @@ def preview():
             query += f" OR {key} LIKE %s"
             params.append(f"%{value}%")
 
+    # Generate HTML progressively
+    def generate_table():
+        conn = get_db_connection()
+        chunks = pd.read_sql(query, conn, params=params, chunksize=1000)
 
+        first_chunk = True
+        row_count = 0
 
+        yield "<table class='table table-striped'><thead><tr>"
+
+        for chunk in chunks:
+            if first_chunk:
+                # Send headers
+                for col in chunk.columns:
+                    yield f"<th>{html.escape(str(col))}</th>"
+                yield "</tr></thead><tbody>"
+                first_chunk = False
+
+            # Send rows
+            for _, row in chunk.iterrows():
+                yield "<tr>" + "".join(f"<td>{html.escape(str(val))}</td>" for val in row) + "</tr>"
+                row_count += 1
+
+        conn.close()
+        yield "</tbody></table>"
+
+    # We still need to store full DataFrame for download (will re-read fully in background)
     conn = get_db_connection()
-    df = pd.read_sql(query, conn, params=params)
+    full_df = pd.read_sql(query, conn, params=params)
     conn.close()
 
-    # Store result in memory with a token
     token = str(uuid.uuid4())
-    query_cache[token] = df
+    query_cache[token] = full_df
 
-    # ✅ Send ALL rows to DataTables (pagination now works in preview.html)
-    preview_html = df.to_html(classes="table table-striped", index=False, border=0)
-
+    # Render the page with streamed table
+    table_html = "".join(generate_table())  # For now, collect generator output for preview.html
     return render_template(
         'preview.html',
-        count=len(df),
+        count=len(full_df),
         token=token,
         limit=limit,
         start_date=start_date,
         end_date=end_date,
-        preview_table=preview_html
+        preview_table=table_html
     )
 
 @app.route('/download/<token>')
