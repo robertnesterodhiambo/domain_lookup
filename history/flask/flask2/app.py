@@ -1,5 +1,7 @@
+# app.py
 from flask import Flask, request, render_template, jsonify, Response, stream_with_context
 from mysql.connector import connect
+import json
 
 app = Flask(__name__)
 
@@ -12,7 +14,6 @@ DB_CONFIG = {
 
 TABLE_NAME = 'group_1'
 
-# Fixed allowed columns (from your list)
 ALLOWED_COLUMNS = [
     "num",
     "domain_name",
@@ -100,14 +101,16 @@ def list_columns():
     # Frontend will populate the multi-select from here
     return jsonify(ALLOWED_COLUMNS)
 
+#
+# STREAMED NDJSON endpoint:
+# Streams one JSON object per line (newline-delimited JSON).
+# This is easier to progressively parse on the browser side.
+#
 @app.route('/data')
 def get_data():
     start_date = request.args.get('start')
     end_date = request.args.get('end')
     columns_param = request.args.get('columns')  # comma-separated list (optional)
-    page = int(request.args.get('page', 1))
-    per_page = 50
-    offset = (page - 1) * per_page
 
     if not start_date or not end_date:
         return jsonify({"error": "Missing date range"}), 400
@@ -115,21 +118,26 @@ def get_data():
     selected_cols = normalize_columns_param(columns_param)
     select_list = build_select_list(selected_cols)
 
-    conn = connect(**DB_CONFIG)
-    cursor = conn.cursor(dictionary=True)
-    try:
-        query = f"""
-            SELECT {select_list}
-            FROM `{TABLE_NAME}`
-            WHERE `create_date` BETWEEN %s AND %s
-            LIMIT %s OFFSET %s
-        """
-        cursor.execute(query, (start_date, end_date, per_page, offset))
-        rows = cursor.fetchall()
-        return jsonify(rows)
-    finally:
-        cursor.close()
-        conn.close()
+    def generate():
+        conn = connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+        try:
+            query = f"""
+                SELECT {select_list}
+                FROM `{TABLE_NAME}`
+                WHERE `create_date` BETWEEN %s AND %s
+            """
+            cursor.execute(query, (start_date, end_date))
+
+            for row in cursor:
+                # Convert row values safely (dates etc.) using default=str
+                yield json.dumps(row, default=str) + "\n"
+        finally:
+            cursor.close()
+            conn.close()
+
+    # NDJSON content-type; client will parse line-by-line
+    return Response(stream_with_context(generate()), mimetype='application/x-ndjson')
 
 @app.route('/download')
 def download_csv():
@@ -160,7 +168,7 @@ def download_csv():
             # Rows
             for row in cursor:
                 yield ",".join(
-                    ("" if row[col] is None else str(row[col]))
+                    ("" if row[col] is None else str(row[col]).replace("\n", " ").replace("\r", ""))
                     for col in cursor.column_names
                 ) + "\n"
         finally:
