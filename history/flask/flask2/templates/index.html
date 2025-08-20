@@ -71,7 +71,8 @@
             flex-wrap: wrap;
         }
 
-        form input, form button {
+        /* Added select so it matches your input style */
+        form input, form button, form select {
             padding: 6px 10px;
             font-size: 14px;
             border: 1px solid #ccc;
@@ -116,6 +117,12 @@
             display: flex;
             gap: 10px;
         }
+
+        .hint {
+            font-size: 12px;
+            color: #666;
+            margin-left: 6px;
+        }
     </style>
 </head>
 <body>
@@ -131,6 +138,12 @@
 <form id="dateForm">
     Start date: <input type="date" name="start" id="start" required>
     End date: <input type="date" name="end" id="end" required>
+
+    <!-- New: Column selection (multi-select), populated from /columns -->
+    Columns:
+    <select id="columns" multiple size="6" style="min-width:240px;"></select>
+    <span class="hint">Hold Ctrl/Cmd to select multiple; leave empty = all columns.</span>
+
     <button type="submit">Load Data</button>
 </form>
 
