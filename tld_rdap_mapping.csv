@@ -741,6 +741,7 @@ buzz,https://rdap.nic.buzz/
 bzh,https://rdap.nic.bzh/
 calvinklein,https://rdap.nic.calvinklein/
 capetown,https://rdap.nic.capetown/rdap/
+capitalone,https://rdap.nic.capitalone/
 caravan,https://rdap.nic.caravan/
 casa,https://rdap.nic.casa/
 cat,https://rdap.nic.cat/
@@ -875,6 +876,7 @@ neustar,https://rdap.nic.neustar/
 nf,https://rdap.nic.nf/
 nfl,https://rdap.nic.nfl/
 nike,https://rdap.nic.nike/
+norton,https://rdap.nic.norton/
 nrw,https://rdap.nic.nrw/
 ntt,https://rdap.nic.ntt/rdap/
 nyc,https://rdap.nic.nyc/
@@ -1132,7 +1134,6 @@ xn--efvy88h,https://rdap.zdnsgtld.com/XN--EFVY88H/
 baidu,https://rdap.zdnsgtld.com/baidu/
 citic,https://rdap.zdnsgtld.com/citic/
 icbc,https://rdap.zdnsgtld.com/icbc/
-redstone,https://rdap.zdnsgtld.com/redstone/
 ren,https://rdap.zdnsgtld.com/ren/
 sohu,https://rdap.zdnsgtld.com/sohu/
 top,https://rdap.zdnsgtld.com/top/
@@ -1156,12 +1157,10 @@ xn--io0a7i,https://restwhois.ngtld.cn/
 xn--xhq521b,https://restwhois.ngtld.cn/
 airtel,https://tld-rdap.verisign.com/airtel/v1/
 bharti,https://tld-rdap.verisign.com/bharti/v1/
-capitalone,https://tld-rdap.verisign.com/capitalone/v1/
 cc,https://tld-rdap.verisign.com/cc/v1/
 comsec,https://tld-rdap.verisign.com/comsec/v1/
 name,https://tld-rdap.verisign.com/name/v1/
 nissay,https://tld-rdap.verisign.com/nissay/v1/
-norton,https://tld-rdap.verisign.com/norton/v1/
 verisign,https://tld-rdap.verisign.com/verisign/v1/
 xn--11b4c3d,https://tld-rdap.verisign.com/xn--11b4c3d/v1/
 xn--3pxu8k,https://tld-rdap.verisign.com/xn--3pxu8k/v1/
