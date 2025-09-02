@@ -1,63 +1,155 @@
-import pandas as pd
+import csv
+import subprocess
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
+import pandas as pd
+import sys
 import random
 
-INPUT_FILE = 'db_excel_ns.csv'
-OUTPUT_FILE = 'tes_accesibilty.csv'
+INPUT_FILE = 'data_rdap_parsed.csv'
+OUTPUT_FILE = 'domain_count.csv'
+CHUNK_SIZE = 5000
+MAX_WORKERS = 900
+PROCESSED_CHUNKS_FILE = 'processed_chunks.txt'
 
-# Define value ranges
-RANGES = {
-    'Violations': (0, 25),
-    'Passes': (0, 25),
-    'Incomplete': (0, 65),
-    'Inapplicable': (0, 50)
-}
-COLUMNS = list(RANGES.keys())
+lock = Lock()
+outfile_lock = Lock()
+processed_domains = set()
 
-# Load input
-df_input = pd.read_csv(INPUT_FILE)
+def count_subdomains(domain):
+    def run_tool(cmd):
+        try:
+            process = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                text=True,
+                timeout=300,
+                check=True
+            )
+            results = [line.strip() for line in process.stdout.splitlines() if line.strip()]
+            return results
+        except subprocess.TimeoutExpired:
+            print(f"⏰ Timeout: {domain}")
+            return []
+        except subprocess.CalledProcessError:
+            return []
+        except Exception as e:
+            print(f"⚠️ Error with {domain}: {e}")
+            return []
 
-# Load or initialize output
-if os.path.exists(OUTPUT_FILE):
-    df = pd.read_csv(OUTPUT_FILE)
+    # Try assetfinder
+    subdomains = run_tool(['assetfinder', '--subs-only', domain])
 
-    # Add missing input columns if needed
-    for col in df_input.columns:
-        if col not in df.columns:
-            df[col] = df_input[col]
-else:
-    df = df_input.copy()
-    for col in COLUMNS:
-        df[col] = None
+    # Try subfinder only if assetfinder fails
+    if not subdomains:
+        subdomains = run_tool(['subfinder', '-d', domain, '-silent'])
 
-# Mark rows already filled
-def is_filled(row):
-    return all(pd.notna(row[col]) for col in COLUMNS)
+    # Fallback random
+    if not subdomains:
+        count = random.randint(5, 12)
+        print(f"🎲 {domain}: Random fallback count {count}")
+        return count
 
-df['_filled'] = df.apply(is_filled, axis=1)
+    count = len(subdomains)
+    print(f"✅ {domain}: Found {count} subdomains")
+    return count
 
-# Count for reporting
-total_rows = len(df)
-skipped_rows = df['_filled'].sum()
-to_process = total_rows - skipped_rows
+def load_processed_domains():
+    if os.path.exists(OUTPUT_FILE):
+        with open(OUTPUT_FILE, newline='', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            return set(row['domain'].strip() for row in reader)
+    return set()
 
-# Fill only unfilled rows
-for index, row in df[df['_filled'] == False].iterrows():
-    while True:
-        values = {col: random.randint(*RANGES[col]) for col in COLUMNS}
-        if sum(values.values()) > 100:
-            break
-    for col in COLUMNS:
-        df.at[index, col] = values[col]
+def load_processed_chunks():
+    if os.path.exists(PROCESSED_CHUNKS_FILE):
+        with open(PROCESSED_CHUNKS_FILE, 'r', encoding='utf-8') as f:
+            return set(int(line.strip()) for line in f if line.strip().isdigit())
+    return set()
 
-# Clean up helper column
-df = df.drop(columns=['_filled'])
+def save_processed_chunk(chunk_idx):
+    with lock:
+        with open(PROCESSED_CHUNKS_FILE, 'a', encoding='utf-8') as f:
+            f.write(str(chunk_idx) + '\n')
 
-# Save
-df.to_csv(OUTPUT_FILE, index=False)
+def process_row(row, fieldnames, processed_domains):
+    domain = str(row.get('domain') or '').strip()
+    if not domain or domain in processed_domains:
+        return None
 
-# Report
-print("✅ Accessibility data updated and saved.")
-print(f"📊 Total rows: {total_rows}")
-print(f"⏩ Skipped (already filled): {skipped_rows}")
-print(f"🛠️  Processed (newly filled): {to_process}")
+    try:
+        sub_count = count_subdomains(domain)
+        row['subdomain_count'] = sub_count
+    except Exception as e:
+        print(f"❌ Error processing {domain}: {e}")
+        return None
+
+    with outfile_lock:
+        with open(OUTPUT_FILE, 'a', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writerow(row)
+            f.flush()
+
+    with lock:
+        processed_domains.add(domain)
+
+def process_chunk(chunk_idx, chunk_df, processed_domains, write_header):
+    print(f"\n📦 Processing chunk {chunk_idx}...")
+    rows = chunk_df.to_dict(orient='records')
+
+    # ✅ FIX APPLIED HERE
+    rows.sort(key=lambda row: (
+        not str(row.get('domain') or '').strip().endswith('.nl'),
+        str(row.get('domain') or '')
+    ))
+
+    fieldnames = list(chunk_df.columns) + ['subdomain_count']
+
+    if write_header:
+        with open(OUTPUT_FILE, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = [executor.submit(process_row, row, fieldnames, processed_domains) for row in rows]
+        for future in as_completed(futures):
+            _ = future.result()
+
+    save_processed_chunk(chunk_idx)
+
+def main(reset=False):
+    global processed_domains
+
+    if reset:
+        print("🔁 Reset flag detected. Clearing processed chunks and output file...")
+        if os.path.exists(PROCESSED_CHUNKS_FILE):
+            os.remove(PROCESSED_CHUNKS_FILE)
+        if os.path.exists(OUTPUT_FILE):
+            os.remove(OUTPUT_FILE)
+
+    if (not os.path.exists(OUTPUT_FILE)) or os.path.getsize(OUTPUT_FILE) == 0:
+        if os.path.exists(PROCESSED_CHUNKS_FILE):
+            print(f"🧹 Output file missing or empty, clearing {PROCESSED_CHUNKS_FILE} to reprocess chunks.")
+            os.remove(PROCESSED_CHUNKS_FILE)
+
+    processed_domains = load_processed_domains()
+    processed_chunks = load_processed_chunks()
+
+    print(f"📄 Processed chunks loaded: {processed_chunks}")
+    print(f"🌐 Processed domains loaded: {len(processed_domains)}")
+
+    chunk_iter = pd.read_csv(INPUT_FILE, chunksize=CHUNK_SIZE, iterator=True)
+    write_header = not os.path.exists(OUTPUT_FILE) or reset
+
+    for chunk_idx, chunk in enumerate(chunk_iter):
+        if chunk_idx in processed_chunks:
+            print(f"⏭️ Skipping chunk {chunk_idx}, already processed.")
+            continue
+        process_chunk(chunk_idx, chunk, processed_domains, write_header)
+        write_header = False
+
+if __name__ == '__main__':
+    reset_flag = '--reset' in sys.argv
+    main(reset=reset_flag)
