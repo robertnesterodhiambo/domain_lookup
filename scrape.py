@@ -30,32 +30,27 @@ def make_driver(headless=False, proxy=None):
     service = Service(ChromeDriverManager().install())
     return webdriver.Chrome(service=service, options=opts)
 
-def wait_for_load(driver, timeout=20):
+def wait_for_load(driver, timeout=15):
     WebDriverWait(driver, timeout).until(
         lambda d: d.execute_script("return document.readyState") == "complete"
     )
 
 def try_accept_cookies(driver):
-    try:
-        wait = WebDriverWait(driver, 5)
-        candidates = [
-            (By.XPATH, "//button[normalize-space()='Accept']"),
-            (By.XPATH, "//button[normalize-space()='I agree']"),
-            (By.XPATH, "//button[contains(., 'Accept all')]"),
-            (By.XPATH, "//button[contains(., 'I agree')]"),
-            (By.CSS_SELECTOR, "button#onetrust-accept-btn-handler"),
-            (By.XPATH, "//button[contains(., 'Sutinku')]"),
-        ]
-        for by, sel in candidates:
-            try:
-                btn = wait.until(EC.element_to_be_clickable((by, sel)))
-                btn.click()
-                time.sleep(0.5)
-                return
-            except Exception:
-                pass
-    except Exception:
-        pass
+    candidates = [
+        (By.XPATH, "//button[normalize-space()='Accept']"),
+        (By.XPATH, "//button[normalize-space()='I agree']"),
+        (By.XPATH, "//button[contains(., 'Accept all')]"),
+        (By.XPATH, "//button[contains(., 'I agree')]"),
+        (By.CSS_SELECTOR, "button#onetrust-accept-btn-handler"),
+        (By.XPATH, "//button[contains(., 'Sutinku')]"),
+    ]
+    for by, sel in candidates:
+        try:
+            btn = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((by, sel)))
+            btn.click()
+            return
+        except Exception:
+            continue
 
 def main():
     driver = make_driver(headless=False)
@@ -64,22 +59,24 @@ def main():
         wait_for_load(driver)
         try_accept_cookies(driver)
 
-        # Click the checkbox
+        # Immediately click checkbox once available
         checkbox = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.ID, "isChecked"))
         )
         checkbox.click()
         print("✔ Checkbox clicked")
 
-        # Click the Show button
+        # Click Show button as soon as it’s clickable
         show_button = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.ID, "show"))
         )
         show_button.click()
         print("✔ Show button clicked")
 
-        # Wait a moment for results to load
-        time.sleep(3)
+        # Wait only for result container to appear instead of sleeping
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "div#response"))
+        )
 
         print("Title:", driver.title)
         print("Current URL:", driver.current_url)
