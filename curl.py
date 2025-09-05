@@ -2,9 +2,12 @@
 import pandas as pd
 import subprocess
 import csv
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 INPUT_CSV = "data_rdap.csv"
 OUTPUT_CSV = "data_rdap_parsed.csv"
+MAX_WORKERS = 999
 
 # CSV output columns
 CSV_COLUMNS = [
@@ -21,11 +24,12 @@ CSV_COLUMNS = [
     "Nameserver2"
 ]
 
+# Thread lock for writing to CSV safely
+write_lock = threading.Lock()
+
 def run_whois(domain):
     try:
-        # Force WHOIS through proxy using proxychains
         cmd = ["proxychains4", "whois", domain]
-
         result = subprocess.run(
             cmd,
             stdout=subprocess.PIPE,
@@ -41,9 +45,8 @@ def run_whois(domain):
         return None
 
 def parse_whois(raw, domain):
-    """Extract structured fields from WHOIS text."""
     if not raw:
-        return {col: None for col in CSV_COLUMNS}
+        return None  # Skip if no data
 
     data = {
         "Domain": domain,
@@ -64,8 +67,7 @@ def parse_whois(raw, domain):
     for line in raw.splitlines():
         line = line.strip()
         if not line or ":" not in line:
-            continue  # skip invalid lines
-
+            continue
         key, value = line.split(":", 1)
         key, value = key.strip().lower(), value.strip()
 
@@ -95,33 +97,45 @@ def parse_whois(raw, domain):
 
     return data
 
+def process_domain(domain):
+    print(f"\nFetching WHOIS for {domain} through proxy...")
+    raw = run_whois(domain)
+
+    if not raw:
+        print(f"❌ No WHOIS data found for {domain}. Skipping...")
+        return None
+
+    print(f"✅ WHOIS fetched for {domain}")
+    parsed = parse_whois(raw, domain)
+
+    if parsed:
+        with write_lock:  # Prevent race conditions in file writing
+            with open(OUTPUT_CSV, "a", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+                writer.writerow(parsed)
+        print(f"✔ Saved {domain} to {OUTPUT_CSV}")
+
+    return parsed
+
 def main():
     df = pd.read_csv(INPUT_CSV)
+    domains = df["domain"].dropna().unique()  # remove duplicates + NaN
 
-    # Write header first
+    # Write CSV header once
     with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
         writer.writeheader()
 
-    for domain in df["domain"]:
-        print(f"\nFetching WHOIS for {domain} through proxy...")
-        raw = run_whois(domain)
+    # Use ThreadPoolExecutor for parallel WHOIS queries
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {executor.submit(process_domain, domain): domain for domain in domains}
 
-        if not raw:
-            print("❌ No WHOIS data found. Skipping...")
-            continue  # <--- skip saving blank rows
-
-        print("✅ WHOIS output:\n")
-        print(raw)
-
-        parsed = parse_whois(raw, domain)
-
-        # Append immediately to CSV
-        with open(OUTPUT_CSV, "a", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
-            writer.writerow(parsed)
-
-        print(f"✔ Saved {domain} to {OUTPUT_CSV}")
+        for future in as_completed(futures):
+            domain = futures[future]
+            try:
+                future.result()
+            except Exception as e:
+                print(f"⚠️ Error processing {domain}: {e}")
 
 if __name__ == "__main__":
     main()
