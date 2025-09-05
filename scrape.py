@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-# pip install selenium webdriver-manager
+# pip install selenium webdriver-manager pandas
 
 import sys
-import time
+import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -52,6 +52,29 @@ def try_accept_cookies(driver):
         except Exception:
             continue
 
+def parse_results(driver):
+    # The result rows are in a table-like structure inside div#response
+    rows = driver.find_elements(By.CSS_SELECTOR, "#response table tr")
+
+    data = {}
+    dns_list = []
+
+    for row in rows:
+        cols = row.find_elements(By.TAG_NAME, "td")
+        if len(cols) == 2:
+            key = cols[0].text.strip()
+            value = cols[1].text.strip()
+            if key.lower().startswith("ns"):  # DNS rows
+                dns_list.append(value)
+            else:
+                data[key] = value
+
+    # Assign DNS into dns1, dns2, ...
+    for i, dns in enumerate(dns_list, start=1):
+        data[f"dns{i}"] = dns
+
+    return data
+
 def main():
     driver = make_driver(headless=False)
     try:
@@ -59,27 +82,30 @@ def main():
         wait_for_load(driver)
         try_accept_cookies(driver)
 
-        # Immediately click checkbox once available
+        # Immediately click checkbox
         checkbox = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.ID, "isChecked"))
         )
         checkbox.click()
-        print("✔ Checkbox clicked")
 
-        # Click Show button as soon as it’s clickable
+        # Click Show button
         show_button = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.ID, "show"))
         )
         show_button.click()
-        print("✔ Show button clicked")
 
-        # Wait only for result container to appear instead of sleeping
+        # Wait for results container
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "div#response"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, "#response table"))
         )
 
-        print("Title:", driver.title)
-        print("Current URL:", driver.current_url)
+        # Parse WHOIS data
+        result = parse_results(driver)
+
+        # Save to CSV
+        df = pd.DataFrame([result])
+        df.to_csv("data_rdap_parsed.csv", index=False)
+        print("✔ Data saved to data_rdap_parsed.csv")
 
     finally:
         driver.quit()
