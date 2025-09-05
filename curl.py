@@ -106,11 +106,13 @@ def main():
     for domain in df["domain"]:
         print(f"\nFetching WHOIS for {domain} through proxy...")
         raw = run_whois(domain)
-        if raw:
-            print("✅ WHOIS output:\n")
-            print(raw)
-        else:
-            print("❌ No WHOIS data found.")
+
+        if not raw:
+            print("❌ No WHOIS data found. Skipping...")
+            continue  # <--- skip saving blank rows
+
+        print("✅ WHOIS output:\n")
+        print(raw)
 
         parsed = parse_whois(raw, domain)
 
