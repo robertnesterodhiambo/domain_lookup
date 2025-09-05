@@ -1,19 +1,8 @@
 #!/usr/bin/env python3
 import pandas as pd
-import requests
-from bs4 import BeautifulSoup
+import subprocess
 import csv
 import os
-
-# Proxy credentials
-username = "geonode_DrXb2XNsHm-type-residential"
-password = "f232262f-0f34-400c-a7a6-84d1ce423302"
-GEONODE_DNS = "92.204.164.15:9000"
-
-proxies = {
-    "http": f"http://{username}:{password}@{GEONODE_DNS}",
-    "https": f"http://{username}:{password}@{GEONODE_DNS}",
-}
 
 INPUT_CSV = "data_rdap.csv"
 OUTPUT_CSV = "data_rdap_parsed.csv"
@@ -37,59 +26,56 @@ CSV_COLUMNS = [
 
 # Mapping from WHOIS keys to CSV column names
 KEY_MAPPING = {
-    "Domain": "Domain",
+    "Domain Name": "Domain",
     "Status": "Status",
-    "Registered": "Registered",
-    "Expires": "Expires",
+    "Creation Date": "Registered",
+    "Registry Expiry Date": "Expires",
     "Registrar": "Registrar",
-    "Registrar website": "Registrar website",
-    "Registrar email": "Registrar email",
-    "Contact organization": "Contact organization",
-    "Contact email": "Contact email",
-    "Nameserver": "Nameserver",  # handled separately
+    "Registrar URL": "Registrar website",
+    "Registrar Abuse Contact Email": "Registrar email",
+    "Registrant Organization": "Contact organization",
+    "Registrant Email": "Contact email",
+    "Name Server": "Nameserver",  # handled separately
 }
 
 
 def fetch_whois(domain):
-    url = f"https://www.whois.com/whois/{domain}"
     print(f"Fetching WHOIS for {domain}...")
 
     try:
-        response = requests.get(url, proxies=proxies, timeout=30)
-        response.raise_for_status()
-    except Exception as e:
+        # Run whois via proxychains4 so it uses your SOCKS5 proxy
+        result = subprocess.run(
+            ["proxychains4", "whois", domain],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        whois_text = result.stdout
+    except subprocess.CalledProcessError as e:
         print(f"⚠️ Error fetching {domain}: {e}")
         return None
 
-    soup = BeautifulSoup(response.text, "html.parser")
-    whois_block = soup.find("pre", {"id": "registryData"})
-
-    if not whois_block:
-        print(f"❌ WHOIS data not found for {url}")
-        return None
-
-    lines = whois_block.get_text().splitlines()
     data_dict = {}
     nameservers = []
 
-    for line in lines:
+    # Parse WHOIS text line by line
+    for line in whois_text.splitlines():
         line = line.strip()
-        if not line or line == "%":
+        if not line or ":" not in line:
             continue
 
-        if ":" in line:
-            key, value = line.split(":", 1)
-            key = key.strip()
-            value = value.strip()
+        key, value = line.split(":", 1)
+        key = key.strip()
+        value = value.strip()
 
-            if key.lower().startswith("nameserver"):
-                nameservers.append(value)
-            else:
-                csv_key = KEY_MAPPING.get(key)
-                if csv_key:
-                    data_dict[csv_key] = value
+        if key.lower().startswith("name server"):
+            nameservers.append(value)
+        else:
+            csv_key = KEY_MAPPING.get(key)
+            if csv_key:
+                data_dict[csv_key] = value
 
-    # Add up to 4 nameservers (ignore 5th+)
+    # Add up to 4 nameservers
     for i in range(4):
         col_name = f"Nameserver{i+1}"
         data_dict[col_name] = nameservers[i] if i < len(nameservers) else "N/A"
@@ -110,7 +96,7 @@ if __name__ == "__main__":
     if "domain" not in df.columns and "Domain" in df.columns:
         df.rename(columns={"Domain": "domain"}, inplace=True)
 
-    domains = df["domain"].head(10).tolist()
+    domains = df["domain"].head(100).tolist()
 
     # Track already processed domains
     processed = set()
@@ -134,5 +120,5 @@ if __name__ == "__main__":
             data = fetch_whois(domain)
             if data:
                 writer.writerow(data)
-                f.flush()  # save immediately
+                f.flush()
                 print(f"✅ Saved WHOIS for {domain}")
