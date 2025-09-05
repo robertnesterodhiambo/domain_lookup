@@ -4,6 +4,7 @@ import csv
 import os
 import re
 import time
+import random
 
 INPUT_CSV = "data_rdap.csv"
 OUTPUT_CSV = "data_rdap_parsed.csv"
@@ -17,10 +18,32 @@ COLUMNS = [
     "Nameservers", "Registrar_website", "Registrar_email"
 ]
 
+# Proxy list (can add many, rotate randomly)
+PROXIES = [
+    "92.204.164.15:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302",
+    "92.204.164.15:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302",
+    "92.204.164.15:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302",
+    "92.204.164.15:9000:geonode_DrXb2XNsHm-type-residential:f232262f-0f34-400c-a7a6-84d1ce423302"
+]
+
 def run_whois(domain):
-    """Run whois command and return raw output"""
+    """Run whois command via rotating proxy and return raw output"""
+    proxy_entry = random.choice(PROXIES)  # pick one proxy randomly
+    host, port, user, pwd = proxy_entry.split(":")
+
+    proxy_url = f"http://{user}:{pwd}@{host}:{port}"
+
     try:
-        result = subprocess.run(["curl", f"https://www.whois.com/whois/{domain}"], capture_output=True, text=True, timeout=20)
+        result = subprocess.run(
+            [
+                "curl",
+                "-x", proxy_url,
+                f"https://www.whois.com/whois/{domain}"
+            ],
+            capture_output=True,
+            text=True,
+            timeout=20
+        )
         return result.stdout
     except Exception as e:
         print(f"Error running whois for {domain}: {e}")
