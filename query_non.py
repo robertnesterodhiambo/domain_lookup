@@ -20,7 +20,7 @@ COLUMNS = [
 def run_whois(domain):
     """Run whois command and return raw output"""
     try:
-        result = subprocess.run(["whois", domain], capture_output=True, text=True, timeout=20)
+        result = subprocess.run(["curl", f"https://www.whois.com/whois/{domain}"], capture_output=True, text=True, timeout=20)
         return result.stdout
     except Exception as e:
         print(f"Error running whois for {domain}: {e}")
