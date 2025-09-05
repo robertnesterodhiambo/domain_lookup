@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
-
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 import csv
-import pandas as pd
 import os
+
+# Proxy credentials
+username = "geonode_DrXb2XNsHm-type-residential"
+password = "f232262f-0f34-400c-a7a6-84d1ce423302"
+GEONODE_DNS = "92.204.164.15:9000"
+
+proxies = {
+    "http": f"http://{username}:{password}@{GEONODE_DNS}",
+    "https": f"http://{username}:{password}@{GEONODE_DNS}",
+}
 
 INPUT_CSV = "data_rdap.csv"
 OUTPUT_CSV = "data_rdap_parsed.csv"
@@ -23,7 +32,7 @@ CSV_COLUMNS = [
     "Nameserver1",
     "Nameserver2",
     "Nameserver3",
-    "Nameserver4"
+    "Nameserver4",
 ]
 
 # Mapping from WHOIS keys to CSV column names
@@ -37,40 +46,29 @@ KEY_MAPPING = {
     "Registrar email": "Registrar email",
     "Contact organization": "Contact organization",
     "Contact email": "Contact email",
-    "Nameserver": "Nameserver"  # handled separately
+    "Nameserver": "Nameserver",  # handled separately
 }
 
-# Proxy config
-username = "geonode_DrXb2XNsHm-type-residential"
-password = "f232262f-0f34-400c-a7a6-84d1ce423302"
-GEONODE_DNS = "92.204.164.15:9000"
 
-PROXIES = {
-    "http": f"http://{username}:{password}@{GEONODE_DNS}",
-    "https": f"http://{username}:{password}@{GEONODE_DNS}"
-}
+def fetch_whois(domain):
+    url = f"https://www.whois.com/whois/{domain}"
+    print(f"Fetching WHOIS for {domain}...")
 
-def fetch_whois(domain_url):
-    headers = {"User-Agent": "curl/7.68.0"}
     try:
-        response = requests.get(domain_url, headers=headers, proxies=PROXIES, timeout=20)
+        response = requests.get(url, proxies=proxies, timeout=30)
+        response.raise_for_status()
     except Exception as e:
-        print(f"Request failed for {domain_url}: {e}")
-        return None
-
-    if response.status_code != 200:
-        print(f"Bad response {response.status_code} for {domain_url}")
+        print(f"⚠️ Error fetching {domain}: {e}")
         return None
 
     soup = BeautifulSoup(response.text, "html.parser")
-    whois_block = soup.find("pre", id="registryData")
-    
+    whois_block = soup.find("pre", {"id": "registryData"})
+
     if not whois_block:
-        print(f"WHOIS data not found for {domain_url}")
+        print(f"❌ WHOIS data not found for {url}")
         return None
-    
+
     lines = whois_block.get_text().splitlines()
-    
     data_dict = {}
     nameservers = []
 
@@ -78,66 +76,63 @@ def fetch_whois(domain_url):
         line = line.strip()
         if not line or line == "%":
             continue
-        
+
         if ":" in line:
             key, value = line.split(":", 1)
             key = key.strip()
             value = value.strip()
-            
+
             if key.lower().startswith("nameserver"):
                 nameservers.append(value)
             else:
                 csv_key = KEY_MAPPING.get(key)
                 if csv_key:
                     data_dict[csv_key] = value
-    
-    # Add up to 4 nameservers
+
+    # Add up to 4 nameservers (ignore 5th+)
     for i in range(4):
         col_name = f"Nameserver{i+1}"
         data_dict[col_name] = nameservers[i] if i < len(nameservers) else "N/A"
-    
+
     # Ensure all fixed columns exist
     for col in CSV_COLUMNS:
         if col not in data_dict:
             data_dict[col] = "N/A"
-    
+
     return data_dict
 
-def append_to_csv(data, filename=OUTPUT_CSV):
-    file_exists = os.path.isfile(filename)
-    with open(filename, "a", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
-        if not file_exists:
-            writer.writeheader()  # write header only once
-        writer.writerow(data)
 
 if __name__ == "__main__":
-    # Load domains from input CSV
+    # Load input CSV
     df = pd.read_csv(INPUT_CSV)
-    df.columns = df.columns.str.strip().str.lower()
-    if "domain" not in df.columns:
-        raise ValueError("Input CSV must have a 'Domain' column")
-    domains = df["domain"].head(10).tolist()  # first 10 rows only
 
-    # Load already processed domains from output CSV (if exists)
-    processed_domains = set()
-    if os.path.isfile(OUTPUT_CSV):
-        try:
-            existing = pd.read_csv(OUTPUT_CSV)
-            if "Domain" in existing.columns:
-                processed_domains = set(existing["Domain"].dropna().astype(str).str.strip().tolist())
-        except Exception as e:
-            print(f"Warning: could not read {OUTPUT_CSV}: {e}")
+    # Normalize column name
+    if "domain" not in df.columns and "Domain" in df.columns:
+        df.rename(columns={"Domain": "domain"}, inplace=True)
 
-    for domain in domains:
-        if domain in processed_domains:
-            print(f"Skipping already processed domain: {domain}")
-            continue
+    domains = df["domain"].head(10).tolist()
 
-        url = f"https://www.whois.com/whois/{domain}"
-        print(f"Fetching WHOIS for {domain}...")
-        data = fetch_whois(url)
-        if data:
-            data["Domain"] = domain  # ensure Domain field is set
-            append_to_csv(data)
-            print(f"Saved data for {domain}")
+    # Track already processed domains
+    processed = set()
+    if os.path.exists(OUTPUT_CSV):
+        with open(OUTPUT_CSV, "r", newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                processed.add(row["Domain"])
+
+    # Open CSV in append mode
+    with open(OUTPUT_CSV, "a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+        if os.stat(OUTPUT_CSV).st_size == 0:
+            writer.writeheader()
+
+        for domain in domains:
+            if domain in processed:
+                print(f"Skipping already processed domain: {domain}")
+                continue
+
+            data = fetch_whois(domain)
+            if data:
+                writer.writerow(data)
+                f.flush()  # save immediately
+                print(f"✅ Saved WHOIS for {domain}")
