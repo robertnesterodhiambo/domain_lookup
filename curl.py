@@ -2,12 +2,11 @@
 import pandas as pd
 import subprocess
 import csv
-import os
 
 INPUT_CSV = "data_rdap.csv"
 OUTPUT_CSV = "data_rdap_parsed.csv"
 
-# Fixed CSV columns
+# CSV output columns
 CSV_COLUMNS = [
     "Domain",
     "Status",
@@ -19,106 +18,108 @@ CSV_COLUMNS = [
     "Contact organization",
     "Contact email",
     "Nameserver1",
-    "Nameserver2",
-    "Nameserver3",
-    "Nameserver4",
+    "Nameserver2"
 ]
 
-# Mapping from WHOIS keys to CSV column names
-KEY_MAPPING = {
-    "Domain Name": "Domain",
-    "Status": "Status",
-    "Creation Date": "Registered",
-    "Registry Expiry Date": "Expires",
-    "Registrar": "Registrar",
-    "Registrar URL": "Registrar website",
-    "Registrar Abuse Contact Email": "Registrar email",
-    "Registrant Organization": "Contact organization",
-    "Registrant Email": "Contact email",
-    "Name Server": "Nameserver",  # handled separately
-}
-
-
-def fetch_whois(domain):
-    print(f"Fetching WHOIS for {domain}...")
-
+def run_whois(domain):
     try:
-        # Run whois via proxychains4 so it uses your SOCKS5 proxy
+        # Force WHOIS through proxy using proxychains
+        cmd = ["proxychains4", "whois", domain]
+
         result = subprocess.run(
-            ["proxychains4", "whois", domain],
-            capture_output=True,
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             text=True,
-            check=True
+            timeout=40
         )
-        whois_text = result.stdout
-    except subprocess.CalledProcessError as e:
-        print(f"⚠️ Error fetching {domain}: {e}")
+        if result.returncode == 0:
+            return result.stdout
+        else:
+            return None
+    except Exception:
         return None
 
-    data_dict = {}
+def parse_whois(raw, domain):
+    """Extract structured fields from WHOIS text."""
+    if not raw:
+        return {col: None for col in CSV_COLUMNS}
+
+    data = {
+        "Domain": domain,
+        "Status": None,
+        "Registered": None,
+        "Expires": None,
+        "Registrar": None,
+        "Registrar website": None,
+        "Registrar email": None,
+        "Contact organization": None,
+        "Contact email": None,
+        "Nameserver1": None,
+        "Nameserver2": None,
+    }
+
     nameservers = []
 
-    # Parse WHOIS text line by line
-    for line in whois_text.splitlines():
+    for line in raw.splitlines():
         line = line.strip()
         if not line or ":" not in line:
-            continue
+            continue  # skip invalid lines
 
         key, value = line.split(":", 1)
-        key = key.strip()
-        value = value.strip()
+        key, value = key.strip().lower(), value.strip()
 
-        if key.lower().startswith("name server"):
+        if key.startswith("status"):
+            data["Status"] = value
+        elif key.startswith("registered"):
+            data["Registered"] = value
+        elif key.startswith("expires"):
+            data["Expires"] = value
+        elif key.startswith("registrar website"):
+            data["Registrar website"] = value
+        elif key.startswith("registrar email"):
+            data["Registrar email"] = value
+        elif key.startswith("registrar"):
+            data["Registrar"] = value
+        elif key.startswith("contact organization"):
+            data["Contact organization"] = value
+        elif key.startswith("contact email"):
+            data["Contact email"] = value
+        elif key.startswith("nameserver"):
             nameservers.append(value)
-        else:
-            csv_key = KEY_MAPPING.get(key)
-            if csv_key:
-                data_dict[csv_key] = value
 
-    # Add up to 4 nameservers
-    for i in range(4):
-        col_name = f"Nameserver{i+1}"
-        data_dict[col_name] = nameservers[i] if i < len(nameservers) else "N/A"
+    if nameservers:
+        data["Nameserver1"] = nameservers[0]
+        if len(nameservers) > 1:
+            data["Nameserver2"] = nameservers[1]
 
-    # Ensure all fixed columns exist
-    for col in CSV_COLUMNS:
-        if col not in data_dict:
-            data_dict[col] = "N/A"
+    return data
 
-    return data_dict
-
-
-if __name__ == "__main__":
-    # Load input CSV
+def main():
     df = pd.read_csv(INPUT_CSV)
 
-    # Normalize column name
-    if "domain" not in df.columns and "Domain" in df.columns:
-        df.rename(columns={"Domain": "domain"}, inplace=True)
-
-    domains = df["domain"].head(100).tolist()
-
-    # Track already processed domains
-    processed = set()
-    if os.path.exists(OUTPUT_CSV):
-        with open(OUTPUT_CSV, "r", newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                processed.add(row["Domain"])
-
-    # Open CSV in append mode
-    with open(OUTPUT_CSV, "a", newline="", encoding="utf-8") as f:
+    # Write header first
+    with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
-        if os.stat(OUTPUT_CSV).st_size == 0:
-            writer.writeheader()
+        writer.writeheader()
 
-        for domain in domains:
-            if domain in processed:
-                print(f"Skipping already processed domain: {domain}")
-                continue
+    for domain in df["domain"]:
+        print(f"\nFetching WHOIS for {domain} through proxy...")
+        raw = run_whois(domain)
+        if raw:
+            print("✅ WHOIS output:\n")
+            print(raw)
+        else:
+            print("❌ No WHOIS data found.")
 
-            data = fetch_whois(domain)
-            if data:
-                writer.writerow(data)
-                f.flush()
-                print(f"✅ Saved WHOIS for {domain}")
+        parsed = parse_whois(raw, domain)
+
+        # Append immediately to CSV
+        with open(OUTPUT_CSV, "a", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+            writer.writerow(parsed)
+
+        print(f"✔ Saved {domain} to {OUTPUT_CSV}")
+
+if __name__ == "__main__":
+    main()
