@@ -1,104 +1,124 @@
-import requests
-from bs4 import BeautifulSoup
+import pandas as pd
+import subprocess
 import csv
+import os
+import re
+import time
 
+INPUT_CSV = "data_rdap.csv"
 OUTPUT_CSV = "data_rdap_parsed.csv"
 
-# Fixed CSV columns
-CSV_COLUMNS = [
-    "Domain",
-    "Status",
-    "Registered",
-    "Expires",
-    "Registrar",
-    "Registrar website",
-    "Registrar email",
-    "Contact organization",
-    "Contact email",
-    "Nameserver1",
-    "Nameserver2",
-    "Nameserver3",
-    "Nameserver4"
+# Columns we always want
+COLUMNS = [
+    "Domain", "DNS", "Registered", "Expires", "Registrar",
+    "Registration_period", "VID", "DNSSEC", "Status",
+    "Registrant_handle", "Registrant_name", "Registrant_address",
+    "Registrant_postalcode", "Registrant_city", "Registrant_country", "Registrant_phone",
+    "Nameservers", "Registrar_website", "Registrar_email"
 ]
 
-# Mapping from WHOIS keys to CSV column names
-KEY_MAPPING = {
-    "Domain": "Domain",
-    "Status": "Status",
-    "Registered": "Registered",
-    "Expires": "Expires",
-    "Registrar": "Registrar",
-    "Registrar website": "Registrar website",
-    "Registrar email": "Registrar email",
-    "Contact organization": "Contact organization",
-    "Contact email": "Contact email",
-    "Nameserver": "Nameserver"  # handled separately
-}
+def run_whois(domain):
+    """Run whois command and return raw output"""
+    try:
+        result = subprocess.run(["whois", domain], capture_output=True, text=True, timeout=20)
+        return result.stdout
+    except Exception as e:
+        print(f"Error running whois for {domain}: {e}")
+        return ""
 
-def fetch_whois(domain_url):
-    headers = {"User-Agent": "curl/7.68.0"}
-    response = requests.get(domain_url, headers=headers)
-    soup = BeautifulSoup(response.text, "html.parser")
-    whois_block = soup.find("pre", id="registryData")
-    
-    if not whois_block:
-        print(f"WHOIS data not found for {domain_url}")
-        return None
-    
-    lines = whois_block.get_text().splitlines()
-    
-    data_dict = {}
-    nameservers = []
+def parse_whois_output(output):
+    """Extract relevant fields from whois output"""
+    data = {col: "" for col in COLUMNS}
 
-    for line in lines:
-        line = line.strip()
-        if not line or line == "%":
-            continue
-        
-        if ":" in line:
-            key, value = line.split(":", 1)
-            key = key.strip()
-            value = value.strip()
-            
-            if key.lower().startswith("nameserver"):
-                nameservers.append(value)
-            else:
-                csv_key = KEY_MAPPING.get(key)
-                if csv_key:
-                    data_dict[csv_key] = value
-    
-    # Add up to 4 nameservers (ignore 5th+)
-    for i in range(4):
-        col_name = f"Nameserver{i+1}"
-        data_dict[col_name] = nameservers[i] if i < len(nameservers) else "N/A"
-    
-    # Ensure all fixed columns exist
-    for col in CSV_COLUMNS:
-        if col not in data_dict:
-            data_dict[col] = "N/A"
-    
-    return data_dict
+    # Generic patterns
+    patterns = {
+        "Domain": r"Domain:\s*(.+)",
+        "DNS": r"DNS:\s*(.+)",
+        "Registered": r"Registered:\s*(.+)",
+        "Expires": r"Expires:\s*(.+)",
+        "Registrar": r"Registrar:\s*(.+)",
+        "Registration_period": r"Registration period:\s*(.+)",
+        "VID": r"VID:\s*(.+)",
+        "DNSSEC": r"DNSSEC:\s*(.+)",
+        "Status": r"Status:\s*(.+)",
+        "Registrant_handle": r"Handle:\s*(.+)",
+        "Registrant_name": r"Name:\s*(.+)",
+        "Registrant_postalcode": r"Postalcode:\s*(.+)",
+        "Registrant_city": r"City:\s*(.+)",
+        "Registrant_country": r"Country:\s*(.+)",
+        "Registrant_phone": r"Phone:\s*(.+)",
+        "Registrar_website": r"Registrar website:\s*(.+)",
+        "Registrar_email": r"Registrar email:\s*(.+)"
+    }
 
-def save_to_csv(data_list, filename=OUTPUT_CSV):
-    with open(filename, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+    for field, pattern in patterns.items():
+        match = re.search(pattern, output, re.IGNORECASE)
+        if match:
+            data[field] = match.group(1).strip()
+
+    # Collect multiple Address lines
+    addresses = re.findall(r"Address:\s*(.+)", output, re.IGNORECASE)
+    if addresses:
+        data["Registrant_address"] = "; ".join([a.strip() for a in addresses])
+
+    # Collect multiple Hostname / Nameserver / nserver
+    nameservers = re.findall(r"(?:Hostname|Nameserver|nserver):\s*(.+)", output, re.IGNORECASE)
+    if nameservers:
+        data["Nameservers"] = "; ".join([ns.strip() for ns in nameservers])
+
+    return data
+
+def main():
+    # Read input
+    df = pd.read_csv(INPUT_CSV)
+
+    # Track already processed domains
+    processed = set()
+    if os.path.exists(OUTPUT_CSV):
+        with open(OUTPUT_CSV, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if "Domain" in row and row["Domain"]:
+                    processed.add(row["Domain"].strip().lower())
+
+    # Prepare output file
+    write_header = not os.path.exists(OUTPUT_CSV)
+    out_file = open(OUTPUT_CSV, "a", newline="", encoding="utf-8")
+    writer = csv.DictWriter(out_file, fieldnames=df.columns.tolist() + COLUMNS)
+    if write_header:
         writer.writeheader()
-        for data in data_list:
-            writer.writerow(data)
+
+    skipped_count = 0
+    processed_count = 0
+
+    for _, row in df.iterrows():
+        domain = row["domain"].strip()
+        if domain.lower() in processed:
+            skipped_count += 1
+            print(f"Skipping {domain}, already collected.")
+            continue
+
+        print(f"Running whois for {domain}...")
+        raw_output = run_whois(domain)
+        print(raw_output)  # print to terminal
+
+        parsed = parse_whois_output(raw_output)
+
+        # Merge input row + parsed data
+        combined = {**row.to_dict(), **parsed}
+        writer.writerow(combined)
+        out_file.flush()  # save immediately
+
+        processed_count += 1
+
+        # Small delay to avoid rate limits
+        time.sleep(1)
+
+    out_file.close()
+
+    print("\nSummary:")
+    print(f"✅ {processed_count} new domains processed")
+    print(f"⏭️ {skipped_count} domains skipped (already collected)")
 
 if __name__ == "__main__":
-    urls = [
-        "https://www.whois.com/whois/007.lt"
-        # Add more WHOIS URLs if needed
-    ]
-    
-    all_data = []
-    for url in urls:
-        data = fetch_whois(url)
-        if data:
-            all_data.append(data)
-            print("Extracted data:", data)  # for verification in terminal
-    
-    if all_data:
-        save_to_csv(all_data)
-        print(f"WHOIS data saved to {OUTPUT_CSV}")
+    main()
