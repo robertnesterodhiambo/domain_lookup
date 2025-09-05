@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import pandas as pd
+import os
 
 INPUT_CSV = "data_rdap.csv"
 OUTPUT_CSV = "data_rdap_parsed.csv"
@@ -102,34 +103,30 @@ def fetch_whois(domain_url):
     
     return data_dict
 
-def save_to_csv(data_list, filename=OUTPUT_CSV):
-    with open(filename, "w", newline="", encoding="utf-8") as f:
+def append_to_csv(data, filename=OUTPUT_CSV):
+    file_exists = os.path.isfile(filename)
+    with open(filename, "a", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
-        writer.writeheader()
-        for data in data_list:
-            writer.writerow(data)
+        if not file_exists:
+            writer.writeheader()  # write header only once
+        writer.writerow(data)
 
 if __name__ == "__main__":
     # Load domains from input CSV
     df = pd.read_csv(INPUT_CSV)
 
-    # Normalize headers (strip spaces, lowercase)
+    # Normalize headers
     df.columns = df.columns.str.strip().str.lower()
     if "domain" not in df.columns:
         raise ValueError("Input CSV must have a 'Domain' column")
 
     domains = df["domain"].head(10).tolist()  # first 10 rows only
     
-    all_data = []
     for domain in domains:
         url = f"https://www.whois.com/whois/{domain}"
         print(f"Fetching WHOIS for {domain}...")
         data = fetch_whois(url)
         if data:
-            data["Domain"] = domain  # make sure Domain field is filled
-            all_data.append(data)
-            print("Extracted data:", data)
-    
-    if all_data:
-        save_to_csv(all_data)
-        print(f"WHOIS data saved to {OUTPUT_CSV}")
+            data["Domain"] = domain  # ensure Domain field is set
+            append_to_csv(data)
+            print(f"Saved data for {domain}")
