@@ -114,15 +114,26 @@ def append_to_csv(data, filename=OUTPUT_CSV):
 if __name__ == "__main__":
     # Load domains from input CSV
     df = pd.read_csv(INPUT_CSV)
-
-    # Normalize headers
     df.columns = df.columns.str.strip().str.lower()
     if "domain" not in df.columns:
         raise ValueError("Input CSV must have a 'Domain' column")
-
     domains = df["domain"].head(10).tolist()  # first 10 rows only
-    
+
+    # Load already processed domains from output CSV (if exists)
+    processed_domains = set()
+    if os.path.isfile(OUTPUT_CSV):
+        try:
+            existing = pd.read_csv(OUTPUT_CSV)
+            if "Domain" in existing.columns:
+                processed_domains = set(existing["Domain"].dropna().astype(str).str.strip().tolist())
+        except Exception as e:
+            print(f"Warning: could not read {OUTPUT_CSV}: {e}")
+
     for domain in domains:
+        if domain in processed_domains:
+            print(f"Skipping already processed domain: {domain}")
+            continue
+
         url = f"https://www.whois.com/whois/{domain}"
         print(f"Fetching WHOIS for {domain}...")
         data = fetch_whois(url)
