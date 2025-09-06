@@ -4,10 +4,15 @@ import subprocess
 import csv
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import itertools
 
 INPUT_CSV = "data_rdap.csv"
 OUTPUT_CSV = "data_rdap_parsed.csv"
-MAX_WORKERS = 999
+MAX_WORKERS = 990  # 999 is too high, system will choke
+
+# Proxy list (SOCKS5 rotating sessions)
+PROXIES = [f"92.204.164.15:{port}" for port in range(11000, 11011)]
+proxy_cycle = itertools.cycle(PROXIES)  # round-robin cycling
 
 # CSV output columns
 CSV_COLUMNS = [
@@ -24,70 +29,74 @@ CSV_COLUMNS = [
     "Nameserver2"
 ]
 
-# Thread lock for writing to CSV safely
+# Thread lock for CSV writing
 write_lock = threading.Lock()
 
 def run_whois(domain):
+    """Run WHOIS through rotating SOCKS5 proxies."""
     try:
-        cmd = ["proxychains4", "whois", domain]
+        proxy = next(proxy_cycle)
+        print(f"   🌐 Using proxy {proxy}")
+
+        cmd = [
+            "proxychains4",  # ensure your proxychains.conf uses dynamic
+            "whois", domain
+        ]
+
+        # overwrite proxychains config temporarily for this run
+        env = dict(**subprocess.os.environ)
+        env["PROXYCHAINS_SOCKS5"] = proxy  # custom env var to inject
+
         result = subprocess.run(
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
-            timeout=40
+            timeout=40,
+            env=env
         )
-        if result.returncode == 0:
+
+        if result.returncode == 0 and result.stdout.strip():
             return result.stdout
-        else:
-            return None
+        return None
     except Exception:
         return None
 
 def parse_whois(raw, domain):
-    if not raw:
-        return None  # Skip if no data
+    if not raw or ("domain" not in raw.lower() and "registrar" not in raw.lower()):
+        return None
 
-    data = {
-        "Domain": domain,
-        "Status": None,
-        "Registered": None,
-        "Expires": None,
-        "Registrar": None,
-        "Registrar website": None,
-        "Registrar email": None,
-        "Contact organization": None,
-        "Contact email": None,
-        "Nameserver1": None,
-        "Nameserver2": None,
-    }
-
+    data = {col: None for col in CSV_COLUMNS}
+    data["Domain"] = domain
     nameservers = []
 
     for line in raw.splitlines():
         line = line.strip()
-        if not line or ":" not in line:
+        if not line or line.startswith("%"):
             continue
+        if ":" not in line:
+            continue
+
         key, value = line.split(":", 1)
         key, value = key.strip().lower(), value.strip()
 
-        if key.startswith("status"):
+        if key in ("status", "domain status", "state"):
             data["Status"] = value
-        elif key.startswith("registered"):
+        elif key in ("registered", "registration time", "created", "creation date", "domain registration date"):
             data["Registered"] = value
-        elif key.startswith("expires"):
+        elif key in ("expires", "expiry date", "expire date", "registry expiry date", "expiration time"):
             data["Expires"] = value
-        elif key.startswith("registrar website"):
+        elif key.startswith("registrar url") or key.startswith("registrar website"):
             data["Registrar website"] = value
         elif key.startswith("registrar email"):
             data["Registrar email"] = value
         elif key.startswith("registrar"):
             data["Registrar"] = value
-        elif key.startswith("contact organization"):
+        elif "contact organization" in key or "organization" in key:
             data["Contact organization"] = value
-        elif key.startswith("contact email"):
+        elif "contact email" in key or (key == "email" and "registrar" not in key):
             data["Contact email"] = value
-        elif key.startswith("nameserver"):
+        elif key.startswith("nameserver") or key.startswith("nserver"):
             nameservers.append(value)
 
     if nameservers:
@@ -98,38 +107,37 @@ def parse_whois(raw, domain):
     return data
 
 def process_domain(domain):
-    print(f"\nFetching WHOIS for {domain} through proxy...")
+    print(f"\nFetching WHOIS for {domain}...")
     raw = run_whois(domain)
 
     if not raw:
-        print(f"❌ No WHOIS data found for {domain}. Skipping...")
+        print(f"❌ No WHOIS data found for {domain}.")
         return None
 
-    print(f"✅ WHOIS fetched for {domain}")
     parsed = parse_whois(raw, domain)
+    if not parsed:
+        print(f"⚠️ Could not parse WHOIS for {domain}. Showing first 10 lines:\n")
+        print("\n".join(raw.splitlines()[:10]))
+        return None
 
-    if parsed:
-        with write_lock:  # Prevent race conditions in file writing
-            with open(OUTPUT_CSV, "a", newline="", encoding="utf-8") as f:
-                writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
-                writer.writerow(parsed)
-        print(f"✔ Saved {domain} to {OUTPUT_CSV}")
+    with write_lock:
+        with open(OUTPUT_CSV, "a", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+            writer.writerow(parsed)
 
+    print(f"✔ Saved {domain} to {OUTPUT_CSV}")
     return parsed
 
 def main():
     df = pd.read_csv(INPUT_CSV)
-    domains = df["domain"].dropna().unique()  # remove duplicates + NaN
+    domains = df["domain"].dropna().unique()
 
-    # Write CSV header once
     with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
         writer.writeheader()
 
-    # Use ThreadPoolExecutor for parallel WHOIS queries
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {executor.submit(process_domain, domain): domain for domain in domains}
-
         for future in as_completed(futures):
             domain = futures[future]
             try:
