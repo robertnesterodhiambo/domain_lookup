@@ -5,6 +5,7 @@ import csv
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import itertools
+import os
 
 INPUT_CSV = "data_rdap.csv"
 OUTPUT_CSV = "data_rdap_parsed.csv"
@@ -39,13 +40,12 @@ def run_whois(domain):
         print(f"   🌐 Using proxy {proxy}")
 
         cmd = [
-            "proxychains4",  # ensure your proxychains.conf uses dynamic
+            "proxychains4",
             "whois", domain
         ]
 
-        # overwrite proxychains config temporarily for this run
         env = dict(**subprocess.os.environ)
-        env["PROXYCHAINS_SOCKS5"] = proxy  # custom env var to inject
+        env["PROXYCHAINS_SOCKS5"] = proxy
 
         result = subprocess.run(
             cmd,
@@ -129,12 +129,21 @@ def process_domain(domain):
     return parsed
 
 def main():
-    df = pd.read_csv(INPUT_CSV)
-    domains = df["domain"].dropna().unique()
+    # Read already processed domains to skip
+    processed_domains = set()
+    if os.path.exists(OUTPUT_CSV):
+        existing_df = pd.read_csv(OUTPUT_CSV)
+        processed_domains = set(existing_df["Domain"].dropna().unique())
+        print(f"ℹ️ Skipping {len(processed_domains)} already processed domains.")
 
-    with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
-        writer.writeheader()
+    df = pd.read_csv(INPUT_CSV)
+    domains = [d for d in df["domain"].dropna().unique() if d not in processed_domains]
+
+    # If output file doesn't exist, write header
+    if not os.path.exists(OUTPUT_CSV):
+        with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+            writer.writeheader()
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {executor.submit(process_domain, domain): domain for domain in domains}
