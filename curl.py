@@ -10,9 +10,9 @@ INPUT_CSV = "data_rdap.csv"
 OUTPUT_CSV = "data_rdap_parsed.csv"
 MAX_WORKERS = 200  # 999 is too high, system will choke
 
-# CSV output columns
+# CSV output columns (domain is lowercase now)
 CSV_COLUMNS = [
-    "Domain",
+    "domain",
     "Status",
     "Registered",
     "Expires",
@@ -55,7 +55,7 @@ def parse_whois(raw, domain):
         return None
 
     data = {col: None for col in CSV_COLUMNS}
-    data["Domain"] = domain
+    data["domain"] = domain  # lowercase assignment
     nameservers = []
 
     for line in raw.splitlines():
@@ -121,11 +121,13 @@ def main():
     processed_domains = set()
     if os.path.exists(OUTPUT_CSV):
         existing_df = pd.read_csv(OUTPUT_CSV)
-        processed_domains = set(existing_df["Domain"].dropna().unique())
+        processed_domains = set(existing_df["domain"].dropna().unique())
         print(f"ℹ️ Skipping {len(processed_domains)} already processed domains.")
 
     df = pd.read_csv(INPUT_CSV)
-    domains = [d for d in df["domain"].dropna().unique() if d not in processed_domains]
+    # handle both "domain" and "Domain" in input
+    domain_col = "domain" if "domain" in df.columns else "Domain"
+    domains = [d for d in df[domain_col].dropna().unique() if d not in processed_domains]
 
     # If output file doesn't exist, write header
     if not os.path.exists(OUTPUT_CSV):

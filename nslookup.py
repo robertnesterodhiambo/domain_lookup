@@ -12,7 +12,7 @@ INPUT_FILE = 'domain_count.csv'
 OUTPUT_FILE = 'nslookup.csv'
 THREADS = 99
 LOCK = threading.Lock()
-CHUNK_SIZE = 50000
+CHUNK_SIZE = 5000
 
 NS_TYPES = ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'TXT', 'SRV', 'SOA']
 counter = 0  # global progress tracker
