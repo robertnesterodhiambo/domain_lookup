@@ -4,16 +4,11 @@ import subprocess
 import csv
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import itertools
 import os
 
 INPUT_CSV = "data_rdap.csv"
 OUTPUT_CSV = "data_rdap_parsed.csv"
-MAX_WORKERS = 990  # 999 is too high, system will choke
-
-# Proxy list (SOCKS5 rotating sessions)
-PROXIES = [f"92.204.164.15:{port}" for port in range(11000, 11011)]
-proxy_cycle = itertools.cycle(PROXIES)  # round-robin cycling
+MAX_WORKERS = 200  # 999 is too high, system will choke
 
 # CSV output columns
 CSV_COLUMNS = [
@@ -34,32 +29,25 @@ CSV_COLUMNS = [
 write_lock = threading.Lock()
 
 def run_whois(domain):
-    """Run WHOIS through rotating SOCKS5 proxies."""
+    """Run WHOIS through proxychains4 using the environment-configured proxies."""
     try:
-        proxy = next(proxy_cycle)
-        print(f"   🌐 Using proxy {proxy}")
+        print(f"   🌐 Fetching via proxychains4...")
 
-        cmd = [
-            "proxychains4",
-            "whois", domain
-        ]
-
-        env = dict(**subprocess.os.environ)
-        env["PROXYCHAINS_SOCKS5"] = proxy
+        cmd = ["proxychains4", "whois", domain]
 
         result = subprocess.run(
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
-            timeout=40,
-            env=env
+            timeout=40
         )
 
         if result.returncode == 0 and result.stdout.strip():
             return result.stdout
         return None
-    except Exception:
+    except Exception as e:
+        print(f"⚠️ Exception fetching WHOIS for {domain}: {e}")
         return None
 
 def parse_whois(raw, domain):
