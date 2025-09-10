@@ -74,13 +74,20 @@ def process_row(row_number, row, writer):
             rows_skipped += 1
         return
 
-    # === Reuse geo data if in complete_data_map ===
+    # === Skip if already processed ===
+    if domain in processed_domains:
+        with write_lock:
+            rows_skipped += 1
+        return
+
+    # === If in complete_data_map, reuse geo data ===
     if domain in complete_data_map:
         with write_lock:
             geo_data = complete_data_map[domain]
             for field in geo_fields:
                 row[field] = geo_data[field]
             writer.writerow(row.to_dict())
+            processed_domains.add(domain)
             rows_filled_from_complete += 1
         return
 
@@ -137,9 +144,9 @@ with open(output_file, mode='a', newline='', encoding='utf-8') as out_csv:
                 for idx, (_, row) in enumerate(chunk.iterrows())
             ]
             for future in as_completed(futures):
-                pass  # We don't need results; just ensure completion
+                pass  # Ensure completion
 
 # === Final summary ===
 print(f"\n✅ Total fetched from IP: {rows_collected}")
-print(f"⏩ Total skipped (no domain): {rows_skipped}")
+print(f"⏩ Total skipped (already processed or no domain): {rows_skipped}")
 print(f"♻️ Reused from complete.csv: {rows_filled_from_complete}")
