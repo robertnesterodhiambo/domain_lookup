@@ -22,6 +22,31 @@ def get_unique_values(column):
     conn.close()
     return sorted(results)
 
+# ✅ New function only for TLD (both DBs)
+def get_unique_tlds():
+    values = set()
+
+    # from finalboss
+    conn = mysql.connector.connect(**DB_CONFIG)
+    cursor = conn.cursor()
+    cursor.execute("SELECT DISTINCT tld FROM finalboss WHERE tld IS NOT NULL AND tld != ''")
+    values.update([row[0] for row in cursor.fetchall()])
+    cursor.close()
+    conn.close()
+
+    # from complete
+    complete_db_config = DB_CONFIG.copy()
+    complete_db_config['database'] = 'complete'
+    conn2 = mysql.connector.connect(**complete_db_config)
+    cursor2 = conn2.cursor()
+    cursor2.execute("SELECT DISTINCT tld FROM complete WHERE tld IS NOT NULL AND tld != ''")
+    values.update([row[0] for row in cursor2.fetchall()])
+    cursor2.close()
+    conn2.close()
+
+    return sorted(values)
+
+
 @app.route('/', methods=['GET'])
 def index():
     # ✅ Connect to main DB for finalboss
@@ -50,8 +75,8 @@ def index():
 
     percent_collected = round((total_collected / total_possible) * 100, 2)
 
-    # Get values from finalboss
-    tlds = get_unique_values('tld')
+    # Get values (TLD from both DBs, others only from finalboss)
+    tlds = get_unique_tlds()
     registrars = get_unique_values('registrar_name')
     countries = get_unique_values('registrar_country')
 
