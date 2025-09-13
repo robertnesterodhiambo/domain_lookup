@@ -4,6 +4,7 @@ import re
 import csv
 import json
 import time
+import os
 
 FIELDS = [
     "domain", "count", "tld", "rdap", "rdap_link",
@@ -134,13 +135,27 @@ def domain_lookup(domain: str, tld: str) -> dict:
 def main(input_csv="data_rdap.csv", output_csv="data_rdap_parsed.csv"):
     df = pd.read_csv(input_csv)
 
-    with open(output_csv, "w", newline="", encoding="utf-8", buffering=1) as f:  # line-buffered
+    # Read already processed domains
+    existing_domains = set()
+    if os.path.exists(output_csv):
+        existing_df = pd.read_csv(output_csv)
+        existing_domains = set(existing_df['domain'].astype(str).tolist())
+
+    # Open CSV in append mode
+    with open(output_csv, "a", newline="", encoding="utf-8", buffering=1) as f:
         writer = csv.DictWriter(f, fieldnames=FIELDS)
-        writer.writeheader()
+        # Write header only if file is empty
+        if f.tell() == 0:
+            writer.writeheader()
 
         for idx, row in df.iterrows():
             domain = row['domain']
             tld = row['tld'].lower()
+
+            if domain in existing_domains:
+                print(f"[{idx+1}/{len(df)}] Skipping already processed domain: {domain}")
+                continue
+
             print(f"[{idx+1}/{len(df)}] Processing {domain} via proxychains4...")
             data = domain_lookup(domain, tld)
 
@@ -151,9 +166,9 @@ def main(input_csv="data_rdap.csv", output_csv="data_rdap_parsed.csv"):
             data['rdap_link'] = row.get('rdap_link', None)
 
             writer.writerow({k: data.get(k) for k in FIELDS})
-            f.flush()  # ensure immediate write to disk
+            f.flush()  # immediate write
 
-    print(f"Saved parsed data to {output_csv}")
+    print(f"Processed all domains and appended results to {output_csv}")
 
 if __name__ == "__main__":
     main()
