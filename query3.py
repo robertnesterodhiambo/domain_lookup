@@ -85,7 +85,7 @@ def proxy_rdap_get(url: str, timeout=15):
                 return json.loads(result.stdout)
         except Exception:
             pass
-        print(f"RDAP retry {attempt} failed, retrying...")
+        print(f"RDAP retry {attempt} failed for {url}, retrying...")
         time.sleep(RETRY_DELAY)
     return None
 
@@ -100,7 +100,7 @@ def proxy_whois(domain: str, timeout=15):
                 return result.stdout
         except Exception:
             pass
-        print(f"WHOIS retry {attempt} failed, retrying...")
+        print(f"WHOIS retry {attempt} failed for {domain}, retrying...")
         time.sleep(RETRY_DELAY)
     return None
 
@@ -134,7 +134,7 @@ def domain_lookup(domain: str, tld: str) -> dict:
 def main(input_csv="data_rdap.csv", output_csv="data_rdap_parsed.csv"):
     df = pd.read_csv(input_csv)
 
-    with open(output_csv, "w", newline="", encoding="utf-8") as f:
+    with open(output_csv, "w", newline="", encoding="utf-8", buffering=1) as f:  # line-buffered
         writer = csv.DictWriter(f, fieldnames=FIELDS)
         writer.writeheader()
 
@@ -151,6 +151,7 @@ def main(input_csv="data_rdap.csv", output_csv="data_rdap_parsed.csv"):
             data['rdap_link'] = row.get('rdap_link', None)
 
             writer.writerow({k: data.get(k) for k in FIELDS})
+            f.flush()  # ensure immediate write to disk
 
     print(f"Saved parsed data to {output_csv}")
 
