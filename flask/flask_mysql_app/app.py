@@ -11,6 +11,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DOWNLOAD_DIR = os.path.join(BASE_DIR, 'downloads')
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
+
 def get_unique_values(column):
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
@@ -21,25 +22,55 @@ def get_unique_values(column):
     conn.close()
     return sorted(results)
 
+
 @app.route('/', methods=['GET'])
 def index():
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
 
+    # Count from finalboss
     cursor.execute("SELECT COUNT(*) FROM finalboss")
     total_collected = cursor.fetchone()[0]
 
-    cursor.execute("SELECT MAX(count) FROM complete")
-    total_possible = cursor.fetchone()[0] or 1
-
-    percent_collected = round((total_collected / total_possible) * 100, 2)
+    # Count rows from complete table in current DB
+    cursor.execute("SELECT COUNT(*) FROM complete")
+    total_possible = cursor.fetchone()[0] or 0
 
     cursor.close()
     conn.close()
 
+    # Count rows from external "complete" DB
+    other_db_config = DB_CONFIG.copy()
+    other_db_config['database'] = 'complete'
+    conn2 = mysql.connector.connect(**other_db_config)
+    cursor2 = conn2.cursor()
+    cursor2.execute("SELECT COUNT(*) FROM complete")
+    extra_possible = cursor2.fetchone()[0] or 0
+    cursor2.close()
+    conn2.close()
+
+    # Add both possible totals
+    total_possible += extra_possible
+    if total_possible == 0:
+        total_possible = 1  # avoid divide by zero
+
+    percent_collected = round((total_collected / total_possible) * 100, 2)
+
+    # Get values from finalboss
     tlds = get_unique_values('tld')
     registrars = get_unique_values('registrar_name')
     countries = get_unique_values('registrar_country')
+
+    # Get extra TLDs from complete DB
+    conn2 = mysql.connector.connect(**other_db_config)
+    cursor2 = conn2.cursor()
+    cursor2.execute("SELECT DISTINCT tld FROM complete WHERE tld IS NOT NULL AND tld != ''")
+    extra_tlds = [row[0] for row in cursor2.fetchall()]
+    cursor2.close()
+    conn2.close()
+
+    # Merge TLDs from both DBs
+    tlds = sorted(set(tlds + extra_tlds))
 
     return render_template(
         'index.html',
@@ -50,6 +81,7 @@ def index():
         total_possible=total_possible,
         percent_collected=percent_collected
     )
+
 
 @app.route('/preview', methods=['POST'])
 def preview():
@@ -88,6 +120,7 @@ def preview():
         country=country
     )
 
+
 @app.route('/download', methods=['POST'])
 def download():
     tld = request.form.get('tld')
@@ -108,33 +141,68 @@ def download():
         values.append(country)
 
     where_clause = "WHERE " + " AND ".join(conditions) if conditions else ""
-    query = f"SELECT * FROM finalboss {where_clause}"
 
-    conn = mysql.connector.connect(**DB_CONFIG)
-    df = pd.read_sql(query, conn, params=values)
+    # Step 1: check if TLD exists in finalboss
+    conn_check = mysql.connector.connect(**DB_CONFIG)
+    cursor_check = conn_check.cursor()
+    cursor_check.execute("SELECT 1 FROM finalboss WHERE tld = %s LIMIT 1", (tld,))
+    exists_in_finalboss = cursor_check.fetchone()
+    cursor_check.close()
+    conn_check.close()
 
-    if df.empty:
+    if exists_in_finalboss:
+        # ✅ Query finalboss
+        conn = mysql.connector.connect(**DB_CONFIG)
+        query = f"SELECT * FROM finalboss {where_clause}"
+        df = pd.read_sql(query, conn, params=values)
+
+        if df.empty:
+            conn.close()
+            return "No data matched the filters selected."
+
+        # Site count from complete (same DB)
+        count_query = f"""
+            SELECT tld, COUNT(DISTINCT domain) AS site_count
+            FROM complete
+            {where_clause}
+            GROUP BY tld
+        """
+        cursor = conn.cursor()
+        cursor.execute(count_query, values)
+        count_results = cursor.fetchall()
+        cursor.close()
         conn.close()
-        return "No data matched the filters selected."
 
-    selected_count = len(df)
-    print(f"User selected {selected_count} rows.")
+    else:
+        # ✅ Query from external complete DB (filters not applied)
+        other_db_config = DB_CONFIG.copy()
+        other_db_config['database'] = 'complete'
+        conn = mysql.connector.connect(**other_db_config)
+        query = "SELECT * FROM complete WHERE tld = %s"
+        df = pd.read_sql(query, conn, params=[tld])
 
-    count_query = f"""
-        SELECT tld, COUNT(DISTINCT domain) AS site_count
-        FROM complete
-        {where_clause}
-        GROUP BY tld
-    """
-    cursor = conn.cursor()
-    cursor.execute(count_query, values)
-    count_results = cursor.fetchall()
-    cursor.close()
-    conn.close()
+        if df.empty:
+            conn.close()
+            return "No data found for the selected TLD."
 
+        # Site count from this complete DB
+        count_query = """
+            SELECT tld, COUNT(DISTINCT domain) AS site_count
+            FROM complete
+            WHERE tld = %s
+            GROUP BY tld
+        """
+        cursor = conn.cursor()
+        cursor.execute(count_query, [tld])
+        count_results = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+    # Add site_count column
     tld_counts = {row[0]: row[1] for row in count_results}
     df['site_count'] = df['tld'].map(tld_counts).fillna(0).astype(int)
 
+    # Save file
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     filename = f"filtered_nslookup_{timestamp}.xlsx"
     filepath = os.path.join(DOWNLOAD_DIR, filename)
@@ -142,6 +210,7 @@ def download():
     df.to_excel(filepath, index=False)
 
     return send_file(filepath, as_attachment=True)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
