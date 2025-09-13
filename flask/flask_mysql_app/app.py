@@ -90,7 +90,6 @@ def index():
         percent_collected=percent_collected
     )
 
-
 @app.route('/preview', methods=['POST'])
 def preview():
     tld = request.form.get('tld')
@@ -111,14 +110,34 @@ def preview():
         values.append(country)
 
     where_clause = "WHERE " + " AND ".join(conditions) if conditions else ""
-    query = f"SELECT COUNT(*) FROM finalboss {where_clause}"
 
-    conn = mysql.connector.connect(**DB_CONFIG)
-    cursor = conn.cursor()
-    cursor.execute(query, values)
-    filtered_count = cursor.fetchone()[0]
-    cursor.close()
-    conn.close()
+    # Step 1: check if TLD exists in finalboss
+    conn_check = mysql.connector.connect(**DB_CONFIG)
+    cursor_check = conn_check.cursor()
+    cursor_check.execute("SELECT 1 FROM finalboss WHERE tld = %s LIMIT 1", (tld,))
+    exists_in_finalboss = cursor_check.fetchone()
+    cursor_check.close()
+    conn_check.close()
+
+    if exists_in_finalboss:
+        # ✅ Count from finalboss
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        query = f"SELECT COUNT(*) FROM finalboss {where_clause}"
+        cursor.execute(query, values)
+        filtered_count = cursor.fetchone()[0]
+        cursor.close()
+        conn.close()
+    else:
+        # ✅ Count from complete
+        other_db_config = DB_CONFIG.copy()
+        other_db_config['database'] = 'complete'
+        conn = mysql.connector.connect(**other_db_config)
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM complete WHERE tld = %s", [tld])
+        filtered_count = cursor.fetchone()[0]
+        cursor.close()
+        conn.close()
 
     return render_template(
         'preview.html',
@@ -127,6 +146,7 @@ def preview():
         registrar=registrar,
         country=country
     )
+
 
 
 @app.route('/download', methods=['POST'])
