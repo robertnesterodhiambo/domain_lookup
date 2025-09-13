@@ -1,8 +1,9 @@
 import subprocess
-import requests
 import pandas as pd
 import re
 import csv
+import json
+import time
 
 FIELDS = [
     "domain", "count", "tld", "rdap", "rdap_link",
@@ -11,6 +12,9 @@ FIELDS = [
     "registrar_name", "registrar_addr", "registrar_city", "registrar_region", "registrar_postalcode",
     "registrar_country", "reseller_name", "nameservers", "secureDNS_delegationSigned"
 ]
+
+MAX_RETRIES = 3
+RETRY_DELAY = 3  # seconds
 
 def parse_rdap_json(data: dict) -> dict:
     result = {k: None for k in FIELDS}
@@ -70,40 +74,60 @@ def parse_lv_whois(text: str) -> dict:
         result["nameservers"] = ",".join([ns.strip() for ns in ns_matches if ns.strip() != "-"])
     return result
 
-def proxy_rdap_get(url, timeout=10):
-    """Use proxychains4 for HTTP requests."""
-    try:
-        result = subprocess.run(
-            ["proxychains4", "curl", "-s", url],
-            capture_output=True, text=True, timeout=timeout
-        )
-        if result.returncode == 0 and result.stdout:
-            import json
-            return json.loads(result.stdout)
-    except Exception as e:
-        print(f"Proxy RDAP request failed: {e}")
+def proxy_rdap_get(url: str, timeout=15):
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            result = subprocess.run(
+                ["proxychains4", "curl", "-s", url],
+                capture_output=True, text=True, timeout=timeout
+            )
+            if result.returncode == 0 and result.stdout:
+                return json.loads(result.stdout)
+        except Exception:
+            pass
+        print(f"RDAP retry {attempt} failed, retrying...")
+        time.sleep(RETRY_DELAY)
+    return None
+
+def proxy_whois(domain: str, timeout=15):
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            result = subprocess.run(
+                ["proxychains4", "whois", domain],
+                capture_output=True, text=True, timeout=timeout
+            )
+            if result.returncode == 0:
+                return result.stdout
+        except Exception:
+            pass
+        print(f"WHOIS retry {attempt} failed, retrying...")
+        time.sleep(RETRY_DELAY)
     return None
 
 def domain_lookup(domain: str, tld: str) -> dict:
-    rdap_servers = {"ch": "https://rdap.nic.ch/domain/", "li": "https://rdap.nic.ch/domain/",
-                    "sj": "https://rdap.norid.no/domain/", "bv": "https://rdap.norid.no/domain/"}
+    rdap_servers = {
+        "ch": "https://rdap.nic.ch/domain/",
+        "li": "https://rdap.nic.ch/domain/",
+        "sj": "https://rdap.norid.no/domain/",
+        "bv": "https://rdap.norid.no/domain/"
+    }
 
     if tld in ["sj", "bv"]:
         return {"status": "Reserved TLD"}
 
-    if tld in ["ch", "li"]:
+    if tld in ["ch", "li", "sj", "bv"]:
         data = proxy_rdap_get(rdap_servers[tld] + domain)
         if data:
             return parse_rdap_json(data)
         else:
-            return {"status": "RDAP lookup failed"}
+            return {"status": "RDAP lookup failed after 3 retries"}
 
     if tld == "lv":
-        try:
-            whois_text = subprocess.check_output(["whois", domain], text=True)
+        whois_text = proxy_whois(domain)
+        if whois_text:
             return parse_lv_whois(whois_text)
-        except:
-            return {"status": "WHOIS lookup failed"}
+        else:
+            return {"status": "WHOIS lookup failed after 3 retries"}
 
     return {"status": "Unsupported TLD"}
 
@@ -114,20 +138,18 @@ def main(input_csv="data_rdap.csv", output_csv="data_rdap_parsed.csv"):
         writer = csv.DictWriter(f, fieldnames=FIELDS)
         writer.writeheader()
 
-        for _, row in df.iterrows():
+        for idx, row in df.iterrows():
             domain = row['domain']
             tld = row['tld'].lower()
-            print(f"Processing {domain} via proxychains4...")
+            print(f"[{idx+1}/{len(df)}] Processing {domain} via proxychains4...")
             data = domain_lookup(domain, tld)
 
-            # Include original CSV columns
             data['domain'] = domain
             data['count'] = row.get('count', None)
             data['tld'] = tld
             data['rdap'] = row.get('rdap', None)
             data['rdap_link'] = row.get('rdap_link', None)
 
-            # Write row immediately
             writer.writerow({k: data.get(k) for k in FIELDS})
 
     print(f"Saved parsed data to {output_csv}")
