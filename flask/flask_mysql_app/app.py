@@ -22,37 +22,31 @@ def get_unique_values(column):
     conn.close()
     return sorted(results)
 
-
 @app.route('/', methods=['GET'])
 def index():
+    # ✅ Connect to main DB for finalboss
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
-
-    # Count from finalboss
     cursor.execute("SELECT COUNT(*) FROM finalboss")
-    total_collected = cursor.fetchone()[0]
-
-    # Count rows from complete table in current DB
-    cursor.execute("SELECT COUNT(*) FROM complete")
-    total_possible = cursor.fetchone()[0] or 0
-
+    finalboss_count = cursor.fetchone()[0]
     cursor.close()
     conn.close()
 
-    # Count rows from external "complete" DB
-    other_db_config = DB_CONFIG.copy()
-    other_db_config['database'] = 'complete'
-    conn2 = mysql.connector.connect(**other_db_config)
+    # ✅ Connect to complete DB for complete table
+    complete_db_config = DB_CONFIG.copy()
+    complete_db_config['database'] = 'complete'
+    conn2 = mysql.connector.connect(**complete_db_config)
     cursor2 = conn2.cursor()
     cursor2.execute("SELECT COUNT(*) FROM complete")
-    extra_possible = cursor2.fetchone()[0] or 0
+    complete_count = cursor2.fetchone()[0]
     cursor2.close()
     conn2.close()
 
-    # Add both possible totals
-    total_possible += extra_possible
-    if total_possible == 0:
-        total_possible = 1  # avoid divide by zero
+    # ✅ total_collected = sum of both
+    total_collected = finalboss_count + complete_count
+
+    # ✅ Hard-coded total_possible
+    total_possible = 337113538
 
     percent_collected = round((total_collected / total_possible) * 100, 2)
 
@@ -60,17 +54,6 @@ def index():
     tlds = get_unique_values('tld')
     registrars = get_unique_values('registrar_name')
     countries = get_unique_values('registrar_country')
-
-    # Get extra TLDs from complete DB
-    conn2 = mysql.connector.connect(**other_db_config)
-    cursor2 = conn2.cursor()
-    cursor2.execute("SELECT DISTINCT tld FROM complete WHERE tld IS NOT NULL AND tld != ''")
-    extra_tlds = [row[0] for row in cursor2.fetchall()]
-    cursor2.close()
-    conn2.close()
-
-    # Merge TLDs from both DBs
-    tlds = sorted(set(tlds + extra_tlds))
 
     return render_template(
         'index.html',
