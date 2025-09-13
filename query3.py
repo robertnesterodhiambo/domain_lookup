@@ -4,7 +4,6 @@ import pandas as pd
 import re
 import csv
 
-# CSV fields including original CSV columns
 FIELDS = [
     "domain", "count", "tld", "rdap", "rdap_link",
     "status", "ldhName", "registration_date", "last_changed_date", "last_update_rdap_date",
@@ -22,10 +21,8 @@ def parse_rdap_json(data: dict) -> dict:
         if len(data["events"]) > 1:
             result["last_changed_date"] = data["events"][1].get("eventDate")
         result["last_update_rdap_date"] = data["events"][0].get("eventDate")
-
     if "nameservers" in data:
         result["nameservers"] = ",".join(ns.get("ldhName") for ns in data["nameservers"] if ns.get("ldhName"))
-
     if "entities" in data:
         for entity in data["entities"]:
             roles = entity.get("roles", [])
@@ -54,7 +51,6 @@ def parse_rdap_json(data: dict) -> dict:
                     result["registrar_country"] = adr.get("countryName")
             elif "reseller" in roles:
                 result["reseller_name"] = name
-
     result["secureDNS_delegationSigned"] = data.get("secureDNS", {}).get("delegationSigned")
     return result
 
@@ -74,6 +70,20 @@ def parse_lv_whois(text: str) -> dict:
         result["nameservers"] = ",".join([ns.strip() for ns in ns_matches if ns.strip() != "-"])
     return result
 
+def proxy_rdap_get(url, timeout=10):
+    """Use proxychains4 for HTTP requests."""
+    try:
+        result = subprocess.run(
+            ["proxychains4", "curl", "-s", url],
+            capture_output=True, text=True, timeout=timeout
+        )
+        if result.returncode == 0 and result.stdout:
+            import json
+            return json.loads(result.stdout)
+    except Exception as e:
+        print(f"Proxy RDAP request failed: {e}")
+    return None
+
 def domain_lookup(domain: str, tld: str) -> dict:
     rdap_servers = {"ch": "https://rdap.nic.ch/domain/", "li": "https://rdap.nic.ch/domain/",
                     "sj": "https://rdap.norid.no/domain/", "bv": "https://rdap.norid.no/domain/"}
@@ -82,13 +92,10 @@ def domain_lookup(domain: str, tld: str) -> dict:
         return {"status": "Reserved TLD"}
 
     if tld in ["ch", "li"]:
-        try:
-            resp = requests.get(rdap_servers[tld] + domain, timeout=10)
-            if resp.status_code == 200:
-                return parse_rdap_json(resp.json())
-            else:
-                return {"status": f"RDAP lookup failed ({resp.status_code})"}
-        except:
+        data = proxy_rdap_get(rdap_servers[tld] + domain)
+        if data:
+            return parse_rdap_json(data)
+        else:
             return {"status": "RDAP lookup failed"}
 
     if tld == "lv":
@@ -103,16 +110,14 @@ def domain_lookup(domain: str, tld: str) -> dict:
 def main(input_csv="data_rdap.csv", output_csv="data_rdap_parsed.csv"):
     df = pd.read_csv(input_csv)
 
-    # Open CSV in write mode and write header once
     with open(output_csv, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDS)
         writer.writeheader()
 
-        # Process each domain and write immediately
         for _, row in df.iterrows():
             domain = row['domain']
             tld = row['tld'].lower()
-            print(f"Processing {domain}...")
+            print(f"Processing {domain} via proxychains4...")
             data = domain_lookup(domain, tld)
 
             # Include original CSV columns
