@@ -10,8 +10,8 @@ FIELDS = [
     "domain", "count", "tld", "rdap", "rdap_link",
     "status", "ldhName", "registration_date", "last_changed_date", "last_update_rdap_date",
     "registrant_name", "registrant_email", "admin_name", "admin_email", "tech_name", "tech_email",
-    "registrar_name", "registrar_addr", "registrar_city", "registrar_region", "registrar_postalcode",
-    "registrar_country", "reseller_name", "nameservers", "secureDNS_delegationSigned"
+    "registrar_name", "registrar_email", "registrar_addr", "registrar_city", "registrar_region",
+    "registrar_postalcode", "registrar_country", "reseller_name", "nameservers", "secureDNS_delegationSigned"
 ]
 
 MAX_RETRIES = 3
@@ -28,17 +28,34 @@ def parse_rdap_json(data: dict) -> dict:
         result["last_update_rdap_date"] = data["events"][0].get("eventDate")
     if "nameservers" in data:
         result["nameservers"] = ",".join(ns.get("ldhName") for ns in data["nameservers"] if ns.get("ldhName"))
+
     if "entities" in data:
         for entity in data["entities"]:
             roles = entity.get("roles", [])
             vcard = entity.get("vcardArray", [])
             name, email = None, None
+            registrar_addr_fields = {
+                "registrar_addr": None,
+                "registrar_city": None,
+                "registrar_region": None,
+                "registrar_postalcode": None,
+                "registrar_country": None
+            }
+
             if vcard and len(vcard) == 2:
                 for item in vcard[1]:
                     if item[0] == "fn":
                         name = item[3]
                     elif item[0] == "email":
                         email = item[3]
+                    elif item[0] == "adr":
+                        adr_list = item[3]
+                        registrar_addr_fields["registrar_addr"] = adr_list[2] if len(adr_list) > 2 else None
+                        registrar_addr_fields["registrar_city"] = adr_list[3] if len(adr_list) > 3 else None
+                        registrar_addr_fields["registrar_region"] = adr_list[4] if len(adr_list) > 4 else None
+                        registrar_addr_fields["registrar_postalcode"] = adr_list[5] if len(adr_list) > 5 else None
+                        registrar_addr_fields["registrar_country"] = adr_list[6] if len(adr_list) > 6 else None
+
             if "registrant" in roles:
                 result["registrant_name"], result["registrant_email"] = name, email
             elif "administrative" in roles:
@@ -47,15 +64,12 @@ def parse_rdap_json(data: dict) -> dict:
                 result["tech_name"], result["tech_email"] = name, email
             elif "registrar" in roles:
                 result["registrar_name"] = name
-                adr = entity.get("adr", {})
-                if adr:
-                    result["registrar_addr"] = adr.get("streetAddress")
-                    result["registrar_city"] = adr.get("locality")
-                    result["registrar_region"] = adr.get("region")
-                    result["registrar_postalcode"] = adr.get("postalCode")
-                    result["registrar_country"] = adr.get("countryName")
+                result["registrar_email"] = email
+                for k, v in registrar_addr_fields.items():
+                    result[k] = v
             elif "reseller" in roles:
                 result["reseller_name"] = name
+
     result["secureDNS_delegationSigned"] = data.get("secureDNS", {}).get("delegationSigned")
     return result
 
@@ -116,7 +130,7 @@ def domain_lookup(domain: str, tld: str) -> dict:
     if tld in ["sj", "bv"]:
         return {"status": "Reserved TLD"}
 
-    if tld in ["ch", "li", "sj", "bv"]:
+    if tld in ["ch", "li"]:
         data = proxy_rdap_get(rdap_servers[tld] + domain)
         if data:
             return parse_rdap_json(data)
@@ -135,16 +149,15 @@ def domain_lookup(domain: str, tld: str) -> dict:
 def main(input_csv="data_rdap.csv", output_csv="data_rdap_parsed.csv"):
     df = pd.read_csv(input_csv)
 
-    # Read already processed domains
+    # Already processed domains
     existing_domains = set()
     if os.path.exists(output_csv):
         existing_df = pd.read_csv(output_csv)
         existing_domains = set(existing_df['domain'].astype(str).tolist())
 
-    # Open CSV in append mode
+    # Append mode
     with open(output_csv, "a", newline="", encoding="utf-8", buffering=1) as f:
         writer = csv.DictWriter(f, fieldnames=FIELDS)
-        # Write header only if file is empty
         if f.tell() == 0:
             writer.writeheader()
 
