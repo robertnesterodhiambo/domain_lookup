@@ -1,10 +1,13 @@
 import subprocess
 import requests
-import csv
+import pandas as pd
 import re
+import csv
 
+# CSV fields including original CSV columns
 FIELDS = [
-    "domain", "ldhName", "status", "registration_date", "last_changed_date", "last_update_rdap_date",
+    "domain", "count", "tld", "rdap", "rdap_link",
+    "status", "ldhName", "registration_date", "last_changed_date", "last_update_rdap_date",
     "registrant_name", "registrant_email", "admin_name", "admin_email", "tech_name", "tech_email",
     "registrar_name", "registrar_addr", "registrar_city", "registrar_region", "registrar_postalcode",
     "registrar_country", "reseller_name", "nameservers", "secureDNS_delegationSigned"
@@ -56,76 +59,73 @@ def parse_rdap_json(data: dict) -> dict:
     return result
 
 def parse_lv_whois(text: str) -> dict:
-    """Parse .lv WHOIS and map to CSV fields."""
     result = {k: None for k in FIELDS}
-
     match = re.search(r"Domain:\s*(.+)", text)
     if match:
         result["ldhName"] = match.group(1).strip()
-
     match = re.search(r"Status:\s*(.+)", text)
     if match:
         result["status"] = match.group(1).strip()
-
     match = re.search(r"Updated:\s*(.+)", text)
     if match:
         result["last_update_rdap_date"] = match.group(1).strip()
-
-    # Holder section
-    match = re.search(r"\[Holder\](.*?)\n\n", text, re.S)
-    if match:
-        holder_section = match.group(1)
-        country_match = re.search(r"Country:\s*(.+)", holder_section)
-        if country_match:
-            result["registrant_country"] = country_match.group(1).strip()
-
-    # Nameservers
     ns_matches = re.findall(r"Nserver:\s*(.+)", text)
     if ns_matches:
         result["nameservers"] = ",".join([ns.strip() for ns in ns_matches if ns.strip() != "-"])
-
     return result
 
-def domain_lookup(domain: str) -> dict:
-    tld = domain.split('.')[-1].lower()
+def domain_lookup(domain: str, tld: str) -> dict:
     rdap_servers = {"ch": "https://rdap.nic.ch/domain/", "li": "https://rdap.nic.ch/domain/",
                     "sj": "https://rdap.norid.no/domain/", "bv": "https://rdap.norid.no/domain/"}
 
     if tld in ["sj", "bv"]:
-        return {"domain": domain, "status": "Reserved TLD", **{k: None for k in FIELDS if k not in ["domain","status"]}}
+        return {"status": "Reserved TLD"}
 
     if tld in ["ch", "li"]:
         try:
             resp = requests.get(rdap_servers[tld] + domain, timeout=10)
             if resp.status_code == 200:
-                data = parse_rdap_json(resp.json())
-                data["domain"] = domain
-                return data
+                return parse_rdap_json(resp.json())
+            else:
+                return {"status": f"RDAP lookup failed ({resp.status_code})"}
         except:
-            pass
-        return {"domain": domain, "status": f"RDAP lookup failed"}
+            return {"status": "RDAP lookup failed"}
 
     if tld == "lv":
         try:
             whois_text = subprocess.check_output(["whois", domain], text=True)
-            data = parse_lv_whois(whois_text)
-            data["domain"] = domain
-            return data
-        except Exception as e:
-            return {"domain": domain, "status": f"WHOIS lookup failed ({e})"}
+            return parse_lv_whois(whois_text)
+        except:
+            return {"status": "WHOIS lookup failed"}
 
-    return {"domain": domain, "status": "Unsupported TLD"}
+    return {"status": "Unsupported TLD"}
 
-def save_to_csv(domains, filename="domain_data.csv"):
-    with open(filename, "w", newline="", encoding="utf-8") as f:
+def main(input_csv="data_rdap.csv", output_csv="data_rdap_parsed.csv"):
+    df = pd.read_csv(input_csv)
+
+    # Open CSV in write mode and write header once
+    with open(output_csv, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDS)
         writer.writeheader()
-        for domain in domains:
-            data = domain_lookup(domain)
+
+        # Process each domain and write immediately
+        for _, row in df.iterrows():
+            domain = row['domain']
+            tld = row['tld'].lower()
+            print(f"Processing {domain}...")
+            data = domain_lookup(domain, tld)
+
+            # Include original CSV columns
+            data['domain'] = domain
+            data['count'] = row.get('count', None)
+            data['tld'] = tld
+            data['rdap'] = row.get('rdap', None)
+            data['rdap_link'] = row.get('rdap_link', None)
+
+            # Write row immediately
             writer.writerow({k: data.get(k) for k in FIELDS})
 
-# Example usage
+    print(f"Saved parsed data to {output_csv}")
+
 if __name__ == "__main__":
-    domain_list = ["example.ch", "example.li", "example.lv", "example.sj", "example.bv"]
-    save_to_csv(domain_list)
-    print("Saved domain data to domain_data.csv")
+    main()
