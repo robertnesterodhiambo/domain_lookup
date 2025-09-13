@@ -5,6 +5,8 @@ import csv
 import json
 import time
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
 
 FIELDS = [
     "domain", "count", "tld", "rdap", "rdap_link",
@@ -16,6 +18,9 @@ FIELDS = [
 
 MAX_RETRIES = 3
 RETRY_DELAY = 3  # seconds
+THREADS = 5
+
+csv_lock = Lock()  # ensure no double writes
 
 def parse_rdap_json(data: dict) -> dict:
     result = {k: None for k in FIELDS}
@@ -146,6 +151,26 @@ def domain_lookup(domain: str, tld: str) -> dict:
 
     return {"status": "Unsupported TLD"}
 
+def process_domain(row, output_csv):
+    domain = row['domain']
+    tld = row['tld'].lower()
+    print(f"Processing {domain} via proxychains4...")
+    data = domain_lookup(domain, tld)
+    data['domain'] = domain
+    data['count'] = row.get('count', None)
+    data['tld'] = tld
+    data['rdap'] = row.get('rdap', None)
+    data['rdap_link'] = row.get('rdap_link', None)
+
+    with csv_lock:
+        with open(output_csv, "a", newline="", encoding="utf-8", buffering=1) as f:
+            writer = csv.DictWriter(f, fieldnames=FIELDS)
+            if f.tell() == 0:
+                writer.writeheader()
+            writer.writerow({k: data.get(k) for k in FIELDS})
+            f.flush()
+    return domain
+
 def main(input_csv="data_rdap.csv", output_csv="data_rdap_parsed.csv"):
     df = pd.read_csv(input_csv)
 
@@ -155,33 +180,15 @@ def main(input_csv="data_rdap.csv", output_csv="data_rdap_parsed.csv"):
         existing_df = pd.read_csv(output_csv)
         existing_domains = set(existing_df['domain'].astype(str).tolist())
 
-    # Append mode
-    with open(output_csv, "a", newline="", encoding="utf-8", buffering=1) as f:
-        writer = csv.DictWriter(f, fieldnames=FIELDS)
-        if f.tell() == 0:
-            writer.writeheader()
+    rows_to_process = [row for _, row in df.iterrows() if row['domain'] not in existing_domains]
 
-        for idx, row in df.iterrows():
-            domain = row['domain']
-            tld = row['tld'].lower()
+    with ThreadPoolExecutor(max_workers=THREADS) as executor:
+        futures = [executor.submit(process_domain, row, output_csv) for row in rows_to_process]
+        for future in as_completed(futures):
+            domain = future.result()
+            print(f"Finished: {domain}")
 
-            if domain in existing_domains:
-                print(f"[{idx+1}/{len(df)}] Skipping already processed domain: {domain}")
-                continue
-
-            print(f"[{idx+1}/{len(df)}] Processing {domain} via proxychains4...")
-            data = domain_lookup(domain, tld)
-
-            data['domain'] = domain
-            data['count'] = row.get('count', None)
-            data['tld'] = tld
-            data['rdap'] = row.get('rdap', None)
-            data['rdap_link'] = row.get('rdap_link', None)
-
-            writer.writerow({k: data.get(k) for k in FIELDS})
-            f.flush()  # immediate write
-
-    print(f"Processed all domains and appended results to {output_csv}")
+    print(f"All domains processed and appended to {output_csv}")
 
 if __name__ == "__main__":
     main()
