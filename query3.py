@@ -18,9 +18,10 @@ FIELDS = [
 
 MAX_RETRIES = 3
 RETRY_DELAY = 3  # seconds
-THREADS = 5
-
+THREADS = 20
 csv_lock = Lock()  # ensure no double writes
+
+# ---------- Parsing Functions ----------
 
 def parse_rdap_json(data: dict) -> dict:
     result = {k: None for k in FIELDS}
@@ -94,6 +95,8 @@ def parse_lv_whois(text: str) -> dict:
         result["nameservers"] = ",".join([ns.strip() for ns in ns_matches if ns.strip() != "-"])
     return result
 
+# ---------- Proxy Functions ----------
+
 def proxy_rdap_get(url: str, timeout=15):
     for attempt in range(1, MAX_RETRIES + 1):
         try:
@@ -124,6 +127,8 @@ def proxy_whois(domain: str, timeout=15):
         time.sleep(RETRY_DELAY)
     return None
 
+# ---------- Domain Lookup ----------
+
 def domain_lookup(domain: str, tld: str) -> dict:
     rdap_servers = {
         "ch": "https://rdap.nic.ch/domain/",
@@ -151,17 +156,31 @@ def domain_lookup(domain: str, tld: str) -> dict:
 
     return {"status": "Unsupported TLD"}
 
+# ---------- Processing Function ----------
+
 def process_domain(row, output_csv):
     domain = row['domain']
     tld = row['tld'].lower()
     print(f"Processing {domain} via proxychains4...")
     data = domain_lookup(domain, tld)
+
+    # Skip failed lookups
+    fail_statuses = [
+        "RDAP lookup failed after 3 retries",
+        "WHOIS lookup failed after 3 retries",
+        "Unsupported TLD"
+    ]
+    if data.get("status") in fail_statuses:
+        print(f"Skipping failed domain: {domain} ({data.get('status')})")
+        return None
+
     data['domain'] = domain
     data['count'] = row.get('count', None)
     data['tld'] = tld
     data['rdap'] = row.get('rdap', None)
     data['rdap_link'] = row.get('rdap_link', None)
 
+    # Thread-safe write
     with csv_lock:
         with open(output_csv, "a", newline="", encoding="utf-8", buffering=1) as f:
             writer = csv.DictWriter(f, fieldnames=FIELDS)
@@ -170,6 +189,8 @@ def process_domain(row, output_csv):
             writer.writerow({k: data.get(k) for k in FIELDS})
             f.flush()
     return domain
+
+# ---------- Main Function ----------
 
 def main(input_csv="data_rdap.csv", output_csv="data_rdap_parsed.csv"):
     df = pd.read_csv(input_csv)
@@ -186,9 +207,12 @@ def main(input_csv="data_rdap.csv", output_csv="data_rdap_parsed.csv"):
         futures = [executor.submit(process_domain, row, output_csv) for row in rows_to_process]
         for future in as_completed(futures):
             domain = future.result()
-            print(f"Finished: {domain}")
+            if domain:
+                print(f"Finished: {domain}")
 
     print(f"All domains processed and appended to {output_csv}")
+
+# ---------- Run Script ----------
 
 if __name__ == "__main__":
     main()
