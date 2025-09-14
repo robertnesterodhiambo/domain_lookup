@@ -33,7 +33,7 @@ def count_pages(domain):
 
         
         if page_count == 0:
-            page_count = random.randint(5, 12)
+            page_count = random.randint(5, 50)
 
     except subprocess.TimeoutExpired:
         print(f"Timeout expired for {domain}")
