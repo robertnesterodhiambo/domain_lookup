@@ -22,6 +22,7 @@ def get_unique_values(column):
     conn.close()
     return sorted(results)
 
+
 # ✅ New function only for TLD (both DBs)
 def get_unique_tlds():
     values = set()
@@ -90,6 +91,7 @@ def index():
         percent_collected=percent_collected
     )
 
+
 @app.route('/preview', methods=['POST'])
 def preview():
     tld = request.form.get('tld')
@@ -146,7 +148,6 @@ def preview():
         registrar=registrar,
         country=country
     )
-
 
 
 @app.route('/download', methods=['POST'])
@@ -230,14 +231,14 @@ def download():
     tld_counts = {row[0]: row[1] for row in count_results}
     df['site_count'] = df['tld'].map(tld_counts).fillna(0).astype(int)
 
-    # Save file
+    # Save file as CSV
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    filename = f"filtered_nslookup_{timestamp}.xlsx"
+    filename = f"filtered_nslookup_{timestamp}.csv"
     filepath = os.path.join(DOWNLOAD_DIR, filename)
 
-    df.to_excel(filepath, index=False)
+    df.to_csv(filepath, index=False)
 
-    return send_file(filepath, as_attachment=True)
+    return send_file(filepath, as_attachment=True, mimetype="text/csv")
 
 
 if __name__ == '__main__':
