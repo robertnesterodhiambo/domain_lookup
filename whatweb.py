@@ -21,6 +21,10 @@ def scan_domain(domain):
         text=True
     )
 
+    # Check for error like "ERROR Opening: ..."
+    if "ERROR Opening:" in result.stdout or "ERROR Opening:" in result.stderr:
+        return [{"Target": domain, **{field: "no data" for field in FIELDS}}]
+
     records = []
     for line in result.stdout.splitlines():
         line = line.strip()
@@ -41,20 +45,28 @@ def scan_domain(domain):
             records.append(record)
         except json.JSONDecodeError:
             continue
+
+    if not records:
+        # if no usable data at all
+        return [{"Target": domain, **{field: "no data" for field in FIELDS}}]
+
     return records
 
 def merge_records(records):
     if not records:
         return None
     
-    best_record = max(records, key=lambda r: sum(1 for v in r.values() if v and v != "None"))
+    # Prefer the record with most filled fields
+    best_record = max(records, key=lambda r: sum(1 for v in r.values() if v and v != "None" and v != "no data"))
     
+    # Merge missing values from other records
     for rec in records:
         if rec is best_record:
             continue
         for k, v in rec.items():
-            if not best_record.get(k) and v:
-                best_record[k] = v
+            if not best_record.get(k) or best_record[k] in [None, "no data"]:
+                if v and v not in ["None", "no data"]:
+                    best_record[k] = v
     return best_record
 
 if __name__ == "__main__":
@@ -90,6 +102,10 @@ if __name__ == "__main__":
                 merged_record = merge_records(records)
                 if merged_record:
                     writer.writerow(merged_record)
-                    f.flush()  # ensure immediate save
+                    f.flush()
             except Exception as e:
                 print(f"Error scanning {domain}: {e}")
+                # Write "no data" row if anything goes wrong
+                fallback_record = {"Target": domain, **{field: "no data" for field in FIELDS}}
+                writer.writerow(fallback_record)
+                f.flush()
