@@ -1,6 +1,7 @@
 import subprocess
 import json
 import pandas as pd
+import csv
 
 FIELDS = [
     "Apache", "Country", "HTTPServer", "IP", "RedirectLocation", "Title",
@@ -8,6 +9,8 @@ FIELDS = [
     "PoweredBy", "Script", "Strict-Transport-Security", "UncommonHeaders",
     "WordPress", "X-Frame-Options"
 ]
+
+OUTPUT_FILE = "whatweb_results.csv"
 
 def scan_domain(domain):
     result = subprocess.run(
@@ -43,26 +46,34 @@ def merge_records(records):
     if not records:
         return None
     
-    # Pick the record with the most filled fields as base
     best_record = max(records, key=lambda r: sum(1 for v in r.values() if v and v != "None"))
     
-    # Merge other records into it
     for rec in records:
         if rec is best_record:
             continue
         for k, v in rec.items():
-            if not best_record.get(k) and v:  # fill only if empty
+            if not best_record.get(k) and v:
                 best_record[k] = v
     return best_record
 
 if __name__ == "__main__":
-    domain = "spixnet.ai"
-    records = scan_domain(domain)
-    merged_record = merge_records(records)
+    # Load domains
+    df = pd.read_csv("combined_nslookup.csv")
+    domains = df["domain"].dropna().unique()[:100]  # first 100 unique domains
     
-    if merged_record:
-        df = pd.DataFrame([merged_record])
-        df.to_csv("whatweb_results.csv", index=False)
-        print(f"Saved merged best result to whatweb_results.csv")
-    else:
-        print("No records found.")
+    # Prepare output file with headers if not exists
+    with open(OUTPUT_FILE, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["Target"] + FIELDS)
+        writer.writeheader()
+    
+    for i, domain in enumerate(domains, start=1):
+        print(f"[{i}/{len(domains)}] Scanning {domain} ...")
+        try:
+            records = scan_domain(domain)
+            merged_record = merge_records(records)
+            if merged_record:
+                with open(OUTPUT_FILE, "a", newline="") as f:
+                    writer = csv.DictWriter(f, fieldnames=["Target"] + FIELDS)
+                    writer.writerow(merged_record)
+        except Exception as e:
+            print(f"Error scanning {domain}: {e}")
