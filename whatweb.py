@@ -39,9 +39,17 @@ def scan_domain(domain):
             continue
     return records
 
+def pick_most_data(records):
+    # pick the row with the most filled fields
+    return max(records, key=lambda r: sum(1 for v in r.values() if v and v != "None"))
+
 if __name__ == "__main__":
     domain = "spixnet.ai"
-    results = scan_domain(domain)
-    df = pd.DataFrame(results)
-    df.to_csv("whatweb_results.csv", index=False)
-    print(f"Saved results to whatweb_results.csv with {len(df)} entries")
+    records = scan_domain(domain)
+    if records:
+        best_record = pick_most_data(records)
+        df = pd.DataFrame([best_record])
+        df.to_csv("whatweb_results.csv", index=False)
+        print(f"Saved best result to whatweb_results.csv")
+    else:
+        print("No records found.")
