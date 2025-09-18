@@ -39,17 +39,30 @@ def scan_domain(domain):
             continue
     return records
 
-def pick_most_data(records):
-    # pick the row with the most filled fields
-    return max(records, key=lambda r: sum(1 for v in r.values() if v and v != "None"))
+def merge_records(records):
+    if not records:
+        return None
+    
+    # Pick the record with the most filled fields as base
+    best_record = max(records, key=lambda r: sum(1 for v in r.values() if v and v != "None"))
+    
+    # Merge other records into it
+    for rec in records:
+        if rec is best_record:
+            continue
+        for k, v in rec.items():
+            if not best_record.get(k) and v:  # fill only if empty
+                best_record[k] = v
+    return best_record
 
 if __name__ == "__main__":
     domain = "spixnet.ai"
     records = scan_domain(domain)
-    if records:
-        best_record = pick_most_data(records)
-        df = pd.DataFrame([best_record])
+    merged_record = merge_records(records)
+    
+    if merged_record:
+        df = pd.DataFrame([merged_record])
         df.to_csv("whatweb_results.csv", index=False)
-        print(f"Saved best result to whatweb_results.csv")
+        print(f"Saved merged best result to whatweb_results.csv")
     else:
         print("No records found.")
