@@ -1,44 +1,71 @@
-#!/usr/bin/env python3
 import requests
+import pandas as pd
 import csv
-import json
-from pathlib import Path
+import ipaddress
 
-URL = "https://internetdb.shodan.io/185.104.29.22"
-OUTFILE = Path("output.csv")
+INPUT_FILE = "combined_nslookup.csv"
+OUTPUT_FILE = "shodan_results.csv"
+SHODAN_URL = "https://internetdb.shodan.io/"
 
+# flatten helper
+def flatten_list(data):
+    if isinstance(data, list):
+        return ";".join(map(str, data))
+    return data if data else "no data"
 
-def fetch_json(url: str) -> dict:
-    resp = requests.get(url, timeout=15)
-    resp.raise_for_status()
-    return resp.json()
+# check valid ip
+def is_valid_ip(ip):
+    try:
+        ipaddress.ip_address(ip)
+        return True
+    except ValueError:
+        return False
 
+# query shodan
+def query_shodan(ip):
+    try:
+        r = requests.get(SHODAN_URL + ip, timeout=10)
+        if r.status_code == 200 and r.text.strip():
+            data = r.json()
+            return {
+                "ip": data.get("ip", "no data"),
+                "cpes": flatten_list(data.get("cpes", [])),
+                "hostnames": flatten_list(data.get("hostnames", [])),
+                "ports": flatten_list(data.get("ports", [])),
+                "tags": flatten_list(data.get("tags", [])),
+                "vulns": flatten_list(data.get("vulns", [])),
+            }
+    except Exception:
+        return None
+    return None
 
-def list_to_string(value, sep=";"):
-    """Convert lists to plain strings, scalars to str, None to ''."""
-    if isinstance(value, (list, tuple)):
-        return sep.join(str(v) for v in value)
-    if value is None:
-        return ""
-    return str(value)
+# open input file
+df = pd.read_csv(INPUT_FILE)
 
+# prepare output CSV with headers
+with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as f:
+    writer = csv.DictWriter(f, fieldnames=["nslookup", "ip", "cpes", "hostnames", "ports", "tags", "vulns"])
+    writer.writeheader()
 
-def save_to_csv(data: dict, out_path: Path):
-    # Flatten dict: convert lists to joined strings
-    flat = {k: list_to_string(v) for k, v in data.items()}
+# iterate rows
+for idx, row in df.iterrows():
+    nslookup_val = str(row.get("nslookup", ""))
+    result = {"nslookup": nslookup_val, "ip": "no data", "cpes": "no data", "hostnames": "no data",
+              "ports": "no data", "tags": "no data", "vulns": "no data"}
 
-    with out_path.open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=flat.keys())
-        writer.writeheader()
-        writer.writerow(flat)
+    if nslookup_val.lower() != "no data" and nslookup_val.strip():
+        ips = [x.strip() for x in nslookup_val.split("|") if is_valid_ip(x.strip())]
+        for ip in ips:
+            data = query_shodan(ip)
+            if data:
+                result.update(data)
+                break
 
-    print(f"Wrote CSV to {out_path}")
+    # append to CSV immediately
+    with open(OUTPUT_FILE, "a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=result.keys())
+        writer.writerow(result)
 
+    print(f"Row {idx+1} processed and saved.")
 
-def main():
-    data = fetch_json(URL)
-    save_to_csv(data, OUTFILE)
-
-
-if __name__ == "__main__":
-    main()
+print("✅ All rows processed and saved.")
