@@ -3,10 +3,15 @@ import pandas as pd
 import csv
 import ipaddress
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
 
 INPUT_FILE = "combined_nslookup.csv"
 OUTPUT_FILE = "shodan_results.csv"
 SHODAN_URL = "https://internetdb.shodan.io/"
+MAX_WORKERS = 25
+
+lock = Lock()  # for thread-safe file writing
 
 # flatten helper
 def flatten_list(data):
@@ -40,6 +45,37 @@ def query_shodan(ip):
         return None
     return None
 
+# worker function
+def process_row(idx, row, processed):
+    nslookup_val = str(row.get("nslookup", ""))
+    domain_val = str(row.get("domain", "no data"))
+    key = (domain_val.strip(), nslookup_val.strip())
+
+    if key in processed:
+        return idx, None, True  # already done
+
+    result = {
+        "domain": domain_val,
+        "nslookup": nslookup_val,
+        "ip": "no data",
+        "cpes": "no data",
+        "hostnames": "no data",
+        "ports": "no data",
+        "tags": "no data",
+        "vulns": "no data"
+    }
+
+    if nslookup_val.lower() != "no data" and nslookup_val.strip():
+        ips = [x.strip() for x in nslookup_val.split("|") if is_valid_ip(x.strip())]
+        for ip in ips:
+            data = query_shodan(ip)
+            if data:
+                result.update(data)
+                break
+
+    return idx, result, False
+
+
 # load input
 df = pd.read_csv(INPUT_FILE)
 
@@ -54,7 +90,7 @@ if os.path.exists(OUTPUT_FILE):
     except Exception:
         pass
 
-# open output file (append mode)
+# open output file in append mode once
 with open(OUTPUT_FILE, "a", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(
         f,
@@ -64,39 +100,21 @@ with open(OUTPUT_FILE, "a", newline="", encoding="utf-8") as f:
     if os.stat(OUTPUT_FILE).st_size == 0:
         writer.writeheader()
 
-    # iterate rows
-    for idx, row in df.iterrows():
-        nslookup_val = str(row.get("nslookup", ""))
-        domain_val = str(row.get("domain", "no data"))
-        key = (domain_val.strip(), nslookup_val.strip())
+    # run with thread pool
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = [executor.submit(process_row, idx, row, processed) for idx, row in df.iterrows()]
 
-        if key in processed:
-            print(f"Row {idx+1} skipped (already collected).")
-            continue
+        for future in as_completed(futures):
+            idx, result, skipped = future.result()
 
-        result = {
-            "domain": domain_val,
-            "nslookup": nslookup_val,
-            "ip": "no data",
-            "cpes": "no data",
-            "hostnames": "no data",
-            "ports": "no data",
-            "tags": "no data",
-            "vulns": "no data"
-        }
+            if skipped:
+                print(f"Row {idx+1} skipped (already collected).")
+                continue
 
-        if nslookup_val.lower() != "no data" and nslookup_val.strip():
-            ips = [x.strip() for x in nslookup_val.split("|") if is_valid_ip(x.strip())]
-            for ip in ips:
-                data = query_shodan(ip)
-                if data:
-                    result.update(data)
-                    break
-
-        # append row immediately
-        writer.writerow(result)
-        f.flush()
-
-        print(f"Row {idx+1} processed and saved.")
+            if result:
+                with lock:  # thread-safe write
+                    writer.writerow(result)
+                    f.flush()
+                print(f"Row {idx+1} processed and saved.")
 
 print("✅ All new rows processed and saved.")
