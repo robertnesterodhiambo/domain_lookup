@@ -23,10 +23,6 @@ df_output = pd.read_csv(
     on_bad_lines="skip"
 )
 
-# Drop rows that are all "no data"
-mask_no_data = (df_output == "no data").all(axis=1)
-df_output = df_output[~mask_no_data]
-
 # Normalize Target to just domain
 df_output["domain_only"] = df_output["Target"].str.replace(r"^https?://", "", regex=True).str.strip("/")
 
@@ -54,16 +50,13 @@ for chunk_num, chunk in enumerate(reader, start=1):
         row = {}
         row["Target"] = f"http://{domain}"
 
-        # For each column, pick a random non-"no data" value
+        # For each column, pick a random value (blanks and "no data" included)
         for col in output_columns:
-            valid_values = df_output[col].dropna()
-            valid_values = [v for v in valid_values if str(v).strip().lower() != "no data"]
-
+            valid_values = df_output[col].dropna().tolist()
             if valid_values:
                 row[col] = random.choice(valid_values)
             else:
-                row[col] = ""
-
+                row[col] = ""  # if column is completely empty
         new_rows.append(row)
         existing_domains.add(domain)
 
