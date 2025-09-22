@@ -14,7 +14,7 @@ columns = [
     "WordPress","X-Frame-Options"
 ]
 
-# Load output file safely
+# Load output file ONCE
 df_output = pd.read_csv(
     output_file,
     names=columns,
@@ -36,6 +36,12 @@ output_columns = [c for c in df_output.columns if c not in ("Target", "domain_on
 df_output.drop(columns=["domain_only"], inplace=True)
 df_output.to_csv(output_file, index=False)
 
+# Pre-cache valid values per column (including blanks and "no data")
+valid_values_per_col = {}
+for col in output_columns:
+    values = df_output[col].dropna().tolist()
+    valid_values_per_col[col] = values if values else [""]
+
 # Process input in chunks
 reader = pd.read_csv(input_file, chunksize=chunksize)
 total_new = 0
@@ -50,13 +56,10 @@ for chunk_num, chunk in enumerate(reader, start=1):
         row = {}
         row["Target"] = f"http://{domain}"
 
-        # For each column, pick a random value (blanks and "no data" included)
+        # Pick a random value from cached column values
         for col in output_columns:
-            valid_values = df_output[col].dropna().tolist()
-            if valid_values:
-                row[col] = random.choice(valid_values)
-            else:
-                row[col] = ""  # if column is completely empty
+            row[col] = random.choice(valid_values_per_col[col])
+
         new_rows.append(row)
         existing_domains.add(domain)
 
