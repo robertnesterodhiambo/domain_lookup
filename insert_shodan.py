@@ -60,8 +60,8 @@ def load_csv_unique():
     return rows
 
 def update_and_insert(conn, cursor, rows):
-    processed, updated, inserted = 0, 0, 0
-    batch = []
+    processed, inserted = 0, 0
+    big_batch = []
 
     for row in rows:
         processed += 1
@@ -69,56 +69,47 @@ def update_and_insert(conn, cursor, rows):
         if not domain:
             continue
 
-        # Prepare update fields
-        set_parts = []
-        params = []
+        insert_data = {"domain": domain}
         for col in NEW_COLUMNS.keys():
-            val = row.get(col)
-            if val:
-                val = val.strip()
-                if val != "":
-                    set_parts.append(f"`{col}` = %s")
-                    params.append(val)
+            insert_data[col] = (row.get(col) or "").strip() or None
+        big_batch.append(insert_data)
 
-        params.append(domain)
-        sql = f"UPDATE `{TABLE_NAME}` SET {', '.join(set_parts)} WHERE `domain` = %s"
-        cursor.execute(sql, params)
+        # When we hit 500 rows, process them in chunks of 100
+        if len(big_batch) >= 500:
+            inserted += process_big_batch(conn, cursor, big_batch)
+            print(f"✅ Processed chunk of 500 rows (total processed: {processed})")
+            big_batch = []
 
-        if cursor.rowcount > 0:
-            updated += 1
-        else:
-            # Prepare for insert
-            insert_data = {"domain": domain}
-            for col in NEW_COLUMNS.keys():
-                insert_data[col] = (row.get(col) or "").strip() or None
-            batch.append(insert_data)
+    # Handle remaining rows
+    if big_batch:
+        inserted += process_big_batch(conn, cursor, big_batch)
+        print(f"✅ Processed final chunk ({len(big_batch)} rows, total processed: {processed})")
 
-        # Insert in chunks of 500
-        if len(batch) >= 500:
-            inserted += bulk_insert(cursor, batch)
-            conn.commit()
-            batch = []
+    return processed, inserted
 
-        if processed % 500 == 0:
-            conn.commit()
-
-    # Insert any remaining
-    if batch:
-        inserted += bulk_insert(cursor, batch)
+def process_big_batch(conn, cursor, big_batch):
+    """Split a 500-row batch into 100-row inserts with commit per subchunk."""
+    inserted = 0
+    for i in range(0, len(big_batch), 100):
+        sub_batch = big_batch[i:i+100]
+        inserted += bulk_insert(cursor, sub_batch)
         conn.commit()
-
-    return processed, updated, inserted
+        print(f"   ↳ Inserted/updated subchunk {i//100 + 1} of {len(big_batch)//100 + 1} ({len(sub_batch)} rows)")
+    return inserted
 
 def bulk_insert(cursor, batch):
-    """Insert rows in bulk into finalboss."""
+    """Insert or update rows in bulk using ON DUPLICATE KEY UPDATE."""
     if not batch:
         return 0
     cols = ["domain"] + list(NEW_COLUMNS.keys())
     placeholders = ", ".join(["%s"] * len(cols))
-    sql = f"INSERT INTO `{TABLE_NAME}` ({', '.join(cols)}) VALUES ({placeholders})"
-    values = []
-    for row in batch:
-        values.append(tuple(row[col] for col in cols))
+    sql = f"""
+    INSERT INTO `{TABLE_NAME}` ({', '.join(cols)})
+    VALUES ({placeholders})
+    ON DUPLICATE KEY UPDATE
+    {', '.join([f'`{col}`=VALUES(`{col}`)' for col in NEW_COLUMNS.keys()])}
+    """
+    values = [tuple(row[col] for col in cols) for row in batch]
     cursor.executemany(sql, values)
     return len(values)
 
@@ -135,11 +126,10 @@ def main():
     rows = load_csv_unique()
     print(f"Unique rows loaded: {len(rows)}")
 
-    print("Updating and inserting...")
-    processed, updated, inserted = update_and_insert(conn, cursor, rows)
+    print("Inserting/updating in chunks...")
+    processed, inserted = update_and_insert(conn, cursor, rows)
     print(f"CSV rows processed: {processed}")
-    print(f"Rows updated: {updated}")
-    print(f"Rows inserted: {inserted}")
+    print(f"Rows inserted/updated: {inserted}")
 
     cursor.close()
     conn.close()
