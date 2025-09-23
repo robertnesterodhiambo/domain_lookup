@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
 import csv
 import mysql.connector
-from mysql.connector import errorcode
 
 DB_CONFIG = {
     'user': 'serviceapp',
     'password': '97HVhkvT4Zw3vd6q9uAgVYiJhsWBFz',
     'host': '46.62.140.165',
-    'database': 'domain_data'
+    'database': 'complete'
 }
 
 CSV_FILE = "whatweb_results.csv"
-TABLE_NAME = "finalboss"
+TABLE_NAME = "complete"
 
-# Define the columns from CSV that need to exist in the DB (excluding domain, ip_web, country_web)
+# Define the columns to add/update (excluding ip_web and country_web)
 NEW_COLUMNS = {
     "Apache": "TEXT",
     "HTTPServer": "TEXT",
@@ -35,26 +34,31 @@ NEW_COLUMNS = {
 def ensure_columns(cursor):
     added = []
     for col, coltype in NEW_COLUMNS.items():
-        try:
-            cursor.execute(f"ALTER TABLE `{TABLE_NAME}` ADD COLUMN IF NOT EXISTS `{col}` {coltype} DEFAULT NULL")
+        cursor.execute(
+            """
+            SELECT COUNT(*) FROM information_schema.COLUMNS
+            WHERE TABLE_SCHEMA=%s AND TABLE_NAME=%s AND COLUMN_NAME=%s
+            """,
+            (DB_CONFIG['database'], TABLE_NAME, col)
+        )
+        exists = cursor.fetchone()[0] > 0
+
+        if not exists:
+            print(f"Adding missing column: {col}")
+            cursor.execute(f"ALTER TABLE `{TABLE_NAME}` ADD COLUMN `{col}` {coltype} DEFAULT NULL")
             added.append(col)
-        except mysql.connector.Error as e:
-            if e.errno == errorcode.ER_PARSE_ERROR:
-                # MySQL < 8.0 doesn't support "IF NOT EXISTS"
-                cursor.execute(
-                    """
-                    SELECT COUNT(*) FROM information_schema.COLUMNS
-                    WHERE TABLE_SCHEMA=%s AND TABLE_NAME=%s AND COLUMN_NAME=%s
-                    """,
-                    (DB_CONFIG['database'], TABLE_NAME, col)
-                )
-                exists = cursor.fetchone()[0] > 0
-                if not exists:
-                    cursor.execute(f"ALTER TABLE `{TABLE_NAME}` ADD COLUMN `{col}` {coltype} DEFAULT NULL")
-                    added.append(col)
-            else:
-                raise
     return added
+
+def normalize_domain(target):
+    """Extract plain domain from Target (strip http://, https://, trailing /)."""
+    if not target:
+        return None
+    target = target.strip()
+    if target.startswith("http://"):
+        target = target[7:]
+    elif target.startswith("https://"):
+        target = target[8:]
+    return target.rstrip("/")
 
 def load_csv_unique():
     """Load CSV and keep only first occurrence of each domain."""
@@ -63,64 +67,82 @@ def load_csv_unique():
     with open(CSV_FILE, newline='', encoding='utf-8') as fh:
         reader = csv.DictReader(fh)
         for row in reader:
-            domain = (row.get("Target") or "").strip()
+            domain = normalize_domain(row.get("Target"))
             if not domain or domain in seen:
                 continue
             seen.add(domain)
-
-            # Map CSV to DB structure
-            insert_data = {"domain": domain}
-            insert_data["ip_web"] = (row.get("IP") or "").strip() or None
-            insert_data["country_web"] = (row.get("Country") or "").strip() or None
-            for col in NEW_COLUMNS.keys():
-                insert_data[col] = (row.get(col) or "").strip() or None
-
-            rows.append(insert_data)
+            row["domain"] = domain  # store cleaned domain
+            rows.append(row)
     return rows
 
 def update_and_insert(conn, cursor, rows):
-    processed, inserted = 0, 0
+    processed, inserted, failed = 0, 0, 0
     big_batch = []
 
     for row in rows:
         processed += 1
-        big_batch.append(row)
+        domain = row.get("domain")
+        if not domain:
+            failed += 1
+            print(f"⚠️ Skipping row with missing domain at row {processed}")
+            continue
 
-        # Process in batches of 500
+        insert_data = {"domain": domain}
+        for col in NEW_COLUMNS.keys():
+            insert_data[col] = (row.get(col) or "").strip() or None
+
+        insert_data["ip_web"] = (row.get("IP") or "").strip() or None
+        insert_data["country_web"] = (row.get("Country") or "").strip() or None
+
+        big_batch.append(insert_data)
+
         if len(big_batch) >= 500:
-            inserted += process_big_batch(conn, cursor, big_batch)
-            print(f"✅ Processed batch of 500 rows (total processed: {processed})")
+            ok, fail = process_big_batch(conn, cursor, big_batch)
+            inserted += ok
+            failed += fail
+            print(f"✅ Processed chunk of 500 rows (total processed: {processed}, failed so far: {failed})")
             big_batch = []
 
-    # Handle final remaining rows
     if big_batch:
-        inserted += process_big_batch(conn, cursor, big_batch)
-        print(f"✅ Processed final batch ({len(big_batch)} rows, total processed: {processed})")
+        ok, fail = process_big_batch(conn, cursor, big_batch)
+        inserted += ok
+        failed += fail
+        print(f"✅ Processed final chunk ({len(big_batch)} rows, total processed: {processed}, failed total: {failed})")
 
-    return processed, inserted
+    return processed, inserted, failed
 
 def process_big_batch(conn, cursor, big_batch):
-    """Split a 500-row batch into 100-row inserts."""
-    inserted = 0
+    inserted, failed = 0, 0
     for i in range(0, len(big_batch), 100):
         sub_batch = big_batch[i:i+100]
-        inserted += bulk_insert(cursor, sub_batch)
-        conn.commit()
-        print(f"   ↳ Inserted/updated subchunk {i//100 + 1} of {len(big_batch)//100 + 1} ({len(sub_batch)} rows)")
-    return inserted
+        try:
+            inserted += bulk_insert(cursor, sub_batch)
+            conn.commit()
+            print(f"   ↳ Inserted/updated subchunk {i//100 + 1} of {(len(big_batch) + 99)//100} ({len(sub_batch)} rows)")
+        except Exception as e:
+            conn.rollback()
+            failed += len(sub_batch)
+            print(f"❌ Failed subchunk {i//100 + 1}: {e} (skipped {len(sub_batch)} rows)")
+    return inserted, failed
 
 def bulk_insert(cursor, batch):
+    """Insert or update rows in bulk using ON DUPLICATE KEY UPDATE."""
     if not batch:
         return 0
 
     cols = ["domain", "ip_web", "country_web"] + list(NEW_COLUMNS.keys())
     placeholders = ", ".join(["%s"] * len(cols))
+
+    # Wrap every column with backticks for safety
+    col_names = ", ".join([f"`{col}`" for col in cols])
+
     sql = f"""
-    INSERT INTO `{TABLE_NAME}` ({', '.join(cols)})
+    INSERT INTO `{TABLE_NAME}` ({col_names})
     VALUES ({placeholders})
     ON DUPLICATE KEY UPDATE
     {', '.join([f'`{col}`=VALUES(`{col}`)' for col in cols if col != "domain"])}
     """
+
     values = [tuple(row[col] for col in cols) for row in batch]
     cursor.executemany(sql, values)
     return len(values)
@@ -132,16 +154,17 @@ def main():
     print("🔍 Ensuring columns exist...")
     added_cols = ensure_columns(cursor)
     conn.commit()
-    print("Added/verified columns:", ", ".join(added_cols) if added_cols else "none")
+    print("   Added/verified columns:", ", ".join(added_cols) if added_cols else "none")
 
-    print(f"📥 Loading CSV: {CSV_FILE}")
+    print(f"📂 Loading CSV: {CSV_FILE}")
     rows = load_csv_unique()
-    print(f"Unique rows loaded: {len(rows)}")
+    print(f"   Unique rows loaded: {len(rows)}")
 
-    print("🚀 Inserting/updating in batches of 500 (subchunks of 100)...")
-    processed, inserted = update_and_insert(conn, cursor, rows)
+    print("🚀 Inserting/updating in chunks...")
+    processed, inserted, failed = update_and_insert(conn, cursor, rows)
     print(f"📊 CSV rows processed: {processed}")
     print(f"✅ Rows inserted/updated: {inserted}")
+    print(f"❌ Rows failed/skipped: {failed}")
 
     cursor.close()
     conn.close()
