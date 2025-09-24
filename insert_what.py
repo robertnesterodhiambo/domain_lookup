@@ -6,11 +6,11 @@ DB_CONFIG = {
     'user': 'serviceapp',
     'password': '97HVhkvT4Zw3vd6q9uAgVYiJhsWBFz',
     'host': '46.62.140.165',
-    'database': 'complete'
+    'database': 'domain_data'
 }
 
 CSV_FILE = "whatweb_results.csv"
-TABLE_NAME = "complete"
+TABLE_NAME = "finalboss"
 
 # Define the columns to add/update (excluding ip_web and country_web)
 NEW_COLUMNS = {
