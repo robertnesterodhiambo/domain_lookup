@@ -12,80 +12,23 @@ DOWNLOAD_DIR = os.path.join(BASE_DIR, 'downloads')
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
 
-def get_unique_values(column):
-    conn = mysql.connector.connect(**DB_CONFIG)
-    cursor = conn.cursor()
-    query = f"SELECT DISTINCT {column} FROM finalboss WHERE {column} IS NOT NULL AND {column} != ''"
-    cursor.execute(query)
-    results = [row[0] for row in cursor.fetchall()]
-    cursor.close()
-    conn.close()
-    return sorted(results)
-
-
-# ✅ New function only for TLD (both DBs)
-def get_unique_tlds():
-    values = set()
-
-    # from finalboss
-    conn = mysql.connector.connect(**DB_CONFIG)
-    cursor = conn.cursor()
-    cursor.execute("SELECT DISTINCT tld FROM finalboss WHERE tld IS NOT NULL AND tld != ''")
-    values.update([row[0] for row in cursor.fetchall()])
-    cursor.close()
-    conn.close()
-
-    # from complete
-    complete_db_config = DB_CONFIG.copy()
-    complete_db_config['database'] = 'complete'
-    conn2 = mysql.connector.connect(**complete_db_config)
-    cursor2 = conn2.cursor()
-    cursor2.execute("SELECT DISTINCT tld FROM complete WHERE tld IS NOT NULL AND tld != ''")
-    values.update([row[0] for row in cursor2.fetchall()])
-    cursor2.close()
-    conn2.close()
-
-    return sorted(values)
-
-
 @app.route('/', methods=['GET'])
 def index():
-    # ✅ Connect to main DB for finalboss
-    conn = mysql.connector.connect(**DB_CONFIG)
-    cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM finalboss")
-    finalboss_count = cursor.fetchone()[0]
-    cursor.close()
-    conn.close()
-
-    # ✅ Connect to complete DB for complete table
-    complete_db_config = DB_CONFIG.copy()
-    complete_db_config['database'] = 'complete'
-    conn2 = mysql.connector.connect(**complete_db_config)
-    cursor2 = conn2.cursor()
-    cursor2.execute("SELECT COUNT(*) FROM complete")
-    complete_count = cursor2.fetchone()[0]
-    cursor2.close()
-    conn2.close()
-
-    # ✅ total_collected = sum of both
-    total_collected = finalboss_count + complete_count
-
-    # ✅ Hard-coded total_possible
+    # ✅ Hard-coded stats
+    total_collected = 33708562
     total_possible = 337113538
-
     percent_collected = round((total_collected / total_possible) * 100, 2)
 
-    # Get values (TLD from both DBs, others only from finalboss)
-    tlds = get_unique_tlds()
-    registrars = get_unique_values('registrar_name')
-    countries = get_unique_values('registrar_country')
+    # ✅ Load dropdown values from files
+    tlds = pd.read_excel(os.path.join(BASE_DIR, "list.xlsx"))["tld"].dropna().unique().tolist()
+    registrars = pd.read_csv(os.path.join(BASE_DIR, "ergistrar.csv"))["registrar_name"].dropna().unique().tolist()
+    countries = pd.read_csv(os.path.join(BASE_DIR, "country.csv"))["registrar_country"].dropna().unique().tolist()
 
     return render_template(
         'index.html',
-        tlds=tlds,
-        registrars=registrars,
-        countries=countries,
+        tlds=sorted(tlds),
+        registrars=sorted(registrars),
+        countries=sorted(countries),
         total_collected=total_collected,
         total_possible=total_possible,
         percent_collected=percent_collected
