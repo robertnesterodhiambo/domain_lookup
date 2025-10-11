@@ -11,7 +11,7 @@ INPUT_CSV = 'data_rdap.csv'
 OUTPUT_CSV = 'data_rdap_parsed.csv'
 CHUNK_SIZE = 50000
 LAST_CHUNK_FILE = 'last_chunk.txt'
-THREADS = 10
+THREADS = 100
 
 write_lock = threading.Lock()
 proxy_lock = threading.Lock()
@@ -145,10 +145,34 @@ def process_row(row):
 
     try:
         response = requests.get(link, headers=headers, timeout=15, proxies=proxy)
+
+        # --- Handle non-200 responses (invalid domains, 404, etc.) ---
         if response.status_code != 200:
             print(f"Non-200 status for {link}: {response.status_code}")
+            output_row = {col: row[col] for col in row.index}
+            for col in parsed_columns:
+                output_row[col] = 'invalid domain'
+            with write_lock:
+                pd.DataFrame([output_row]).to_csv(OUTPUT_CSV, mode='a', header=False, index=False)
+                processed_links.add(link)
+                print(f"Saved invalid domain for: {link}")
             return
 
+        rdap_json = response.json()
+
+        # --- Handle valid 200 but with INVALID_DOMAIN_NAME error in JSON ---
+        if "errors" in rdap_json and any("INVALID_DOMAIN_NAME" in str(e) for e in rdap_json["errors"]):
+            print(f"Invalid domain detected in JSON for {link}")
+            output_row = {col: row[col] for col in row.index}
+            for col in parsed_columns:
+                output_row[col] = 'invalid domain'
+            with write_lock:
+                pd.DataFrame([output_row]).to_csv(OUTPUT_CSV, mode='a', header=False, index=False)
+                processed_links.add(link)
+                print(f"Saved invalid domain for: {link}")
+            return
+
+        # --- Normal valid response ---
         rdap_json = response.json()
         parsed = parse_rdap_json(rdap_json)
 
@@ -176,7 +200,6 @@ for chunk in pd.read_csv(INPUT_CSV, chunksize=CHUNK_SIZE):
     chunk['rdap_link'] = chunk['rdap_link'].astype(str).str.strip()
     chunk = chunk[chunk['rdap_link'] != '']
 
-    # Process entire chunk without .nl filtering
     chunk_sorted = chunk
 
     with ThreadPoolExecutor(max_workers=THREADS) as executor:
