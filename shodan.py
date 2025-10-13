@@ -6,7 +6,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
 
-INPUT_FILE = "combined_nslookup.csv"
+INPUT_FILE = "nslookup.csv"
 OUTPUT_FILE = "shodan_results.csv"
 SHODAN_URL = "https://internetdb.shodan.io/"
 MAX_WORKERS = 25

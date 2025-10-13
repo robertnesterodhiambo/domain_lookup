@@ -84,7 +84,7 @@ def process_domain(domain, writer):
 
 if __name__ == "__main__":
     # Load domains list
-    df = pd.read_csv("combined_nslookup.csv")
+    df = pd.read_csv("nslookup.csv")
     domains = df["domain"].dropna().unique()  # ALL domains
 
     # Load already processed results
